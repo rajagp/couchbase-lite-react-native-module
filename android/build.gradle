@@ -68,13 +68,16 @@ repositories {
         // Android JSC is installed from npm
         url "$rootDir/../node_modules/jsc-android/dist"
     }
+    flatDir {
+        dirs 'libs'
+    }
     google()
 }
 
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
-    implementation files('libs/couchbase-lite-android-ee-3.0.0.aar')  // From node_modules
+    implementation fileTree(dir: "libs", include: ["*.aar"])
 }
 
 def configureReactNativePom(def pom) {

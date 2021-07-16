@@ -1,7 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b250c646-1080-4fee-b62b-6b5cb93278ca" name="Default Changelist" comment="" />
+    <list default="true" id="b250c646-1080-4fee-b62b-6b5cb93278ca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/javaCompile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____libs_couchbase_lite_android_ee_3_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____libs_couchbase_lite_android_ee_3_0_0_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/intermediates/compile_only_not_namespaced_r_class_jar/debug/generateDebugRFile/R.jar" beforeDir="false" afterPath="$PROJECT_DIR$/build/intermediates/compile_only_not_namespaced_r_class_jar/debug/generateDebugRFile/R.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/intermediates/incremental/packageDebugResources/compile-file-map.properties" beforeDir="false" afterPath="$PROJECT_DIR$/build/intermediates/incremental/packageDebugResources/compile-file-map.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/intermediates/incremental/packageDebugResources/merger.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/intermediates/incremental/packageDebugResources/merger.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/intermediates/res/symbol-table-with-package/debug/package-aware-r.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/intermediates/res/symbol-table-with-package/debug/package-aware-r.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/intermediates/symbols/debug/R.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/intermediates/symbols/debug/R.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/outputs/logs/manifest-merger-debug-report.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/outputs/logs/manifest-merger-debug-report.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/reactlibrary/CbliteAndroidModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/reactlibrary/CbliteAndroidModule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/reactlibrary/CbliteAndroidPackage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/reactlibrary/CbliteAndroidPackage.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,7 +48,11 @@
       </state>
     </system>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="ProjectId" id="1vPXVjukHbh1HpammtOWm9dR4qB" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -32,6 +60,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Dependencies" />
     <property name="project.structure.proportion" value="0.17" />
@@ -69,21 +98,25 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="165" y="120" key="#PSD" timestamp="1626467440281">
+    <state x="165" y="120" key="#PSD" timestamp="1626473046161">
       <screen x="0" y="25" width="1280" height="718" />
     </state>
-    <state x="165" y="120" key="#PSD/0.25.1280.718@0.25.1280.718" timestamp="1626467440281" />
+    <state x="165" y="120" key="#PSD/0.25.1280.718@0.25.1280.718" timestamp="1626473046161" />
+    <state x="453" y="94" key="#com.intellij.ide.util.MemberChooser" timestamp="1626474664483">
+      <screen x="0" y="25" width="1280" height="718" />
+    </state>
+    <state x="453" y="94" key="#com.intellij.ide.util.MemberChooser/0.25.1280.718@0.25.1280.718" timestamp="1626474664483" />
     <state x="332" y="139" width="615" height="490" key="find.popup" timestamp="1626464854225">
       <screen x="0" y="25" width="1280" height="718" />
     </state>
     <state x="332" y="139" width="615" height="490" key="find.popup/0.25.1280.718@0.25.1280.718" timestamp="1626464854225" />
-    <state x="327" y="241" key="psd.add.jar.dependency.panel.dimension" timestamp="1626467435047">
+    <state x="327" y="241" key="psd.add.jar.dependency.panel.dimension" timestamp="1626473038834">
       <screen x="0" y="25" width="1280" height="718" />
     </state>
-    <state x="327" y="241" key="psd.add.jar.dependency.panel.dimension/0.25.1280.718@0.25.1280.718" timestamp="1626467435047" />
-    <state x="168" y="131" key="psd.add.library.dependency.panel.dimension" timestamp="1626465947529">
+    <state x="327" y="241" key="psd.add.jar.dependency.panel.dimension/0.25.1280.718@0.25.1280.718" timestamp="1626473038834" />
+    <state x="168" y="131" key="psd.add.library.dependency.panel.dimension" timestamp="1626470656705">
       <screen x="0" y="25" width="1280" height="718" />
     </state>
-    <state x="168" y="131" key="psd.add.library.dependency.panel.dimension/0.25.1280.718@0.25.1280.718" timestamp="1626465947529" />
+    <state x="168" y="131" key="psd.add.library.dependency.panel.dimension/0.25.1280.718@0.25.1280.718" timestamp="1626470656705" />
   </component>
 </project>

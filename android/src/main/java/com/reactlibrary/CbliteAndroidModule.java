@@ -33,9 +33,6 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         return "CbliteAndroid";
     }
 
-
-
-
     @ReactMethod
     public void LoginUser(String username, String password, Callback cb) {
         try{
