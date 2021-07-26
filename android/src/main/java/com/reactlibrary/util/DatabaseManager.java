@@ -11,13 +11,28 @@ import com.couchbase.lite.DatabaseChangeListener;
 import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.ListenerToken;
+import com.couchbase.lite.MutableDocument;
 
 public class DatabaseManager {
     private static Database database;
     private static DatabaseManager instance = null;
     private ListenerToken listenerToken;
-    public String currentUser = null;
-    private static String dbName = "userprofile";
+    //public String currentUser = null;
+
+    //listing of actions that the plugin can do from javascript
+   // private static final String actionCreateDatabase = "createDatabase";
+   // private static final String actionCloseDatabase = "closeDatabase";
+    private static final String actionCopyDatabase = "copyDatabase";
+    private static final String actionAddChangeListener = "addChangeListener";
+  //  private static final String actionRemoveChangeListener = "removeChangeListener";
+    private static final String actionDeleteDocument = "deleteDocument";
+  //  private static final String actionGetDocument = "getDocument";
+  //  private static final String actionSaveDocument = "saveDocument";
+    private static final String actionMutableDocument = "createMutableDocument";
+    private static final String actionMutableDocumentString = "mutableDocumentSetString";
+    private static final String actionMutableDocumentBlob = "mutableDocumentSetBlob";
+    private static final String actionEnableLogging = "enableLogging";
+
 
     protected DatabaseManager() {
 
@@ -27,7 +42,6 @@ public class DatabaseManager {
         if (instance == null) {
             instance = new DatabaseManager();
         }
-
         return instance;
     }
 
@@ -35,42 +49,78 @@ public class DatabaseManager {
         return database;
     }
 
-    // tag::initCouchbaseLite[]
     public void initCouchbaseLite(Context context) {
         CouchbaseLite.init(context);
     }
-    // end::initCouchbaseLite[]
 
-    // tag::userProfileDocId[]
-    public String getCurrentUserDocId() {
-        return "user::" + currentUser;
-    }
-    // end::userProfileDocId[]
 
-    // tag::openOrCreateDatabase[]
-    public void openOrCreateDatabaseForUser(Context context, String username)
-    // end::openOrCreateDatabase[]
+
+    public String openOrCreateDatabase(Context context, String args)
     {
-        // tag::databaseConfiguration[]
+
+        String response;
+
+        DatabaseArgs dars = new DatabaseArgs(context,args);
+
         DatabaseConfiguration config = new DatabaseConfiguration();
-        config.setDirectory(String.format("%s/%s", context.getFilesDir(), username));
-        // end::databaseConfiguration[]
 
-        currentUser = username;
+        config.setDirectory(dars.directory);
 
-        try {
-            // tag::createDatabase[]
-            database = new Database(dbName, config);
-            // end::createDatabase[]
-            registerForDatabaseChanges();
-        } catch (CouchbaseLiteException e) {
-            e.printStackTrace();
+
+        if(dars.dbName.isEmpty())
+        {
+            response = "Missing arguments : Database Name";
+            return response;
         }
+        else {
+            try {
+                // tag::createDatabase[]
+                database = new Database(dars.dbName, config);
+                // end::createDatabase[]
+                registerForDatabaseChanges();
+                response = "Database Created.";
+            } catch (CouchbaseLiteException e) {
+
+                response = "There was an exception opening database. error: " + e.getMessage();
+            }
+
+            return response;
+        }
+
     }
 
-    // tag::registerForDatabaseChanges[]
+
+    public String getDocument(String docId)
+    {
+
+        Document document = null;
+
+        if (database != null) {
+            document = database.getDocument(docId);
+        }
+
+        return document.toJSON();
+
+    }
+
+
+
+    public String setDocument(String docId, String JSONDoc)
+    {
+        MutableDocument mutableDocument = new MutableDocument(docId, JSONDoc);
+        try {
+            database.save(mutableDocument);
+        } catch (CouchbaseLiteException ex) {
+            ex.printStackTrace();
+
+        }
+
+        return docId;
+    }
+
+
+
     private void registerForDatabaseChanges()
-    // end::registerForDatabaseChanges[]
     {
         // tag::addDatabaseChangelistener[]
         // Add database change listener
@@ -94,16 +144,12 @@ public class DatabaseManager {
         // end::addDatabaseChangelistener[]
     }
 
-    // tag::closeDatabaseForUser[]
-    public void closeDatabaseForUser()
-    // end::closeDatabaseForUser[]
+    public void closeDatabase()
     {
         try {
             if (database != null) {
                 deregisterForDatabaseChanges();
-                // tag::closeDatabase[]
                 database.close();
-                // end::closeDatabase[]
                 database = null;
             }
         } catch (CouchbaseLiteException e) {
@@ -111,14 +157,11 @@ public class DatabaseManager {
         }
     }
 
-    // tag::deregisterForDatabaseChanges[]
-    private void deregisterForDatabaseChanges()
-    // end::deregisterForDatabaseChanges[]
+    public void deregisterForDatabaseChanges()
     {
         if (listenerToken != null) {
-            // tag::removedbchangelistener[]
-            database.removeChangeListener(listenerToken);
-            // end::removedbchangelistener[]
-        }
+             database.removeChangeListener(listenerToken);
+            }
     }
+
 }

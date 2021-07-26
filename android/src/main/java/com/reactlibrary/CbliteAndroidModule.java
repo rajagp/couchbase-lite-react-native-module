@@ -2,57 +2,69 @@
 
 package com.reactlibrary;
 
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.Callback;
 import com.reactlibrary.util.DatabaseManager;
-
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Database;
-import com.couchbase.lite.Document;
-import com.couchbase.lite.MutableDocument;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.annotation.Nullable;
 
 public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext reactContext;
+    DatabaseManager dbMgr;
+
+    private static final String TAG = "CbliteAndroid";
 
     public CbliteAndroidModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
+        dbMgr = DatabaseManager.getSharedInstance();
     }
 
     @Override
     public String getName() {
-        return "CbliteAndroid";
+        return TAG;
     }
 
     @ReactMethod
-    public void LoginUser(String username, String password, Callback cb) {
+    public void init() {
+        _init();
+    }
+
+    @ReactMethod
+    public void createDatabase(String args, @Nullable Callback cb) {
         try{
-            cb.invoke(null, mloginuser(username,password));
+            cb.invoke(null, _createDatabase(args));
         }catch (Exception e){
             cb.invoke(e.toString(), null);
         }
     }
 
     @ReactMethod
-    public void GetProfile(Callback cb) {
+    public void closeDatabase(String args, @Nullable Callback cb) {
         try{
-            cb.invoke(null, mGetUserProfile());
+            cb.invoke(null, _closeDatabase("nan"));
         }catch (Exception e){
             cb.invoke(e.toString(), null);
         }
     }
 
     @ReactMethod
-    public void SetProfile(String JsonObject,Callback cb) {
+    public void getDocument(String id, Callback cb) {
+        try{
+            cb.invoke(null, _getDocument(id));
+        }catch (Exception e){
+            cb.invoke(e.toString(), null);
+        }
+    }
+
+    @ReactMethod
+    public void setDocument(String id, String JsonObject, Callback cb) {
 
         Boolean objectIsValid;
 
@@ -63,10 +75,9 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
             objectIsValid = false;
         }
 
-
         try{
             if(objectIsValid)
-                cb.invoke(null, mSetUserProfile(JsonObject));
+                cb.invoke(null, _setdocument(id,JsonObject));
             else
                 cb.invoke(null, "Invalid Json Object");
 
@@ -75,46 +86,91 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
     }
 
-
-    private String mloginuser(String username, String password)
+    private void _init()
     {
-        DatabaseManager dbMgr = DatabaseManager.getSharedInstance();
+        //initialize Couchbase Lite
         dbMgr.initCouchbaseLite(reactContext);
-        System.out.println("logiinni");
-        dbMgr.openOrCreateDatabaseForUser(reactContext, username);
-        return "UserLoggedIn";
     }
 
-    public String mGetUserProfile()
+    private String _createDatabase(String JSONdatabaseArgs)
     {
-        Database database = DatabaseManager.getDatabase();
-        String docId = DatabaseManager.getSharedInstance().getCurrentUserDocId();
-        Document document = null;
+        String response;
 
-        if (database != null) {
-            Map<String, Object> profile = new HashMap<>();
-            profile.put("email", DatabaseManager.getSharedInstance().currentUser);
-            document = database.getDocument(docId);
+        if(!JSONdatabaseArgs.isEmpty())
+        {
+            response = dbMgr.openOrCreateDatabase(reactContext,JSONdatabaseArgs);
+        }
+        else
+        {
+            response = "No arguments passed.";
+            return response;
         }
 
-        return document.toJSON();
+        //if exception
+        //response = "There was an exception opening database. error: "+couchbaseLiteException.getMessage();
+
+        return response;
     }
 
-    public String mSetUserProfile(String profile)
+    //Args for later "list of database"
+    private String _closeDatabase(String JSONdatabaseArgs)
     {
+        String response;
 
+        if(!JSONdatabaseArgs.isEmpty())
+        {
+            dbMgr.closeDatabase();
+            response = "Database Closed";
+        }
+        else
+        {
+            response = "No arguments passed";
+            return response;
+        }
+
+        return response;
+    }
+
+    private String _removeListener(String JSONdatabaseArgs)
+    {
+        String response;
+
+        if(!JSONdatabaseArgs.isEmpty())
+        {
+            dbMgr.deregisterForDatabaseChanges();
+            response = "Database Closed";
+        }
+        else
+        {
+            response = "No arguments passed";
+            return response;
+        }
+
+        return response;
+    }
+
+    private String _getDocument(String id)
+    {
         String response = null;
-        Database database = DatabaseManager.getDatabase();
-        String docId = DatabaseManager.getSharedInstance().getCurrentUserDocId();
-        MutableDocument mutableDocument = new MutableDocument(docId, profile);
 
-        try {
-            database.save(mutableDocument);
-            response = "Profile Updated";
-        } catch (CouchbaseLiteException ex) {
-            ex.printStackTrace();
-            response = ex.toString();
+        String document = dbMgr.getDocument(id);
+        if(!document.isEmpty())
+        {
+           response = dbMgr.getDocument(id);
         }
+        else {
+            response = "Document not found";
+        }
+
+        return response;
+    }
+
+    private String _setdocument(String id, String data)
+    {
+        String response = null;
+
+        response = dbMgr.setDocument(id,data);
+
 
         return response;
     }
