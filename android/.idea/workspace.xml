@@ -84,6 +84,12 @@
     <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.reactlibrary" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/java/com/reactlibrary" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.reactlibrary.util" />
     </key>

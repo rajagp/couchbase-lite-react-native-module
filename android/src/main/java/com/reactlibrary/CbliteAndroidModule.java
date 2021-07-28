@@ -2,14 +2,22 @@
 
 package com.reactlibrary;
 
-import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.Callback;
 import com.reactlibrary.util.DatabaseManager;
+
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.Document;
+import com.couchbase.lite.MutableDocument;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -39,7 +47,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void createDatabase(String args, @Nullable Callback cb) {
         try{
-            cb.invoke(null, _createDatabase(args));
+            cb.invoke(null, _createDatabase(args,cb));
         }catch (Exception e){
             cb.invoke(e.toString(), null);
         }
@@ -48,14 +56,14 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void closeDatabase(String args, @Nullable Callback cb) {
         try{
-            cb.invoke(null, _closeDatabase("nan"));
+            cb.invoke(null, _closeDatabase(args));
         }catch (Exception e){
             cb.invoke(e.toString(), null);
         }
     }
 
     @ReactMethod
-    public void getDocument(String id, Callback cb) {
+    public void getDocument(String id,Callback cb) {
         try{
             cb.invoke(null, _getDocument(id));
         }catch (Exception e){
@@ -64,22 +72,37 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setDocument(String id, String JsonObject, Callback cb) {
-
-        Boolean objectIsValid;
+    public void setDocument(String docObject,Callback cb) {
 
         try{
-            JSONObject checkobject = new JSONObject(JsonObject);
-            objectIsValid = true;
-        }catch (JSONException exception){
-            objectIsValid = false;
-        }
 
-        try{
-            if(objectIsValid)
-                cb.invoke(null, _setdocument(id,JsonObject));
+            if(!docObject.isEmpty())
+                cb.invoke(null, _setdocument(docObject));
             else
                 cb.invoke(null, "Invalid Json Object");
+
+        }catch (Exception e){
+            cb.invoke(e.toString(), null);
+        }
+    }
+
+    @ReactMethod
+    public void getBlob(String data,Callback cb) {
+        try{
+            cb.invoke(null, _getBlob(data));
+        }catch (Exception e){
+            cb.invoke(e.toString(), null);
+        }
+    }
+
+    @ReactMethod
+    public void setBlob(String type,String docObject,Callback cb) {
+        try{
+
+            if(!docObject.isEmpty())
+                cb.invoke(null, _setBlob(type,docObject));
+            else
+                cb.invoke("Invalid data",null );
 
         }catch (Exception e){
             cb.invoke(e.toString(), null);
@@ -92,13 +115,13 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         dbMgr.initCouchbaseLite(reactContext);
     }
 
-    private String _createDatabase(String JSONdatabaseArgs)
+    private String _createDatabase(String JSONdatabaseArgs,Callback cb)
     {
         String response;
 
         if(!JSONdatabaseArgs.isEmpty())
         {
-            response = dbMgr.openOrCreateDatabase(reactContext,JSONdatabaseArgs);
+            response = dbMgr.openOrCreateDatabase(JSONdatabaseArgs,cb);
         }
         else
         {
@@ -156,7 +179,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         String document = dbMgr.getDocument(id);
         if(!document.isEmpty())
         {
-           response = dbMgr.getDocument(id);
+            response = document;
         }
         else {
             response = "Document not found";
@@ -165,13 +188,41 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         return response;
     }
 
-    private String _setdocument(String id, String data)
+    private String _setdocument(String data)
     {
         String response = null;
 
-        response = dbMgr.setDocument(id,data);
+        try {
+            response = dbMgr.setDocument(data);
+        } catch (CouchbaseLiteException couchbaseLiteException) {
+            return response = "Error while updating document : "+couchbaseLiteException.getMessage();
+        }
 
 
+        return response;
+    }
+
+    private String _getBlob(String data)
+    {
+        String response = null;
+
+        String document = dbMgr.getBlob(data);
+
+        if(!document.isEmpty())
+        {
+            response = document;
+        }
+        else {
+            response = "Blob not found";
+        }
+
+        return response;
+    }
+
+    private String _setBlob(String type,String data)
+    {
+        String response = null;
+        response = dbMgr.setBlob(type,data);
         return response;
     }
 
