@@ -60,6 +60,7 @@ repositories {
     // ref: https://www.baeldung.com/maven-local-repository
     mavenLocal()
     mavenCentral()
+    google()
     maven {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
         url "$rootDir/../node_modules/react-native/android"
@@ -71,7 +72,7 @@ repositories {
     flatDir {
         dirs 'libs'
     }
-    google()
+
 }
 
 dependencies {

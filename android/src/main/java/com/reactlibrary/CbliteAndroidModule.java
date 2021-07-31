@@ -31,7 +31,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     public CbliteAndroidModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-        dbMgr = DatabaseManager.getSharedInstance();
+        dbMgr = DatabaseManager.getSharedInstance(reactContext);
     }
 
     @Override
@@ -40,32 +40,23 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void init() {
-        _init();
-    }
-
-    @ReactMethod
-    public void createDatabase(String args, @Nullable Callback cb) {
+    public void createDatabase(String args, @Nullable Callback onDatabaseChanged) {
         try{
-            cb.invoke(null, _createDatabase(args,cb));
+            onDatabaseChanged.invoke(null, _createDatabase(args,onDatabaseChanged));
         }catch (Exception e){
-            cb.invoke(e.toString(), null);
+            onDatabaseChanged.invoke(e.toString(), null);
         }
     }
 
-    @ReactMethod
-    public void closeDatabase(String args, @Nullable Callback cb) {
-        try{
-            cb.invoke(null, _closeDatabase(args));
-        }catch (Exception e){
-            cb.invoke(e.toString(), null);
-        }
+    @ReactMethod (isBlockingSynchronousMethod = true)
+    public String closeDatabase(String args) {
+        return  _closeDatabase(args);
     }
 
     @ReactMethod
-    public void getDocument(String id,Callback cb) {
+    public void getDocument(String docargs,Callback cb) {
         try{
-            cb.invoke(null, _getDocument(id));
+            cb.invoke(null, _getDocument(docargs));
         }catch (Exception e){
             cb.invoke(e.toString(), null);
         }
@@ -75,11 +66,10 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     public void setDocument(String docObject,Callback cb) {
 
         try{
-
-            if(!docObject.isEmpty())
+            if(docObject.length()>0)
                 cb.invoke(null, _setdocument(docObject));
             else
-                cb.invoke(null, "Invalid Json Object");
+                cb.invoke("Null Json Object",null);
 
         }catch (Exception e){
             cb.invoke(e.toString(), null);
@@ -95,24 +85,13 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
     }
 
-    @ReactMethod
-    public void setBlob(String type,String docObject,Callback cb) {
-        try{
 
-            if(!docObject.isEmpty())
-                cb.invoke(null, _setBlob(type,docObject));
-            else
-                cb.invoke("Invalid data",null );
-
-        }catch (Exception e){
-            cb.invoke(e.toString(), null);
-        }
-    }
-
-    private void _init()
-    {
-        //initialize Couchbase Lite
-        dbMgr.initCouchbaseLite(reactContext);
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String setBlob(String type,String docObject) {
+        if(!docObject.isEmpty())
+            return _setBlob(type,docObject);
+        else
+            return "Invalid data";
     }
 
     private String _createDatabase(String JSONdatabaseArgs,Callback cb)
@@ -172,11 +151,11 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         return response;
     }
 
-    private String _getDocument(String id)
+    private String _getDocument(String docargs)
     {
         String response = null;
 
-        String document = dbMgr.getDocument(id);
+        String document = dbMgr.getDocument(docargs);
         if(!document.isEmpty())
         {
             response = document;

@@ -30,31 +30,16 @@ public class DatabaseManager {
     private ListenerToken listenerToken;
     //public String currentUser = null;
 
-    //listing of actions that the plugin can do from javascript
-    // private static final String actionCreateDatabase = "createDatabase";
-    // private static final String actionCloseDatabase = "closeDatabase";
-    private static final String actionCopyDatabase = "copyDatabase";
-    //   private static final String actionAddChangeListener = "addChangeListener";
-    //  private static final String actionRemoveChangeListener = "removeChangeListener";
-    // private static final String actionDeleteDocument = "deleteDocument";
-    //  private static final String actionGetDocument = "getDocument";
-    //  private static final String actionSaveDocument = "saveDocument";
-    //  private static final String actionSaveDocument = "setBlob";
-    //  private static final String actionSaveDocument = "getBlob";
-    private static final String actionMutableDocument = "createMutableDocument";
-    private static final String actionMutableDocumentString = "mutableDocumentSetString";
-    private static final String actionMutableDocumentBlob = "mutableDocumentSetBlob";
-    private static final String actionEnableLogging = "enableLogging";
-
 
     protected DatabaseManager() {
 
     }
 
-    public static DatabaseManager getSharedInstance() {
+    public static DatabaseManager getSharedInstance(Context context) {
         if (instance == null) {
             instance = new DatabaseManager();
         }
+        CouchbaseLite.init(context);
         return instance;
     }
 
@@ -62,9 +47,6 @@ public class DatabaseManager {
         return database;
     }
 
-    public void initCouchbaseLite(Context context) {
-        CouchbaseLite.init(context);
-    }
 
     public String openOrCreateDatabase(String args,Callback cb)
     {
@@ -80,17 +62,18 @@ public class DatabaseManager {
 
         DatabaseConfiguration config = new DatabaseConfiguration();
 
-        config.setDirectory(dars.directory);
-
-
         if(dars.dbName.isEmpty())
         {
             response = "Missing arguments : Database Name";
             return response;
         }
+        else if (dars.dbName.isEmpty()) {
+            response = "Missing arguments : Directory";
+            return response;
+        }
         else {
             try {
-
+                config.setDirectory(dars.directory);
                 database = new Database(dars.dbName, config);
 
                 registerForDatabaseChanges(cb);
@@ -150,7 +133,6 @@ public class DatabaseManager {
         DocumentArgs dars=null;
 
         //Check args object
-
         try {
             dars = new DocumentArgs(docArgs);
         }
@@ -169,7 +151,6 @@ public class DatabaseManager {
 
 
         Document document = null;
-
         if (database != null) {
             document = database.getDocument(dars.docid);
         }
@@ -178,7 +159,10 @@ public class DatabaseManager {
             return response = "Database not found";
         }
 
-        return document.toJSON();
+        if(document==null)
+            return "Document is null";
+        else
+            return document.toJSON();
 
     }
 
@@ -239,7 +223,7 @@ public class DatabaseManager {
         database.saveBlob(image);
 
 
-        return "Blob Saved";
+        return image.toJSON();
     }
 
     public String getBlob(String blobdata)
@@ -276,6 +260,8 @@ public class DatabaseManager {
         return imagedata;
     }
 
+
+    //todo on sync phase
     private void registerForDatabaseChanges(final Callback cb)
     {
 
@@ -285,7 +271,7 @@ public class DatabaseManager {
                 if (change != null) {
                     for(String docId : change.getDocumentIDs()) {
                         Document doc = database.getDocument(docId);
-                        cb.invoke("dbChanged",doc.toJSON());
+//                        cb.invoke("dbChanged",doc.toJSON());
                     }
                 }
             }
