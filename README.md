@@ -62,10 +62,10 @@ CbliteAndroid.createDatabase(dbName,directory,encrytion,(error, response)=>callb
 **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
 
 #### Example Response from Create Database :
-> _"Database Created"_
-> _"Missing Arguments : Database Name"_
-> _"Missing Arguments : Directory"_
-> _"Error while Creating Database : <exception>"_
+> * _"Database Created"_
+> * _"Missing Arguments : Database Name"_
+> * _"Missing Arguments : Directory"_
+> * _"Error while Creating Database : <exception>"_
 
 
 
@@ -80,8 +80,8 @@ CbliteAndroid.closeDatabase(dbName);
 **dbName :** Name of the Database as string.
 
 #### Example Response from Create Database :
-> _"Database Closed"_
-> _"Error while Closing Database : <exception>"_
+> * _"Database Closed"_
+> * _"Error while Closing Database : <exception>"_
 
 
 
@@ -99,15 +99,15 @@ CbliteAndroid.setDocument(dbName,docid,data,(error, response)=>callback);
 **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
 
 #### Example Response from Create Document :
-> _"Document Created"_
-> _"Document is Null"_
-> _"Document not found"_
-> _"Database not found"_
-> _"Missing Arguments : Database Name"_
-> _"Missing Arguments : Document ID"_
-> _"Missing Arguments : Document Data"_
-> _"Invalid Arguments : Document data is not in proper JSON format"_
-> _"Error while Creating Document : <exception>"_
+> * _"Document Created"_
+> * _"Document is Null"_
+> * _"Document not found"_
+> * _"Database not found"_
+> * _"Missing Arguments : Database Name"_
+> * _"Missing Arguments : Document ID"_
+> * _"Missing Arguments : Document Data"_
+> * _"Invalid Arguments : Document data is not in proper JSON format"_
+> * _"Error while Creating Document : <exception>"_
 
 
 
@@ -125,10 +125,10 @@ CbliteAndroid.getDocument(dbname,docid,(error, result) => callback);
 **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
 
 #### Example Response from Get Document :
-> _"<Document as JSON>"_
-> _"Missing Arguments : Database Name"_
-> _"Missing Arguments : Document ID"_
-> _"Error while Fetching Document : <exception>"_
+> * _"<Document as JSON>"_
+> * _"Missing Arguments : Database Name"_
+> * _"Missing Arguments : Document ID"_
+> * _"Error while Fetching Document : <exception>"_
 
 
 
@@ -147,10 +147,10 @@ var BlobJSON = CbliteAndroid.setBlob(ContentType,Blob);
 **Retrun :** Synchronously returns a String of JSON Object of blob Meta Data which can be used retrieve blob by passing object to getBlob function.
 
 #### Example Response from Save Blob :
-> _"<BLOB Meta Data>"_
-> _"Missing Arguments : Content Type"_
-> _"Missing Arguments : Blob Data"_
-> _"Error while Creating Blob : <exception>"_
+> * _"<BLOB Meta Data>"_
+> * _"Missing Arguments : Content Type"_
+> * _"Missing Arguments : Blob Data"_
+> * _"Error while Creating Blob : <exception>"_
 
 
 
@@ -167,11 +167,11 @@ CbliteAndroid.getBlob(blobMeta,(error, result) => callback);
 **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
 
 #### Example Response from Get Blob :
-> _"<Base64 encoded Blob String>"_
-> _"Blob not found"_
-> _"Missing Arguments : BlobObject"_
-> _"Invalid Arguments : Blob Object is not in proper JSON format"_
-> _"Error while Fetching Blob : <exception>"_
+> * _"<Base64 encoded Blob String>"_
+> * _"Blob not found"_
+> * _"Missing Arguments : BlobObject"_
+> * _"Invalid Arguments : Blob Object is not in proper JSON format"_
+> * _"Error while Fetching Blob : <exception>"_
 
 
 
