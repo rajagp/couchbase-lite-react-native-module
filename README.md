@@ -56,10 +56,10 @@ CbliteAndroid.createDatabase(dbName,directory,encrytion,(error, response)=>callb
 
 ### Params
 
-**dbName :** Name of the Database as string.
-**directory :** Path of the database directory as string.
-**Encryption :** Encryption key as string.
-**Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
+1. **dbName :** Name of the Database as string.
+2. **directory :** Path of the database directory as string.
+3. **Encryption :** Encryption key as string.
+4. **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
 
 #### Example Response from Create Database :
 > * _"Database Created"_
@@ -77,7 +77,7 @@ CbliteAndroid.closeDatabase(dbName);
 
 ### Params
 
-**dbName :** Name of the Database as string.
+1. **dbName :** Name of the Database as string.
 
 #### Example Response from Create Database :
 > * _"Database Closed"_
@@ -93,10 +93,10 @@ CbliteAndroid.setDocument(dbName,docid,data,(error, response)=>callback);
 
 ### Params
 
-**dbName :** Name of the Database as string.
-**docid :** Unique id of the document as string.
-**data :** A JSON object containing data to be saved in document.
-**Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
+1. **dbName :** Name of the Database as string.
+2. **docid :** Unique id of the document as string.
+3. **data :** A JSON object containing data to be saved in document.
+4. **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
 
 #### Example Response from Create Document :
 > * _"Document Created"_
@@ -120,9 +120,9 @@ CbliteAndroid.getDocument(dbname,docid,(error, result) => callback);
 
 ### Params
 
-**dbName :** Name of the Database as string.
-**docid :** Unique id of the document as string.
-**Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
+1. **dbName :** Name of the Database as string.
+2. **docid :** Unique id of the document as string.
+3. **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
 
 #### Example Response from Get Document :
 > * _"<Document as JSON>"_
@@ -142,9 +142,9 @@ var BlobJSON = CbliteAndroid.setBlob(ContentType,Blob);
 
 ### Params
 
-**ContentType :** Content type of the Blob object as string.
-**Blob :** Base64 encoded blob string.
-**Retrun :** Synchronously returns a String of JSON Object of blob Meta Data which can be used retrieve blob by passing object to getBlob function.
+1. **ContentType :** Content type of the Blob object as string.
+2. **Blob :** Base64 encoded blob string.
+3. **Retrun :** Synchronously returns a String of JSON Object of blob Meta Data which can be used retrieve blob by passing object to getBlob function.
 
 #### Example Response from Save Blob :
 > * _"<BLOB Meta Data>"_
@@ -163,8 +163,8 @@ CbliteAndroid.getBlob(blobMeta,(error, result) => callback);
 
 ### Params
 
-**blobMeta :** Meta Data JSON object of Blob which is returned from save blob function.
-**Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
+1. **blobMeta :** Meta Data JSON object of Blob which is returned from save blob function.
+2. **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
 
 #### Example Response from Get Blob :
 > * _"<Base64 encoded Blob String>"_
