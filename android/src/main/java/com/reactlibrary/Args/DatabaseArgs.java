@@ -1,4 +1,4 @@
-package com.reactlibrary.util;
+package com.reactlibrary.Args;
 
 import android.content.Context;
 
@@ -11,10 +11,10 @@ import org.json.JSONObject;
 
 public class DatabaseArgs {
 
-    String directory;
-    String dbName;
-    String encryptionKey;
-    String username;
+   public String directory;
+    public String dbName;
+    public String encryptionKey;
+    public String username;
 
 
     public String getDirectory() {
@@ -28,6 +28,21 @@ public class DatabaseArgs {
     public String getEncryptionKey() {
         return encryptionKey;
     }
+
+
+    public DatabaseArgs(String dbname,String directory,String encryptionKey)
+    {
+        this.dbName = dbname;
+        this.directory = directory;
+        this.encryptionKey = encryptionKey;
+    }
+
+    public DatabaseArgs(String dbname,String directory)
+    {
+        this.dbName = dbname;
+        this.directory = directory;
+    }
+
 
     public DatabaseArgs(String dbArgsJSON) throws JSONException
     {

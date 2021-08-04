@@ -3,25 +3,53 @@
   <component name="AndroidLogFilters">
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="b250c646-1080-4fee-b62b-6b5cb93278ca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/reactlibrary/strings/ResponseStrings.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/md5-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____libs_couchbase_lite_android_ee_3_0_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____libs_couchbase_lite_android_ee_3_0_0_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_appcompat_v7_23_0_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_appcompat_v7_23_0_1_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_recyclerview_v7_23_0_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_recyclerview_v7_23_0_1_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_v4_23_0_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_v4_23_0_1_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_fresco_drawee_0_8_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_fresco_drawee_0_8_1_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_fresco_fbcore_0_8_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_fresco_fbcore_0_8_1_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_fresco_fresco_0_8_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_fresco_fresco_0_8_1_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_fresco_imagepipeline_0_8_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_fresco_imagepipeline_0_8_1_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_fresco_imagepipeline_okhttp_0_8_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_fresco_imagepipeline_okhttp_0_8_1_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_react_react_native_0_20_1_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_facebook_react_react_native_0_20_1_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_webkit_android_jsc_r174650_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_webkit_android_jsc_r174650_aar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/reactlibrary/CbliteAndroidModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/reactlibrary/CbliteAndroidModule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/reactlibrary/CbliteAndroidPackage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/reactlibrary/CbliteAndroidPackage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/reactlibrary/util/DatabaseArgs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/reactlibrary/Args/DatabaseArgs.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/reactlibrary/util/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/reactlibrary/util/DatabaseManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/reactlibrary/util/DocumentArgs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/reactlibrary/Args/DocumentArgs.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="isMigrated" value="true" />
   </component>
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
@@ -40,11 +68,62 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="y" value="22" />
+    <option name="width" value="1280" />
+    <option name="height" value="734" />
+  </component>
   <component name="ProjectId" id="1vPXVjukHbh1HpammtOWm9dR4qB" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="ProjectPane" />
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="android" type="1abcf292:AndroidViewProjectNode" />
+              <item name="android" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="android" type="1abcf292:AndroidViewProjectNode" />
+              <item name="android" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="android" type="1abcf292:AndroidViewProjectNode" />
+              <item name="android" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="reactlibrary" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="android" type="1abcf292:AndroidViewProjectNode" />
+              <item name="android" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="reactlibrary" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -54,6 +133,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="memory.settings.postsync.last.time.stamp" value="1628046746320" />
     <property name="project.structure.last.edited" value="Dependencies" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.35025382" />
@@ -82,6 +162,7 @@
       </method>
     </configuration>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -95,58 +176,39 @@
     </task>
     <servers />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="165" y="120" key="#PSD" timestamp="1626473046161">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state x="165" y="120" key="#PSD/0.25.1280.718@0.25.1280.718" timestamp="1626473046161" />
-    <state x="453" y="94" key="#com.intellij.ide.util.MemberChooser" timestamp="1627750974822">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state x="453" y="94" key="#com.intellij.ide.util.MemberChooser/0.25.1280.718@0.25.1280.718" timestamp="1627750974822" />
-    <state x="0" y="406" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1627330295224">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state x="0" y="406" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.25.1280.718@0.25.1280.718" timestamp="1627330295224" />
-    <state x="404" y="282" width="471" height="211" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1627330563810">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state x="404" y="282" width="471" height="211" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.25.1280.718@0.25.1280.718" timestamp="1627330563810" />
-    <state x="404" y="295" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.packages" timestamp="1627330536205">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state x="404" y="295" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.packages/0.25.1280.718@0.25.1280.718" timestamp="1627330536205" />
-    <state x="378" y="135" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1627330558825">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state x="378" y="135" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.25.1280.718@0.25.1280.718" timestamp="1627330558824" />
-    <state width="1236" height="474" key="GridCell.Tab.0.bottom" timestamp="1627491921780">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state width="1236" height="474" key="GridCell.Tab.0.bottom/0.25.1280.718@0.25.1280.718" timestamp="1627491921780" />
-    <state width="1236" height="474" key="GridCell.Tab.0.center" timestamp="1627491921780">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state width="1236" height="474" key="GridCell.Tab.0.center/0.25.1280.718@0.25.1280.718" timestamp="1627491921780" />
-    <state width="1236" height="474" key="GridCell.Tab.0.left" timestamp="1627491921779">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state width="1236" height="474" key="GridCell.Tab.0.left/0.25.1280.718@0.25.1280.718" timestamp="1627491921779" />
-    <state width="1236" height="474" key="GridCell.Tab.0.right" timestamp="1627491921780">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state width="1236" height="474" key="GridCell.Tab.0.right/0.25.1280.718@0.25.1280.718" timestamp="1627491921780" />
-    <state x="332" y="139" width="615" height="490" key="find.popup" timestamp="1626464854225">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state x="332" y="139" width="615" height="490" key="find.popup/0.25.1280.718@0.25.1280.718" timestamp="1626464854225" />
-    <state x="327" y="241" key="psd.add.jar.dependency.panel.dimension" timestamp="1626473038834">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state x="327" y="241" key="psd.add.jar.dependency.panel.dimension/0.25.1280.718@0.25.1280.718" timestamp="1626473038834" />
-    <state x="168" y="131" key="psd.add.library.dependency.panel.dimension" timestamp="1626470656705">
-      <screen x="0" y="25" width="1280" height="718" />
-    </state>
-    <state x="168" y="131" key="psd.add.library.dependency.panel.dimension/0.25.1280.718@0.25.1280.718" timestamp="1626470656705" />
+  <component name="ToolWindowManager">
+    <frame x="0" y="22" width="1280" height="733" extended-state="6" />
+    <layout>
+      <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
+      <window_info id="Project" order="1" visible="true" weight="0.3296875" />
+      <window_info id="Structure" order="2" side_tool="true" />
+      <window_info id="Build Variants" order="3" side_tool="true" />
+      <window_info id="Image Layers" order="4" />
+      <window_info id="Designer" order="5" />
+      <window_info id="Resources Explorer" order="6" />
+      <window_info id="Capture Tool" order="7" />
+      <window_info id="Favorites" order="8" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="0" />
+      <window_info anchor="bottom" id="Logcat" order="1" />
+      <window_info anchor="bottom" id="TODO" order="2" />
+      <window_info anchor="bottom" id="Android Profiler" order="3" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="4" />
+      <window_info anchor="bottom" id="Event Log" order="5" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Build" order="6" visible="true" weight="0.32930514" />
+      <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
+      <window_info anchor="right" id="Capture Analysis" order="1" />
+      <window_info anchor="right" id="Gradle" order="2" />
+      <window_info anchor="right" id="Theme Preview" order="3" />
+      <window_info anchor="right" id="Palette&#9;" order="4" />
+    </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reactlibrary/CbliteAndroidModule.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="139">
+          <caret line="88" column="47" selection-start-line="88" selection-start-column="47" selection-end-line="88" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
   </component>
 </project>
