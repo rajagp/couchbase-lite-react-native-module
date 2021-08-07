@@ -29,7 +29,6 @@ public class DatabaseManager {
     private static Database database;
     private static DatabaseManager instance = null;
     private ListenerToken listenerToken;
-    //public String currentUser = null;
     private ResponseStrings responseStrings;
 
     protected DatabaseManager() {
@@ -49,8 +48,7 @@ public class DatabaseManager {
     }
 
 
-    public String openOrCreateDatabase(DatabaseArgs dars)
-    {
+    public String openOrCreateDatabase(DatabaseArgs dars) {
 
         String response;
 
@@ -70,29 +68,24 @@ public class DatabaseManager {
 
     }
 
-    public String deleteDocument(String docArgs) throws CouchbaseLiteException
-    {
+    public String deleteDocument(String docArgs) throws CouchbaseLiteException {
 
         String response;
-        DocumentArgs dars=null;
+        DocumentArgs dars = null;
 
         //Check args object
 
         try {
             dars = new DocumentArgs(docArgs);
-        }
-        catch(JSONException exception){
+        } catch (JSONException exception) {
             return response = responseStrings.invalidArgs;
         }
 
 
-
         // Check id
-        if(dars.docid.isEmpty())
-        {
+        if (dars.docid.isEmpty()) {
             return response = responseStrings.MissingargsDCID;
         }
-
 
 
         Document document = null;
@@ -100,8 +93,7 @@ public class DatabaseManager {
         if (database != null) {
             document = database.getDocument(dars.docid);
             database.delete();
-        } else
-        {
+        } else {
             return response = responseStrings.DBnotfound;
         }
 
@@ -109,49 +101,43 @@ public class DatabaseManager {
 
     }
 
-    public String getDocument(DocumentArgs dars)
-    {
+    public String getDocument(DocumentArgs dars) {
         String response;
 
         Document document = null;
         if (database != null) {
             document = database.getDocument(dars.docid);
-        }
-        else
-        {
+        } else {
             return response = responseStrings.DBnotfound;
         }
 
-        if(document==null)
+        if (document == null)
             return responseStrings.Docnotfound;
         else
             return document.toJSON();
 
     }
 
-    public String setDocument(DocumentArgs dars)
-    {
+    public String setDocument(DocumentArgs dars) {
         MutableDocument mutableDocument = new MutableDocument(dars.docid, dars.data.toString());
         try {
             database.save(mutableDocument);
             return responseStrings.DocCreated;
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
-            return responseStrings.ExceptionDOC +e.getMessage();
+            return responseStrings.ExceptionDOC + e.getMessage();
         }
 
     }
 
 
-    public String setBlob(String type,String blobdata)
-    {
+    public String setBlob(String type, String blobdata) {
         Blob blob = new Blob(type, Base64.decode(blobdata, Base64.DEFAULT));
         database.saveBlob(blob);
         return blob.toJSON();
     }
 
-    public String getBlob(String blobdata)
-    {
+    public String getBlob(String blobdata) {
 
         JSONObject blob = null;
 
@@ -179,14 +165,13 @@ public class DatabaseManager {
 
 
     //todo on sync phase
-    private void registerForDatabaseChanges(final Callback cb)
-    {
+    private void registerForDatabaseChanges(final Callback cb) {
 
         listenerToken = database.addChangeListener(new DatabaseChangeListener() {
             @Override
             public void changed(final DatabaseChange change) {
                 if (change != null) {
-                    for(String docId : change.getDocumentIDs()) {
+                    for (String docId : change.getDocumentIDs()) {
                         Document doc = database.getDocument(docId);
 //                        cb.invoke("dbChanged",doc.toJSON());
                     }
@@ -195,8 +180,7 @@ public class DatabaseManager {
         });
     }
 
-    public void closeDatabase()
-    {
+    public void closeDatabase() {
         try {
             if (database != null) {
                 database.close();
@@ -207,8 +191,7 @@ public class DatabaseManager {
         }
     }
 
-    public void deregisterForDatabaseChanges()
-    {
+    public void deregisterForDatabaseChanges() {
         if (listenerToken != null) {
             database.removeChangeListener(listenerToken);
         }

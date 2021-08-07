@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DocumentArgs {
+
     public String docid;
     public JSONObject data;
     public String databaseName;
@@ -22,13 +23,11 @@ public class DocumentArgs {
         return databaseName;
     }
 
-    // sample object
-    // {"dbname":"mydb" , "docid":"12312-sae12-31", "data":{"email":"abc@gmail.com","name":"Abc"}}
 
-    public DocumentArgs(String dbname,String docid,String data) throws JSONException {
+    public DocumentArgs(String dbname,String docid,JSONObject data) throws JSONException {
         this.docid = docid;
         this.databaseName = dbname;
-        this.data  = new JSONObject(data);
+        this.data  = data;
 
     }
     public DocumentArgs(String dbname,String docid) throws JSONException {
@@ -36,6 +35,8 @@ public class DocumentArgs {
         this.databaseName = dbname;
     }
 
+    // sample object
+    // {"dbname":"mydb" , "docid":"12312-sae12-31", "data":{"email":"abc@gmail.com","name":"Abc"}}
 
     public DocumentArgs(String docArgsJSON) throws JSONException
     {

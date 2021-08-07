@@ -13,13 +13,14 @@ import com.reactlibrary.util.DatabaseManager;
 import com.reactlibrary.Args.DocumentArgs;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.annotation.Nullable;
 
 public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext reactContext;
-    DatabaseManager dbMgr;
+    private DatabaseManager dbMgr;
     private ResponseStrings responseStrings;
     private static final String TAG = "CbliteAndroid";
 
@@ -38,135 +39,100 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
 
-
     @ReactMethod
-    public void createDatabase(String dbname,String directory,@Nullable String encryptionKey, @Nullable Callback onDatabaseChanged) {
-        try{
+    public void createDatabase(String dbname, JSONObject config, Callback OnSuccessCallback, Callback OnErrorCallback) {
+        try {
             DatabaseArgs databaseArgs = null;
 
-            if(encryptionKey==null)
-            databaseArgs = new DatabaseArgs(dbname,directory);
-            else
-            databaseArgs = new DatabaseArgs(dbname,directory,encryptionKey);
+            if(config.length()>0) {
 
-            onDatabaseChanged.invoke(null, _createDatabase(databaseArgs));
+            databaseArgs = new DatabaseArgs(dbname, config);
 
-        }catch (Exception e){
-            onDatabaseChanged.invoke(responseStrings.ExceptionDB + e.getMessage(), null);
+            String response;
+
+            if (databaseArgs.getDbName().isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.MissingargsDBN);
+            } else if (databaseArgs.getDirectory().isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.MissingargsDBD);
+            } else {
+                OnSuccessCallback.invoke(dbMgr.openOrCreateDatabase(databaseArgs));
+            }
+
+
+            }else
+            {
+                OnErrorCallback.invoke(responseStrings.Missingargs +"Database Configuration");
+            }
+
+        } catch (Exception e) {
+            OnErrorCallback.invoke(responseStrings.ExceptionDB + e.getMessage());
         }
     }
 
     @ReactMethod
-    public void getDocument(String dbname,String docid,Callback cb) {
-        try{
+    public void getDocument(String dbname, String docid, Callback OnSuccessCallback, Callback OnErrorCallback) {
+        try {
             DocumentArgs documentArgs = null;
 
-            if(docid.isEmpty())
-            {
-                cb.invoke(responseStrings.MissingargsDCID, null);
-            }
-            else if (dbname.isEmpty())
-            {
-                cb.invoke(responseStrings.MissingargsDBN, null);
-            }
-            else {
+            if (docid.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.MissingargsDCID);
+            } else if (dbname.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.MissingargsDBN);
+            } else {
                 documentArgs = new DocumentArgs(dbname, docid);
-                cb.invoke(null, _getDocument(documentArgs));
-            }
-        }catch (Exception e){
-            cb.invoke("Error while get document : "+e.getMessage(), null);
-        }
-    }
 
-    @ReactMethod
-    public void setDocument(String dbname,String docid,String data,Callback cb) {
-        try{
-            DocumentArgs documentArgs = null;
-
-            if(dbname.isEmpty())
-            {
-                cb.invoke(responseStrings.MissingargsDBN, null);
-            }
-            else if(docid.isEmpty())
-            {
-                cb.invoke(responseStrings.MissingargsDCID, null);
-            }
-            else if(data.isEmpty())
-            {
-                cb.invoke(responseStrings.MissingargsDCData, null);
-            }
-            else {
-                try {
-                    documentArgs = new DocumentArgs(dbname, docid, data);
-                    cb.invoke(null, _setdocument(documentArgs));
-                }catch (JSONException exception)
-                {
-                    cb.invoke(responseStrings.invalidargsDCData, null);
+                String document = dbMgr.getDocument(documentArgs);
+                if (!document.isEmpty()) {
+                    OnSuccessCallback.invoke(document);
+                } else {
+                    OnErrorCallback.invoke(responseStrings.NullDoc);
                 }
 
             }
-        }catch (Exception e){
-            cb.invoke(responseStrings.ExceptionDOCGet+e.getMessage(), null);
+        } catch (Exception e) {
+            OnErrorCallback.invoke(responseStrings.ExceptionDOCGet + e.getMessage());
         }
     }
 
-    @ReactMethod (isBlockingSynchronousMethod = true)
-    public String closeDatabase(String dbname) {
-        return  _closeDatabase(dbname);
-    }
-
     @ReactMethod
-    public void getBlob(String data,Callback cb) {
-        try{
-            cb.invoke(null, _getBlob(data));
-        }catch (Exception e){
-            cb.invoke(responseStrings.ExceptionBLOBget+e.getMessage(), null);
+    public void setDocument(String dbname, String docid, JSONObject data, Callback OnSuccessCallback, Callback OnErrorCallback) {
+        try {
+            DocumentArgs documentArgs = null;
+
+            if (dbname.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.MissingargsDBN);
+            } else if (docid.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.MissingargsDCID);
+            } else if (data.length()<1) {
+                OnErrorCallback.invoke(responseStrings.MissingargsDCData);
+            } else {
+                try {
+                    documentArgs = new DocumentArgs(dbname, docid, data);
+                    String response = dbMgr.setDocument(documentArgs);
+
+                    if (response.equals(responseStrings.DocCreated))
+                        OnSuccessCallback.invoke(response);
+                    else
+                        OnErrorCallback.invoke(response);
+
+                } catch (JSONException exception) {
+                    OnErrorCallback.invoke(responseStrings.invalidargsDCData);
+                }
+
+            }
+        } catch (Exception e) {
+            OnErrorCallback.invoke(responseStrings.ExceptionDOCGet + e.getMessage());
         }
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public String setBlob(String type,String docObject) {
-        return _setBlob(type, docObject);
-    }
-
-
-
-
-    private String _createDatabase(DatabaseArgs databaseArgs)
-    {
+    public String closeDatabase(String dbname) {
         String response;
 
-        if(databaseArgs.getDbName().isEmpty())
-        {
-            response = responseStrings.MissingargsDBN;
-        }
-        else if(databaseArgs.getDirectory().isEmpty())
-        {
-            response = responseStrings.MissingargsDBD;
-        }
-        else
-        {
-            response = dbMgr.openOrCreateDatabase(databaseArgs);
-        }
-
-        //if exception
-        //response = "There was an exception opening database. error: "+couchbaseLiteException.getMessage();
-
-        return response;
-    }
-
-    //Args for later "list of database"
-    private String _closeDatabase(String dbname)
-    {
-        String response;
-
-        if(!dbname.isEmpty())
-        {
+        if (!dbname.isEmpty()) {
             dbMgr.closeDatabase();
             response = "Database Closed";
-        }
-        else
-        {
+        } else {
             response = responseStrings.MissingargsDBN;
             return response;
         }
@@ -174,64 +140,38 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         return response;
     }
 
-    private String _getDocument(DocumentArgs docargs)
-    {
-        String response = null;
-
-        String document = dbMgr.getDocument(docargs);
-        if(!document.isEmpty())
-        {
-            response = document;
-        }
-        else {
-            response = responseStrings.NullDoc;
-        }
-
-        return response;
-    }
-
-    private String _setdocument(DocumentArgs data)
-    {
-        String response = null;
-        response = dbMgr.setDocument(data);
-        return response;
-    }
-
-    private String _getBlob(String data)
-    {
-
-        // Check id
-        if(data.isEmpty())
-        {
-            return responseStrings.Missingargs+"Blob Data";
-        }
-        else {
-
-            String document = dbMgr.getBlob(data);
-
-            if (!document.isEmpty()) {
-                return document;
+    @ReactMethod
+    public void getBlob(String data, Callback OnSuccessCallback, Callback OnErrorCallback) {
+        try {
+            String response;
+            if (data.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.Missingargs + "Blob Data");
             } else {
-                return responseStrings.Blobnotfound;
-            }
-        }
 
+                String document = dbMgr.getBlob(data);
+
+                if (!document.isEmpty()) {
+                    OnSuccessCallback.invoke(document);
+                } else {
+                    OnErrorCallback.invoke(responseStrings.Blobnotfound);
+                }
+            }
+
+
+        } catch (Exception e) {
+            OnErrorCallback.invoke(responseStrings.ExceptionBLOBget + e.getMessage());
+        }
     }
 
-    private String _setBlob(String type,String data)
-    {
-        // Check id
-        if(type.isEmpty())
-        {
-            return responseStrings.Missingargs+"Content type";
-        }
-        else if(data.isEmpty())
-        {
-            return responseStrings.Missingargs+"Blob Data";
-        }
-       else {
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String setBlob(String type, String docObject) {
+        if (type.isEmpty()) {
+            return responseStrings.Missingargs + "Content type";
+        } else if (docObject.isEmpty()) {
+            return responseStrings.Missingargs + "Blob Data";
+        } else {
             try {
-                return dbMgr.setBlob(type, data);
+                return dbMgr.setBlob(type, docObject);
             } catch (Exception exception) {
 
                 return responseStrings.ExceptionBLOB + exception.getMessage();
@@ -239,22 +179,5 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
     }
 
-    private String _removeListener(String JSONdatabaseArgs)
-    {
-        String response;
-
-        if(!JSONdatabaseArgs.isEmpty())
-        {
-            dbMgr.deregisterForDatabaseChanges();
-            response = "Removed Listeners";
-        }
-        else
-        {
-            response = responseStrings.NoArgs;
-            return response;
-        }
-
-        return response;
-    }
 
 }

@@ -4,8 +4,13 @@
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1dc19f8202b816901bc8be6f6af3ccf2/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1dc19f8202b816901bc8be6f6af3ccf2/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1dc19f8202b816901bc8be6f6af3ccf2/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1ddc19635f41958e7538717990083a39/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1ddc19635f41958e7538717990083a39/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1ddc19635f41958e7538717990083a39/jars/classes.jar!/" />
     </CLASSES>
-    <JAVADOC />
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.facebook.fresco/imagepipeline-okhttp/0.8.1/cb5bd74a697000b2072dfa3726bae266597cb26e/imagepipeline-okhttp-0.8.1-javadoc.jar!/" />
+    </JAVADOC>
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.facebook.fresco/imagepipeline-okhttp/0.8.1/3728771840c2e71c5c598432fe1c0a617df81bb7/imagepipeline-okhttp-0.8.1-sources.jar!/" />
     </SOURCES>

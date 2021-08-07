@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 public class DatabaseArgs {
 
-   public String directory;
+    public String directory;
     public String dbName;
     public String encryptionKey;
     public String username;
@@ -44,32 +44,15 @@ public class DatabaseArgs {
     }
 
 
-    public DatabaseArgs(String dbArgsJSON) throws JSONException
+    public DatabaseArgs(String dbName,JSONObject databaseArgs) throws JSONException
     {
 
-        JSONObject databaseArgs;
+                this.dbName = dbName;
 
-        if(!dbArgsJSON.isEmpty())
-        {
-            databaseArgs  = new JSONObject(dbArgsJSON);
-
-
-            if(databaseArgs.has("dbName"))
-            {
-                dbName = databaseArgs.getString("dbName");
-            }
-
-            if(databaseArgs.has("Directory"))
-            {
                 directory = databaseArgs.getString("Directory");
-            }
-
-            if(databaseArgs.has("encryptionKey"))
-            {
                 encryptionKey = databaseArgs.getString("encryptionKey");
-            }
 
-        }
+
 
 
     }
