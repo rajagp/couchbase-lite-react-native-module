@@ -32,6 +32,9 @@ This is WIP
 A step by step installation guide of React Native Module of Couchbase Lite in Android.
 
 ## Installation 
+* Create a blank react-native app and inside your react-native project folder install yarn. 
+* Install the plugin by using following commands.
+* Add Couchbase lite android framework as a dependency.
 
 ### Yarn
 ```
@@ -174,6 +177,47 @@ CbliteAndroid.getBlob(blobMeta,(error, result) => callback);
 > * _"Error while Fetching Blob : \{exception\}"_
 
 
+### Adding couchbase-lite-android framework as a dependency
+
+The plugin does not come bundled with the cordova plugin. You will have to include the appropriately licensed Couchbase Lite Android library as dependency within your app. The Cordova reference plugin requires minimal version of **Couchbase Lite v3.0.0**. 
+
+Couchbase Lite can be downloaded from Couchbase [downloads](https://www.couchbase.com/downloads) page or can be pulled in via maven as described in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html).
+
+We discuss the steps to add the Couchbase Lite framework dependency depending on how you downloaded the framework. 
+
+* Open the Android project located inside your react-native project under directory: `/path/to/react-native-app/android` using Android Studio.
+
+**To add couchbase-lite-android as an .aar file**
+
+* Create a a new directory called 'libs' under your Android project
+* Copy the .aar files from within your downloaded Couchbase Lite package to the 'libs' folder 
+
+![](https://blog.couchbase.com/wp-content/uploads/2021/08/adding-couchbase-lite-aar-files.png)
+
+* In your 'app' level `build.gradle` file and add your library file path under dependencies. 
+**NOTE**: It is important that you add the dependency line OUTSIDE Of the "// SUB-PROJECT DEPENDENCIES" block
+
+```bash
+dependencies {
+    implementation fileTree(dir: 'libs', include: '*.jar')
+    implementation files('libs/couchbase-lite-android-ee-3.0.0.aar', 'libs/okhttp-3.14.7.jar','libs/okio-1.17.2.jar')
+    // SUB-PROJECT DEPENDENCIES START
+    implementation(project(path: ":CordovaLib"))
+    implementation "com.android.support:support-annotations:27.+"
+    // SUB-PROJECT DEPENDENCIES END
+
+}
+```
+
+
+**Include couchbase-lite-android sdk from maven**
+
+- In your 'app' level `build.gradle` file, add your library file path. Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL or maven repository etc.
+ ```
+ dependencies {
+    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
+ }
+```
 
 
 
