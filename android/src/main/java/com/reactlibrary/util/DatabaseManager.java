@@ -2,7 +2,6 @@ package com.reactlibrary.util;
 
 import android.content.Context;
 import android.util.Base64;
-import android.util.Log;
 
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.CouchbaseLite;
@@ -18,18 +17,19 @@ import com.couchbase.lite.MutableDocument;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.couchbase.lite.internal.utils.JSONUtils;
 import com.facebook.react.bridge.Callback;
+import com.reactlibrary.Args.DatabaseArgs;
+import com.reactlibrary.Args.DocumentArgs;
+import com.reactlibrary.strings.ResponseStrings;
 
 public class DatabaseManager {
     private static Database database;
     private static DatabaseManager instance = null;
     private ListenerToken listenerToken;
-    //public String currentUser = null;
-
+    private ResponseStrings responseStrings;
 
     protected DatabaseManager() {
 
@@ -48,69 +48,44 @@ public class DatabaseManager {
     }
 
 
-    public String openOrCreateDatabase(String args,Callback cb)
-    {
+    public String openOrCreateDatabase(DatabaseArgs dars) {
 
         String response;
-        DatabaseArgs dars=null;
-        try {
-            dars = new DatabaseArgs(args);
-        }
-        catch(JSONException exception){
-            return response = "Invalid Args object";
-        }
 
         DatabaseConfiguration config = new DatabaseConfiguration();
 
-        if(dars.dbName.isEmpty())
-        {
-            response = "Missing arguments : Database Name";
-            return response;
-        }
-        else if (dars.dbName.isEmpty()) {
-            response = "Missing arguments : Directory";
-            return response;
-        }
-        else {
-            try {
-                config.setDirectory(dars.directory);
-                database = new Database(dars.dbName, config);
+        config.setDirectory(dars.directory);
 
-                registerForDatabaseChanges(cb);
-                response = "Database Created.";
-            } catch (CouchbaseLiteException e) {
-
-                response = "There was an exception opening database. error: " + e.getMessage();
-            }
-
-            return response;
+        try {
+            database = new Database(dars.dbName, config);
+        } catch (CouchbaseLiteException e) {
+            response = responseStrings.ExceptionDB + e.getMessage();
         }
+
+        response = responseStrings.DBCreated;
+
+        return response;
 
     }
 
-    public String deleteDocument(String docArgs) throws CouchbaseLiteException
-    {
+    public String deleteDocument(String docArgs) throws CouchbaseLiteException {
 
         String response;
-        DocumentArgs dars=null;
+        DocumentArgs dars = null;
 
         //Check args object
 
         try {
             dars = new DocumentArgs(docArgs);
+        } catch (JSONException exception) {
+            return response = responseStrings.invalidArgs;
         }
-        catch(JSONException exception){
-            return response = "Invalid Args object";
-        }
-
 
 
         // Check id
-        if(dars.docid.isEmpty())
-        {
-            return response = "Missing args : Document Id";
+        if (dars.docid.isEmpty()) {
+            return response = responseStrings.MissingargsDCID;
         }
-
 
 
         Document document = null;
@@ -118,133 +93,61 @@ public class DatabaseManager {
         if (database != null) {
             document = database.getDocument(dars.docid);
             database.delete();
-        } else
-        {
-            return response = "Database not found";
+        } else {
+            return response = responseStrings.DBnotfound;
         }
 
-        return "Document Deleted";
+        return responseStrings.DocDeleted;
 
     }
 
-    public String getDocument(String docArgs)
-    {
+    public String getDocument(DocumentArgs dars) {
         String response;
-        DocumentArgs dars=null;
-
-        //Check args object
-        try {
-            dars = new DocumentArgs(docArgs);
-        }
-        catch(JSONException exception){
-            return response = "Invalid Args object";
-        }
-
-
-
-        // Check id
-        if(dars.docid.isEmpty())
-        {
-            return response = "Missing args : Document Id";
-        }
-
-
 
         Document document = null;
         if (database != null) {
             document = database.getDocument(dars.docid);
-        }
-        else
-        {
-            return response = "Database not found";
+        } else {
+            return response = responseStrings.DBnotfound;
         }
 
-        if(document==null)
-            return "Document is null";
+        if (document == null)
+            return responseStrings.Docnotfound;
         else
             return document.toJSON();
 
     }
 
-    public String setDocument(String docArgs)  throws CouchbaseLiteException
-    {
-
-        String response;
-        DocumentArgs dars=null;
-
-        //Check args object
-
-        try {
-            dars = new DocumentArgs(docArgs);
-        }
-        catch(JSONException exception){
-            return response = "Invalid Args object";
-        }
-
-
-
-        // Check id
-        if(dars.docid.isEmpty())
-        {
-            return response = "Missing args : Document Id";
-        }
-        // Check data
-        if(dars.data.length()<1)
-        {
-            return response = "Missing args : No Data";
-        }
-
-
+    public String setDocument(DocumentArgs dars) {
         MutableDocument mutableDocument = new MutableDocument(dars.docid, dars.data.toString());
-        database.save(mutableDocument);
+        try {
+            database.save(mutableDocument);
+            return responseStrings.DocCreated;
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            return responseStrings.ExceptionDOC + e.getMessage();
+        }
 
-
-        return "Document Saved";
     }
 
 
-    public String setBlob(String type,String imageData)
-    {
-
-        String response;
-
-        // Check id
-        if(type.isEmpty())
-        {
-            return response = "Missing args : Content type";
-        }
-        // Check data
-        if(imageData.isEmpty())
-        {
-            return response = "Missing args : No Image Data";
-        }
-
-        Blob image = new Blob(type, Base64.decode(imageData, Base64.DEFAULT));
-        database.saveBlob(image);
-
-
-        return image.toJSON();
+    public String setBlob(String type, String blobdata) {
+        Blob blob = new Blob(type, Base64.decode(blobdata, Base64.DEFAULT));
+        database.saveBlob(blob);
+        return blob.toJSON();
     }
 
-    public String getBlob(String blobdata)
-    {
+    public String getBlob(String blobdata) {
 
-        String response;
         JSONObject blob = null;
 
         // check Object is valid
         try {
             blob = new JSONObject(blobdata);
         } catch (JSONException exception) {
-            return response = "Invalid Object : Blob Data";
+            return responseStrings.invalidblob;
         }
 
-
-        // Check id
-        if(blobdata.isEmpty())
-        {
-            return response = "Missing args : Blob Data";
-        }
 
         Map<String, Object> keyvalue = null;
         try {
@@ -255,21 +158,20 @@ public class DatabaseManager {
 
         Blob getblob = database.getBlob(keyvalue);
 
-        String imagedata = Base64.encodeToString(getblob.getContent(), Base64.NO_WRAP);
+        String blobres = Base64.encodeToString(getblob.getContent(), Base64.NO_WRAP);
 
-        return imagedata;
+        return blobres;
     }
 
 
     //todo on sync phase
-    private void registerForDatabaseChanges(final Callback cb)
-    {
+    private void registerForDatabaseChanges(final Callback cb) {
 
         listenerToken = database.addChangeListener(new DatabaseChangeListener() {
             @Override
             public void changed(final DatabaseChange change) {
                 if (change != null) {
-                    for(String docId : change.getDocumentIDs()) {
+                    for (String docId : change.getDocumentIDs()) {
                         Document doc = database.getDocument(docId);
 //                        cb.invoke("dbChanged",doc.toJSON());
                     }
@@ -278,11 +180,9 @@ public class DatabaseManager {
         });
     }
 
-    public void closeDatabase()
-    {
+    public void closeDatabase() {
         try {
             if (database != null) {
-                deregisterForDatabaseChanges();
                 database.close();
                 database = null;
             }
@@ -291,8 +191,7 @@ public class DatabaseManager {
         }
     }
 
-    public void deregisterForDatabaseChanges()
-    {
+    public void deregisterForDatabaseChanges() {
         if (listenerToken != null) {
             database.removeChangeListener(listenerToken);
         }

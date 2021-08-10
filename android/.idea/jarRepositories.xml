@@ -19,7 +19,7 @@
     <remote-repository>
       <option name="id" value="maven2" />
       <option name="name" value="maven2" />
-      <option name="url" value="file:$PROJECT_DIR$/../../../../CB%20Android%20Native%20Module/untitled%20folder/react-native-cblite-android/node_modules/jsc-android/dist" />
+      <option name="url" value="file:$USER_HOME$/CB%20Android%20Native%20Module/untitled%20folder/react-native-cblite-android/node_modules/jsc-android/dist" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="MavenLocal" />
@@ -29,7 +29,7 @@
     <remote-repository>
       <option name="id" value="maven" />
       <option name="name" value="maven" />
-      <option name="url" value="file:$PROJECT_DIR$/../../../../CB%20Android%20Native%20Module/untitled%20folder/react-native-cblite-android/node_modules/react-native/android" />
+      <option name="url" value="file:$USER_HOME$/CB%20Android%20Native%20Module/untitled%20folder/react-native-cblite-android/node_modules/react-native/android" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="Google" />
@@ -45,6 +45,16 @@
       <option name="id" value="maven" />
       <option name="name" value="maven" />
       <option name="url" value="file:$PROJECT_DIR$/../../../CB%20Android%20Native%20Module/couchbase-lite-react-native-module-android/node_modules/react-native/android" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="file:$PROJECT_DIR$/../node_modules/react-native/android" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven2" />
+      <option name="name" value="maven2" />
+      <option name="url" value="file:$PROJECT_DIR$/../node_modules/jsc-android/dist" />
     </remote-repository>
   </component>
 </project>
