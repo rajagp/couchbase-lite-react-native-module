@@ -21,9 +21,8 @@ import java.util.Map;
 
 import com.couchbase.lite.internal.utils.JSONUtils;
 import com.facebook.react.bridge.Callback;
-import com.reactlibrary.Args.DatabaseArgs;
-import com.reactlibrary.Args.DocumentArgs;
-import com.reactlibrary.strings.ResponseStrings;
+import com.reactlibrary.Args.*;
+import com.reactlibrary.strings.*;
 
 public class DatabaseManager {
     private static Database database;
@@ -68,7 +67,7 @@ public class DatabaseManager {
 
     }
 
-    public String deleteDocument(String docArgs) throws CouchbaseLiteException {
+    public String deleteDocument(String dbname,String docid) throws CouchbaseLiteException {
 
         String response;
         DocumentArgs dars = null;
@@ -76,7 +75,7 @@ public class DatabaseManager {
         //Check args object
 
         try {
-            dars = new DocumentArgs(docArgs);
+            dars = new DocumentArgs(dbname,docid);
         } catch (JSONException exception) {
             return response = responseStrings.invalidArgs;
         }
