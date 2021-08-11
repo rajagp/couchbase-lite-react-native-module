@@ -6,11 +6,11 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
-import com.reactlibrary.strings.ResponseStrings;
-import com.reactlibrary.Args.DatabaseArgs;
+import com.facebook.react.bridge.ReadableMap;
+import com.reactlibrary.strings.*;
+import com.reactlibrary.Args.*;
 import com.reactlibrary.util.DatabaseManager;
 
-import com.reactlibrary.Args.DocumentArgs;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,19 +40,19 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void createDatabase(String dbname, JSONObject config, Callback OnSuccessCallback, Callback OnErrorCallback) {
+    public void createDatabase(String dbname, ReadableMap config, Callback OnSuccessCallback, Callback OnErrorCallback) {
         try {
             DatabaseArgs databaseArgs = null;
 
-            if(config.length()>0) {
+            if(config!=null) {
 
             databaseArgs = new DatabaseArgs(dbname, config);
 
             String response;
 
-            if (databaseArgs.getDbName().isEmpty()) {
+            if (databaseArgs.getDbName().isEmpty()||databaseArgs.getDbName().equals(null)) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDBN);
-            } else if (databaseArgs.getDirectory().isEmpty()) {
+            } else if (databaseArgs.getDirectory().isEmpty()||databaseArgs.getDirectory().equals(null)) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDBD);
             } else {
                 OnSuccessCallback.invoke(dbMgr.openOrCreateDatabase(databaseArgs));
@@ -95,15 +95,15 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setDocument(String dbname, String docid, JSONObject data, Callback OnSuccessCallback, Callback OnErrorCallback) {
+    public void setDocument(String dbname, String docid, String data, Callback OnSuccessCallback, Callback OnErrorCallback) {
         try {
             DocumentArgs documentArgs = null;
 
-            if (dbname.isEmpty()) {
+            if (dbname.isEmpty()||dbname.equals(null)) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDBN);
-            } else if (docid.isEmpty()) {
+            } else if (docid.isEmpty()||docid.equals(null)) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDCID);
-            } else if (data.length()<1) {
+            } else if (data.isEmpty()||data.equals(null)) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDCData);
             } else {
                 try {
