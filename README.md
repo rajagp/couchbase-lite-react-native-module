@@ -54,15 +54,17 @@ import CbliteAndroid from 'react-native-cblite-android’;
 
 ## Create Database
 ```
-CbliteAndroid.createDatabase(dbName,directory,encrytion,(error, response)=>callback);
+CbliteAndroid.createDatabase(dbName,config,this.success_callback,this.error_callback);
 ```
 
 ### Params
 
 1. **dbName :** Name of the Database as string.
-2. **directory :** Path of the database directory as string.
-3. **Encryption :** Encryption key as string.
-4. **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
+2. **config :** Couchbase Database configuration JSONobject containing following.
+    * **directory :** Path of the database directory as string.
+    * **Encryption :** Encryption key as string.
+3. **Error Callback :** Asynchronously triggers when the function fails execution. Contains Error string as param, If there is an exception while execution the param will have the string exception.
+4. **Success Callback :** Asynchronously triggers when the function succeeds execution. Contains string Response as param, If there is no exception while execution the param can contain one of the following responses.
 
 #### Example Response from Create Database :
 > * _"Database Created"_
@@ -91,7 +93,7 @@ CbliteAndroid.closeDatabase(dbName);
 
 ## Create Document
 ```
-CbliteAndroid.setDocument(dbName,docid,data,(error, response)=>callback);
+CbliteAndroid.setDocument(dbName,docid,data,this.success_callback,this.error_callback);
 ```
 
 ### Params
@@ -99,7 +101,8 @@ CbliteAndroid.setDocument(dbName,docid,data,(error, response)=>callback);
 1. **dbName :** Name of the Database as string.
 2. **docid :** Unique id of the document as string.
 3. **data :** A JSON object containing data to be saved in document.
-4. **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
+4. **Error Callback :** Asynchronously triggers when the function fails execution. Contains Error string as param, If there is an exception while execution the param will have the string exception.
+5. **Success Callback :** Asynchronously triggers when the function succeeds execution. Contains string Response as param, If there is no exception while execution the param can contain one of the following responses.
 
 #### Example Response from Create Document :
 > * _"Document Created"_
@@ -118,14 +121,15 @@ CbliteAndroid.setDocument(dbName,docid,data,(error, response)=>callback);
 
 ## Get Document
 ```
-CbliteAndroid.getDocument(dbname,docid,(error, result) => callback);
+CbliteAndroid.getDocument(dbname,docid,this.success_callback,this.error_callback);
 ```
 
 ### Params
 
 1. **dbName :** Name of the Database as string.
 2. **docid :** Unique id of the document as string.
-3. **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
+3. **Error Callback :** Asynchronously triggers when the function fails execution. Contains Error string as param, If there is an exception while execution the param will have the string exception.
+4. **Success Callback :** Asynchronously triggers when the function succeeds execution. Contains string Response as param, If there is no exception while execution the param can contain one of the following responses.
 
 #### Example Response from Get Document :
 > * _"\{Document as JSON\}"_
@@ -161,13 +165,15 @@ var BlobJSON = CbliteAndroid.setBlob(ContentType,Blob);
 
 ## Get Blob
 ```
-CbliteAndroid.getBlob(blobMeta,(error, result) => callback);
+CbliteAndroid.getBlob(blobMeta,this.success_callback,this.error_callback);
 ```
 
 ### Params
 
 1. **blobMeta :** Meta Data JSON object of Blob which is returned from save blob function.
-2. **Callback :** Asynchronously triggers when the function completes execution. Contains Error and Response params, If there is an exception while execution the Error param will have the string exception if there is no exception then the response param will contains following responses.
+2. **Error Callback :** Asynchronously triggers when the function fails execution. Contains Error string as param, If there is an exception while execution the param will have the string exception.
+3. **Success Callback :** Asynchronously triggers when the function succeeds execution. Contains string Response as param, If there is no exception while execution the param can contain one of the following responses.
+
 
 #### Example Response from Get Blob :
 > * _"\{Base64 encoded Blob String\}"_
