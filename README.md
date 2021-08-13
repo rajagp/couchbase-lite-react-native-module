@@ -31,25 +31,85 @@ This is WIP
 
 A step by step installation guide of React Native Module of Couchbase Lite in Android.
 
-## Installation 
+## Getting started
+The plugin can be integrated within react-native projects.
+
+The step-by-step instructions below illustrates how you can integrate and use the plugin within a blank React Native Project for Android platform. You will do something similar when building your own app.
+ 
 * Create a blank react-native app and inside your react-native project folder install yarn. 
-* Install the plugin by using following commands.
+* Install the plugin by using yarn.
 * Add Couchbase lite android framework as a dependency.
 
-### Yarn
+***
+
+First you will need to download the react-native module from github by clicking on download -> download zip.
+
+Extract the downloaded zip file in any folder and copy the path e.g. `desktop\react\plugin`.
+
+For start create a blank react-native project using `react-native init awesomeproject` command in terminal.
+
+Then open your project folder in terminal using `cd awesomeproject` command.
+
+Make sure you already have npm installed in your system if not then first install npm.
+
+After installing npm follow steps stated below for plugin installation :
+
+### Install yarn using NPM
 ```
-Yarn add “<package path>”
+npm install yarn
 ```
 
-### NPM
+
+### install plugin using Yarn
 ```
-npm install “<package path>”
+Yarn add “<react native module path>”
 ```
+
+### Adding couchbase-lite-android framework as a dependency
+
+The plugin does not come bundled with the react-native plugin. You will have to include the appropriately licensed Couchbase Lite Android library as dependency within your app. The React Native reference plugin requires minimal version of **Couchbase Lite v3.0.0**. 
+
+Couchbase Lite can be downloaded from Couchbase [downloads](https://www.couchbase.com/downloads) page or can be pulled in via maven as described in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html).
+
+We discuss the steps to add the Couchbase Lite framework dependency depending on how you downloaded the framework. 
+
+* Open the Android project located inside your React Native project under directory: `/path/to/react-native-app/android` using Android Studio.
+
+**To add couchbase-lite-android as an .aar file**
+
+* Create a new directory called 'libs' under your /android/app/ folder
+* Copy the .aar file within that 'libs' folder 
+
+* In your 'Project' level `build.gradle` file and add `flatDir{dirs 'libs'}` like did below. 
+```
+allprojects {
+   repositories {
+      jcenter()
+      flatDir {
+        dirs 'libs'
+      }
+   }
+}
+```
+
+* In your 'app' level `build.gradle` file and add your library file under dependencies. 
+```bash
+dependencies {
+    implementation(name:'couchbase-lite-android-ee-3.0.0', ext:'aar')
+    .......
+}
+```
+
 
 
 # Sample Usage Instructions
+
+Here are a few examples of using the plugin in your app
+
+To use the plugin, open your react-native app and declare the plugin at the on top of your app.js file.
+
 ```
-import CbliteAndroid from 'react-native-cblite-android’;
+import CbliteAndroid from 'react-native-cblite-android';
 ```
 
 ## Create Database
@@ -182,48 +242,6 @@ CbliteAndroid.getBlob(blobMeta,this.success_callback,this.error_callback);
 > * _"Invalid Arguments : Blob Object is not in proper JSON format"_
 > * _"Error while Fetching Blob : \{exception\}"_
 
-
-### Adding couchbase-lite-android framework as a dependency
-
-The plugin does not come bundled with the cordova plugin. You will have to include the appropriately licensed Couchbase Lite Android library as dependency within your app. The Cordova reference plugin requires minimal version of **Couchbase Lite v3.0.0**. 
-
-Couchbase Lite can be downloaded from Couchbase [downloads](https://www.couchbase.com/downloads) page or can be pulled in via maven as described in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html).
-
-We discuss the steps to add the Couchbase Lite framework dependency depending on how you downloaded the framework. 
-
-* Open the Android project located inside your react-native project under directory: `/path/to/react-native-app/android` using Android Studio.
-
-**To add couchbase-lite-android as an .aar file**
-
-* Create a a new directory called 'libs' under your Android project
-* Copy the .aar files from within your downloaded Couchbase Lite package to the 'libs' folder 
-
-![](https://blog.couchbase.com/wp-content/uploads/2021/08/adding-couchbase-lite-aar-files.png)
-
-* In your 'app' level `build.gradle` file and add your library file path under dependencies. 
-**NOTE**: It is important that you add the dependency line OUTSIDE Of the "// SUB-PROJECT DEPENDENCIES" block
-
-```bash
-dependencies {
-    implementation fileTree(dir: 'libs', include: '*.jar')
-    implementation files('libs/couchbase-lite-android-ee-3.0.0.aar', 'libs/okhttp-3.14.7.jar','libs/okio-1.17.2.jar')
-    // SUB-PROJECT DEPENDENCIES START
-    implementation(project(path: ":CordovaLib"))
-    implementation "com.android.support:support-annotations:27.+"
-    // SUB-PROJECT DEPENDENCIES END
-
-}
-```
-
-
-**Include couchbase-lite-android sdk from maven**
-
-- In your 'app' level `build.gradle` file, add your library file path. Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL or maven repository etc.
- ```
- dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
- }
-```
 
 
 
