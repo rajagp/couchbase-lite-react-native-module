@@ -167,7 +167,8 @@ _Params_
 
 _Example Response_
 
- * _"Database Created"_
+ * _"Success"_
+ * _"Database already exists"_
  * _"Missing Arguments: Database Name"_
  * _"Missing Arguments: Directory"_
  * _"Error while Creating Database: \{exception\}"_
@@ -187,8 +188,29 @@ _Params_
 
 _Example Response_
 
- * _"Database Closed"_
+ * _"Success"_
+ * _"Database not found"_
  * _"Error while Closing Database : \{exception\}"_
+
+
+
+**Delete Database**
+
+```
+let response = CBL.deleteDatabase(dbName);
+console.log("close" + dbName+ " database reponse is :" + response);
+```
+
+_Params_
+
+ * dbName:  Name of the Database as string.
+
+_Example Response_
+
+ * _"Success"_
+ * _"Database not found"_
+ * _"Error while Deleting Database : \{exception\}"_
+
 
 
 **Create/Update Document**
@@ -212,7 +234,7 @@ _Params_
 
 _Example Response_
 
- * _"Document Created"_
+ * _"Success"_
  * _"Document is Null"_
  * _"Document not found"_
  * _"Database not found"_
@@ -243,6 +265,8 @@ _Params_
 _Example Response_
 
  * _"\{Document as JSON\}"_
+ * _"Database not found"_
+ * _"Document not found"_
  * _"Missing Arguments : Database Name"_
  * _"Missing Arguments : Document ID"_
  * _"Error while Fetching Document : \{exception\}"_
@@ -251,17 +275,19 @@ _Example Response_
 **Save Blob**
 
 ```
-var blobMeta = CBL.setBlob(contentType,blob);
+var blobMeta = CBL.setBlob(dbName,contentType,blob);
 ```
 
 _Params_
 
+ * dbName: Name of the Database as string.
  * contentType: MIME content type of the binary data
  * blob:  Base64 encoded string corresponding to binary data to be stored
 
 _Example Response_
 
  * _"\{BLOB Meta Data\}"_: Synchronously returns a String of JSON Object of blob Meta Data which can be used retrieve blob by passing object to getBlob function.
+ * _"Database not found"_
  * _"Missing Arguments : Content Type"_
  * _"Missing Arguments : Blob Data"_
  * _"Error while Creating Blob : \{exception\}"_
@@ -270,23 +296,79 @@ _Example Response_
 **Get Blob**
 
 ```
-
-CBL.getBlob(blobMeta,this.success_callback,this.error_callback);
+CBL.getBlob(dbName,blobMeta,this.success_callback,this.error_callback);
 ```
 
 _Params_
 
+  * dbName: Name of the Database as string.
   * _blobMeta_: Meta Data JSON object of Blob which is returned from save blob function.
   * _Error Callback_: Asynchronously triggers when the function fails execution. Contains Error string as param, If there is an exception while execution the param will have the string exception.
   * _Success Callback_: Asynchronously triggers when the function succeeds execution. Contains string Response as param, If there is no exception while execution the param can contain one of the following responses.
 
 
-#### Example Response from Get Blob :
-> * _"\{Base64 encoded Blob String\}"_
-> * _"Blob not found"_
-> * _"Missing Arguments : BlobObject"_
-> * _"Invalid Arguments : Blob Object is not in proper JSON format"_
-> * _"Error while Fetching Blob : \{exception\}"_
+_Example Response_
+
+ * _"\{Base64 encoded Blob String\}"_
+ * _"Blob not found"_
+ * _"Database not found"_
+ * _"Missing Arguments : BlobObject"_
+ * _"Invalid Arguments : Blob Object is not in proper JSON format"_
+ * _"Error while Fetching Blob : \{exception\}"_
+
+
+
+
+**Add Database Change Listener**
+
+```
+import {DeviceEventEmitter} from 'react-native';
+......
+
+var response = CouchbaseNativeModule.addChangeListener(dbname,JSListener);
+
+if(response=='Success')
+DeviceEventEmitter.addListener('DatabaseChangeEvent', this.onDbchange);
+
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * _JSListener_: String name of the Javascript listener event.
+  
+  * _onDbchange_: Asynchronous function which triggers when there is any change on the database contains string response as param.
+
+
+
+_Example Response_
+   * _"Success"_
+
+   * _"Database not found"_
+   * _"Document was added/updated."_
+   * _"Document was deleted."_
+
+
+
+
+**Remove Database Change Listener**
+
+```
+var response = CouchbaseNativeModule.removeChangeListener(dbname);
+
+if(response=='Success')
+DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+
+
+
+#### Example Response from Remove Database Change Listener:
+ * _"Success"_
+ * _"Database not found"_
 
 
 
