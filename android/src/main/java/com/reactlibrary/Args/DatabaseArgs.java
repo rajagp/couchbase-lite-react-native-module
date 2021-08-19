@@ -15,6 +15,7 @@ public class DatabaseArgs {
     public String directory;
     public String dbName;
     public String encryptionKey;
+    public ReadableMap databaseConfig;
     public String username;
 
     protected DatabaseArgs() {
@@ -45,12 +46,19 @@ public class DatabaseArgs {
     }
 
 
-    public DatabaseArgs(String dbName, ReadableMap databaseArgs) throws JSONException {
+    public DatabaseArgs(String dbName) throws JSONException {
 
         this.dbName = dbName;
 
-        directory = databaseArgs.hasKey("Directory") ? databaseArgs.getString("Directory") : null;
-        encryptionKey = databaseArgs.hasKey("encryptionKey") ? databaseArgs.getString("encryptionKey") : null;
+
+    }
+
+    public DatabaseArgs(String dbName, ReadableMap databaseConfig) throws JSONException {
+
+        this.dbName = dbName;
+        this.databaseConfig = databaseConfig;
+        directory = databaseConfig.hasKey("Directory") ? databaseConfig.getString("Directory") : null;
+        encryptionKey = databaseConfig.hasKey("encryptionKey") ? databaseConfig.getString("encryptionKey") : null;
 
 
     }
