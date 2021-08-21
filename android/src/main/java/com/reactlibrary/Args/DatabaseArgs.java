@@ -16,7 +16,6 @@ public class DatabaseArgs {
     public String dbName;
     public String encryptionKey;
     public ReadableMap databaseConfig;
-    public String username;
 
     protected DatabaseArgs() {
     }

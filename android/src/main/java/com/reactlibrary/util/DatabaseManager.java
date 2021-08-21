@@ -32,7 +32,7 @@ import com.reactlibrary.Args.*;
 import com.reactlibrary.strings.*;
 
 public class DatabaseManager {
-    private static Database database;
+
     private static Map<String, DatabaseResource> databases;
 
 
@@ -58,14 +58,6 @@ public class DatabaseManager {
 
     public static Map<String, DatabaseResource> getDatabases() {
         return databases;
-    }
-
-    public static Database getDatabase() {
-        return database;
-    }
-
-    public static void setDatabase(Database database) {
-        DatabaseManager.database = database;
     }
 
     private DatabaseConfiguration getDatabaseConfig(DatabaseArgs args) {
@@ -196,7 +188,7 @@ public class DatabaseManager {
     }
 
 
-    public String deleteDocument(String dbname, String docid) throws CouchbaseLiteException {
+    public String deleteDocument(DocumentArgs documentArgs) {
 
         String response;
         DocumentArgs dars = null;
@@ -204,7 +196,7 @@ public class DatabaseManager {
         //Check args object
 
         try {
-            dars = new DocumentArgs(dbname, docid);
+            dars = new DocumentArgs(documentArgs.databaseName, documentArgs.docid);
         } catch (JSONException exception) {
             return response = responseStrings.invalidArgs;
         }
@@ -217,20 +209,23 @@ public class DatabaseManager {
 
 
         Document document = null;
-
-        if (databases.get(dbname) != null) {
-            Database db = databases.get(dbname).getDatabase();
-            document = db.getDocument(dars.docid);
-            db.delete(document);
-            return responseStrings.SuccessCode;
-        } else {
-            return responseStrings.DBnotfound;
+        try {
+            if (databases.get(documentArgs.databaseName) != null) {
+                Database db = databases.get(documentArgs.databaseName).getDatabase();
+                document = db.getDocument(dars.docid);
+                db.delete(document);
+                return responseStrings.SuccessCode;
+            } else {
+                return responseStrings.DBnotfound;
+            }
+        } catch (CouchbaseLiteException ex) {
+            return responseStrings.Exception + ex;
         }
-
 
     }
 
-    public String getDocument(DocumentArgs dars) {
+    public String getDocument(DocumentArgs dars) throws Exception {
+
         String response;
         String dbName = dars.getDatabaseName();
         String docId = dars.getDocid();
@@ -239,7 +234,9 @@ public class DatabaseManager {
             return responseStrings.DBnotfound;
         }
 
+
         Document document = null;
+
         if (databases.get(dbName) != null) {
             document = databases.get(dbName).getDatabase().getDocument(dars.docid);
         } else {
@@ -328,7 +325,6 @@ public class DatabaseManager {
     public String registerForDatabaseChanges(String dbname, final String jsListener) {
 
 
-
         if (!databases.containsKey(dbname)) {
             return responseStrings.DBnotfound;
         }
@@ -371,7 +367,7 @@ public class DatabaseManager {
 
     public String deregisterForDatabaseChanges(String dbname) {
 
-        if (!databases.containsKey(database)) {
+        if (!databases.containsKey(dbname)) {
             return responseStrings.DBnotfound;
         }
 

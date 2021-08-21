@@ -49,8 +49,8 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
             if (dbname != null) {
 
-                if(config!=null) databaseArgs = new DatabaseArgs(dbname, config);
-                else databaseArgs = new DatabaseArgs(dbname);
+                if(config!=null) { databaseArgs = new DatabaseArgs(dbname, config);}
+                else { databaseArgs = new DatabaseArgs(dbname);}
                 response = dbMgr.openOrCreateDatabase(databaseArgs);
 
                 if (response.equals(responseStrings.DBExists) || response.equals(responseStrings.SuccessCode)) {
@@ -198,6 +198,36 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
     }
 
+    @ReactMethod
+    public void deleteDocument(String dbname, String docid, Callback OnSuccessCallback, Callback OnErrorCallback) {
+        try {
+            DocumentArgs documentArgs = null;
+
+            if (docid==null||docid.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.MissingargsDCID);
+            } else if (dbname==null||dbname.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.MissingargsDBN);
+            } else {
+                documentArgs = new DocumentArgs(dbname, docid);
+
+                String documentResponse = dbMgr.deleteDocument(documentArgs);
+                if (!documentResponse.isEmpty()) {
+
+                    if(documentResponse.equals(responseStrings.SuccessCode))
+                        OnSuccessCallback.invoke(documentResponse);
+                    else
+                        OnErrorCallback.invoke(documentResponse);
+
+
+                } else {
+                    OnErrorCallback.invoke(responseStrings.NullDoc);
+                }
+
+            }
+        } catch (Exception e) {
+            OnErrorCallback.invoke(responseStrings.Exception + e.getMessage());
+        }
+    }
 
 
     @ReactMethod
