@@ -136,6 +136,8 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void getDocument(String dbname, String docid, Callback OnSuccessCallback, Callback OnErrorCallback) {
         try {
+
+
             DocumentArgs documentArgs = null;
 
             if (docid==null||docid.isEmpty()) {
@@ -148,7 +150,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
                 String documentResponse = dbMgr.getDocument(documentArgs);
                 if (!documentResponse.isEmpty()) {
 
-                    if(!documentResponse.equals(responseStrings.DBnotfound)&&!documentResponse.equals(responseStrings.Docnotfound))
+                    if (!documentResponse.equals(responseStrings.DBnotfound) && !documentResponse.equals(responseStrings.Docnotfound))
                         OnSuccessCallback.invoke(documentResponse);
                     else
                         OnErrorCallback.invoke(documentResponse);

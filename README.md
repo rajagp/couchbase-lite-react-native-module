@@ -138,7 +138,7 @@ Here are a few examples of using the native module in your app
 To use the module, open your react-native app project using a suitable IDE and declare the plugin at the on top of your `app.js` file.
 
 ```
-import CBL from 'react-native-cblite-android';
+import CBL from 'react-native-cblite';
 ```
 
 **Create Database**
@@ -329,6 +329,9 @@ var response = CouchbaseNativeModule.addChangeListener(dbname,JSListener);
 
 if(response=='Success')
 DeviceEventEmitter.addListener('DatabaseChangeEvent', this.onDbchange);
+......
+
+onDbchange = (event) => {....}
 
 ```
 
@@ -340,14 +343,17 @@ _Params_
   * _onDbchange_: Asynchronous function which triggers when there is any change on the database contains string response as param.
 
 
-
-_Example Response_
+_Example Response for addChangeListener_
    * _"Success"_
-
    * _"Database not found"_
    * _"Document was added/updated."_
    * _"Document was deleted."_
 
+
+_Example Response for DatabaseChangeEvent_
+   * _{"Modified": {"DocumentID": "DocumentJson"},"Deleted": {"DocumentID": "DocumentJson"}}_
+   * _{"Deleted": {"DocumentID1": "Document1Json","DocumentID2": "Document2Json"...}}_
+   * _{"Modified": {"DocumentID1": "Document2Json","DocumentID2": "Document2Json"...}}_
 
 
 

@@ -24,6 +24,11 @@ import java.util.Map;
 
 import com.couchbase.lite.internal.utils.JSONUtils;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.couchbase.cblitereact.Args.*;
 import com.couchbase.cblitereact.strings.*;
@@ -332,36 +337,43 @@ public class DatabaseManager {
             @Override
             public void changed(DatabaseChange change) {
 
-                Map <String,Document> changeDocMap =  new HashMap<>();
-                Map <String,Document> deletedDocMap =  new HashMap<>();
+                WritableMap changeDocMap = new WritableNativeMap();
+                WritableMap deletedDocMap = new WritableNativeMap();
+
+                WritableMap finalmap = new WritableNativeMap();
+
+                Boolean hasmodified = false;
+                Boolean hasdeleted = false;
+
                 if (change != null) {
+
                     for (String docId : change.getDocumentIDs()) {
                         Document doc = db.getDocument(docId);
                         if (doc != null) {
-
-                            changeDocMap.put(doc.getId(),doc);
                             Log.i("DatabaseChangeEvent", "Document: " + doc.getId() + " was modified");
-
-
-
+                            changeDocMap.putString(doc.getId(),doc.toJSON());
+                            hasmodified = true;
                         } else {
                             Log.i("DatabaseChangeEvent", "Document: " + doc.getId() + " was deleted");
-
-                            deletedDocMap.put(doc.getId(),doc);
-
-
+                            hasdeleted = true;
+                            deletedDocMap.putString(doc.getId(),doc.toJSON());
                         }
                     }
 
-                    if(changeDocMap.size()>0)
+
+                    if(hasmodified)
                     {
-                        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("DatabaseChangeEvent", changeDocMap);
+                        finalmap.putMap("Modified",changeDocMap);
                     }
 
-                    if(deletedDocMap.size()>0)
+                    if(hasdeleted)
                     {
-                        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("DatabaseChangeEvent", deletedDocMap);
+                        finalmap.putMap("Deleted",deletedDocMap);
                     }
+
+
+                    context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("DatabaseChangeEvent", finalmap);
+
                 }
 
             }
