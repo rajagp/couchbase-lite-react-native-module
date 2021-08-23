@@ -1,21 +1,18 @@
 // CbliteAndroidModule.java
 
-package com.reactlibrary;
+package com.couchbase.cblitereact;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.PromiseImpl;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReadableMap;
-import com.reactlibrary.strings.*;
-import com.reactlibrary.Args.*;
-import com.reactlibrary.util.DatabaseManager;
+import com.couchbase.cblitereact.strings.*;
+import com.couchbase.cblitereact.Args.*;
+import com.couchbase.cblitereact.util.DatabaseManager;
 
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import javax.annotation.Nullable;
 

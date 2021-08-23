@@ -1,4 +1,4 @@
-package com.reactlibrary.strings;
+package com.couchbase.cblitereact.strings;
 
 public class ResponseStrings {
 

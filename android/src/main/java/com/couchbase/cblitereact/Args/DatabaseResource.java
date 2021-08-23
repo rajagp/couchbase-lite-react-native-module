@@ -1,4 +1,4 @@
-package com.reactlibrary.Args;
+package com.couchbase.cblitereact.Args;
 
 import com.couchbase.lite.Database;
 import com.couchbase.lite.DatabaseConfiguration;

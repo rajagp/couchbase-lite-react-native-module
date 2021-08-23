@@ -1,9 +1,6 @@
-package com.reactlibrary.Args;
-
-import android.content.Context;
+package com.couchbase.cblitereact.Args;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class DocumentArgs {
 

@@ -1,6 +1,5 @@
-package com.reactlibrary.util;
+package com.couchbase.cblitereact.util;
 
-import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 
@@ -14,7 +13,6 @@ import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.EncryptionKey;
 import com.couchbase.lite.ListenerToken;
-import com.couchbase.lite.LogLevel;
 import com.couchbase.lite.MutableDocument;
 
 import org.json.JSONException;
@@ -25,11 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.couchbase.lite.internal.utils.JSONUtils;
-import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.reactlibrary.Args.*;
-import com.reactlibrary.strings.*;
+import com.couchbase.cblitereact.Args.*;
+import com.couchbase.cblitereact.strings.*;
 
 public class DatabaseManager {
 
@@ -335,24 +332,35 @@ public class DatabaseManager {
             @Override
             public void changed(DatabaseChange change) {
 
+                Map <String,Document> changeDocMap =  new HashMap<>();
+                Map <String,Document> deletedDocMap =  new HashMap<>();
                 if (change != null) {
                     for (String docId : change.getDocumentIDs()) {
                         Document doc = db.getDocument(docId);
                         if (doc != null) {
 
+                            changeDocMap.put(doc.getId(),doc);
                             Log.i("DatabaseChangeEvent", "Document: " + doc.getId() + " was modified");
 
-                            context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("DatabaseChangeEvent", "Document was added/updated.");
 
 
                         } else {
                             Log.i("DatabaseChangeEvent", "Document: " + doc.getId() + " was deleted");
 
-
-                            context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("DatabaseChangeEvent", "Document was deleted.");
+                            deletedDocMap.put(doc.getId(),doc);
 
 
                         }
+                    }
+
+                    if(changeDocMap.size()>0)
+                    {
+                        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("DatabaseChangeEvent", changeDocMap);
+                    }
+
+                    if(deletedDocMap.size()>0)
+                    {
+                        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("DatabaseChangeEvent", deletedDocMap);
                     }
                 }
 

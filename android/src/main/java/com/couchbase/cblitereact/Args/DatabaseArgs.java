@@ -1,14 +1,8 @@
-package com.reactlibrary.Args;
+package com.couchbase.cblitereact.Args;
 
-import android.content.Context;
-
-import com.couchbase.lite.DatabaseConfiguration;
-import com.couchbase.lite.EncryptionKey;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableMap;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class DatabaseArgs {
 
