@@ -58,7 +58,7 @@ public class DatabaseManager {
         return instance;
     }
 
-    public static Map<String, DatabaseResource> getDatabases() {
+    private static Map<String, DatabaseResource> getDatabases() {
         return databases;
     }
 
