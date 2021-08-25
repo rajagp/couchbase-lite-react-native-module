@@ -4,6 +4,7 @@ public class ResponseStrings {
 
 
     public static String MissingargsDBN="Missing Arguments : Database Name";
+    public static String listenerTokenExist="Listener already attached, kindly remove it before attaching new token";
     public static String MissingargsDBD="Missing Arguments : Directory";
     public static String MissingargsDCID="Missing Arguments : Document ID";
     public static String MissingargsDCData="Missing Arguments : Document Data";

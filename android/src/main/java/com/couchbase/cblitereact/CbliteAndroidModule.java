@@ -253,9 +253,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
                     }
                 }
 
-
             }
-
 
         } catch (Exception e) {
             OnErrorCallback.invoke(responseStrings.ExceptionBLOBget + e.getMessage());

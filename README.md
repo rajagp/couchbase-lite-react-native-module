@@ -325,10 +325,12 @@ _Example Response_
 import {DeviceEventEmitter} from 'react-native';
 ......
 
+var JSListener = 'OnDbchange'
+
 var response = CouchbaseNativeModule.addChangeListener(dbname,JSListener);
 
 if(response=='Success')
-DeviceEventEmitter.addListener('DatabaseChangeEvent', this.onDbchange);
+DeviceEventEmitter.addListener(JSListener, this.onDbchange);
 ......
 
 onDbchange = (event) => {....}

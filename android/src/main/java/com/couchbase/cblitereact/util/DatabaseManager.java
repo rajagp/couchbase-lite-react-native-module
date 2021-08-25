@@ -333,6 +333,7 @@ public class DatabaseManager {
 
         DatabaseResource dbResource = databases.get(dbname);
         final Database db = dbResource.getDatabase();
+        if(dbResource.getListenerToken()==null){
         ListenerToken listenerToken = db.addChangeListener(new DatabaseChangeListener() {
             @Override
             public void changed(DatabaseChange change) {
@@ -372,7 +373,7 @@ public class DatabaseManager {
                     }
 
 
-                    context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("DatabaseChangeEvent", finalmap);
+                    context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(jsListener, finalmap);
 
                 }
 
@@ -380,7 +381,10 @@ public class DatabaseManager {
         });
 
         dbResource.setListenerToken(listenerToken);
-
+        }
+        else {
+            return responseStrings.listenerTokenExist;
+        }
 
         return responseStrings.SuccessCode;
     }
