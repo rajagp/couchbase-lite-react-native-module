@@ -149,7 +149,7 @@ let config = {
 };
 
 let dbName = '{{DATABASE_NAME}}'
-CBL.createDatabase(dbName,config ,function(rs) { console.log("database "+ dbName + " creation: "+ rs.toString())}, function(error) { console.log(error.toString())});
+CBL.CreateOrOpenDatabase(dbName,config ,function(rs) { console.log("database "+ dbName + " creation: "+ rs.toString())}, function(error) { console.log(error.toString())});
 
 ```
 
@@ -325,34 +325,31 @@ _Example Response_
 import {DeviceEventEmitter} from 'react-native';
 ......
 
-var JSListener = 'OnDbchange'
+var JSListenerEvent = 'OnDatabaseChanged'
 
-var response = CouchbaseNativeModule.addChangeListener(dbname,JSListener);
+var response = CBL.addDatabaseChangeListener(dbName,JSListenerEvent);
 
 if(response=='Success')
-DeviceEventEmitter.addListener(JSListener, this.onDbchange);
-......
+DeviceEventEmitter.addListener(JSListener, (eventResponse) => { console.log(eventResponse) });
 
-onDbchange = (event) => {....}
 
 ```
 
 _Params_
 
   * dbName: Name of the Database as string.
-  * _JSListener_: String name of the Javascript listener event.
-  
-  * _onDbchange_: Asynchronous function which triggers when there is any change on the database contains string response as param.
+  * _JSListenerEvent_: String name of the Javascript listener event.
 
 
 _Example Response for addChangeListener_
    * _"Success"_
    * _"Database not found"_
-   * _"Document was added/updated."_
-   * _"Document was deleted."_
+   * _"Missing Arguments : Database Name"_
+   * _"Missing Arguments : JSListener"_
+   * _"Database listener already registered with database. Please remove the database listener before registering new one."_
 
 
-_Example Response for DatabaseChangeEvent_
+_Example Response in eventResponse_
    * _{"Modified": {"DocumentID": "DocumentJson"},"Deleted": {"DocumentID": "DocumentJson"}}_
    * _{"Deleted": {"DocumentID1": "Document1Json","DocumentID2": "Document2Json"...}}_
    * _{"Modified": {"DocumentID1": "Document2Json","DocumentID2": "Document2Json"...}}_
@@ -362,22 +359,27 @@ _Example Response for DatabaseChangeEvent_
 **Remove Database Change Listener**
 
 ```
-var response = CouchbaseNativeModule.removeChangeListener(dbname);
+
+var JSListenerEvent = 'OnDatabaseChanged'
+.....
+
+var response = CBL.removeDatabaseChangeListener(dbName);
 
 if(response=='Success')
-DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
+DeviceEventEmitter.removeAllListeners(JSListenerEvent);
 ```
 
 _Params_
 
   * dbName: Name of the Database as string.
-
+  * _JSListenerEvent_: String name of the Javascript listener event.
 
 
 #### Example Response from Remove Database Change Listener:
  * _"Success"_
  * _"Database not found"_
-
+ * _"Database listener not registered with database."_
+ * _"Missing Arguments : Database Name"_
 
 
 ## Updates to Native Module

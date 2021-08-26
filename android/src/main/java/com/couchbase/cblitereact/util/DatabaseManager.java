@@ -383,7 +383,7 @@ public class DatabaseManager {
         dbResource.setListenerToken(listenerToken);
         }
         else {
-            return responseStrings.listenerTokenExist;
+            return responseStrings.listenerTokenExists;
         }
 
         return responseStrings.SuccessCode;
@@ -400,6 +400,10 @@ public class DatabaseManager {
 
         if (dbResource.getListenerToken() != null) {
             db.removeChangeListener(dbResource.getListenerToken());
+        }
+        else
+        {
+            return responseStrings.listenerTokenNotExists;
         }
 
         return responseStrings.SuccessCode;

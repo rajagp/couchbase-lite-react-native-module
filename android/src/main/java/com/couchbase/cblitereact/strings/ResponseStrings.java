@@ -4,8 +4,7 @@ public class ResponseStrings {
 
 
     public static String MissingargsDBN="Missing Arguments : Database Name";
-    public static String listenerTokenExist="Listener already attached, kindly remove it before attaching new token";
-    public static String MissingargsDBD="Missing Arguments : Directory";
+   public static String MissingargsDBD="Missing Arguments : Directory";
     public static String MissingargsDCID="Missing Arguments : Document ID";
     public static String MissingargsDCData="Missing Arguments : Document Data";
     public static String NullDoc="Document is Null";
@@ -18,6 +17,9 @@ public class ResponseStrings {
     public static String DBNotExists="Database not exists";
     public static String DocCreated="Document Created";
     public static String DocDeleted="Document Deleted";
+    public static String listenerTokenExists="Database listener already registered with database. Please remove the database listener before registering new one.";
+    public static String listenerTokenNotExists="Database listener not registered with database.";
+
     public static String ExceptionDB="Error while Creating Database : ";
     public static String ExceptionDBclose="Error while Closing Database : ";
     public static String ExceptionDBdelete="Error while Deleting Database : ";

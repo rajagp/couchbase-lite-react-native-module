@@ -38,7 +38,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void createDatabase(String dbname, @Nullable ReadableMap config, Callback OnSuccessCallback, Callback OnErrorCallback) {
+    public void CreateOrOpenDatabase(String dbname, @Nullable ReadableMap config, Callback OnSuccessCallback, Callback OnErrorCallback) {
         try {
 
             String response;
@@ -284,7 +284,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod (isBlockingSynchronousMethod = true)
-    private String addChangeListener(String dbname, String listener) {
+    private String addDatabaseChangeListener(String dbname, String listener) {
 
         try {
 
@@ -310,7 +310,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod (isBlockingSynchronousMethod = true)
-    private String removeChangeListener(String dbname) {
+    private String removeDatabaseChangeListener(String dbname) {
 
         try {
 
@@ -327,7 +327,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
 
         } catch (Exception e) {
-            return responseStrings.ExceptionDOC + e.getMessage();
+            return responseStrings.Exception + e.getMessage();
         }
 
     }
