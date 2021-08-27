@@ -1,21 +1,15 @@
-package com.reactlibrary.Args;
+package com.couchbase.cblitereact.Args;
 
-import android.content.Context;
-
-import com.couchbase.lite.DatabaseConfiguration;
-import com.couchbase.lite.EncryptionKey;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableMap;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class DatabaseArgs {
 
     public String directory;
     public String dbName;
     public String encryptionKey;
-    public String username;
+    public ReadableMap databaseConfig;
 
     protected DatabaseArgs() {
     }
@@ -45,12 +39,19 @@ public class DatabaseArgs {
     }
 
 
-    public DatabaseArgs(String dbName, ReadableMap databaseArgs) throws JSONException {
+    public DatabaseArgs(String dbName) throws JSONException {
 
         this.dbName = dbName;
 
-        directory = databaseArgs.hasKey("Directory") ? databaseArgs.getString("Directory") : null;
-        encryptionKey = databaseArgs.hasKey("encryptionKey") ? databaseArgs.getString("encryptionKey") : null;
+
+    }
+
+    public DatabaseArgs(String dbName, ReadableMap databaseConfig) throws JSONException {
+
+        this.dbName = dbName;
+        this.databaseConfig = databaseConfig;
+        directory = databaseConfig.hasKey("Directory") ? databaseConfig.getString("Directory") : null;
+        encryptionKey = databaseConfig.hasKey("encryptionKey") ? databaseConfig.getString("encryptionKey") : null;
 
 
     }

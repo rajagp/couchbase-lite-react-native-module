@@ -1,7 +1,7 @@
 // main index.js
 
-import { NativeModules } from 'react-native';
+import { NativeModules,DeviceEventEmitter } from 'react-native';
 
-const { CbliteAndroid } = NativeModules;
+const {CbliteAndroid} = NativeModules;
 
 export default CbliteAndroid;
