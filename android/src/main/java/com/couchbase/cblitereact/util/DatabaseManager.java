@@ -396,10 +396,10 @@ public class DatabaseManager {
         }
 
         DatabaseResource dbResource = databases.get(dbname);
-        Database db = dbResource.getDatabase();
-
-        if (dbResource.getListenerToken() != null) {
+        final Database db = dbResource.getDatabase();
+        if(dbResource.getListenerToken()!=null){
             db.removeChangeListener(dbResource.getListenerToken());
+            databases.get(dbname).setListenerToken(null);
         }
         else
         {
