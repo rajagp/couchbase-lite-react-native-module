@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.couchbase.cblitereact.strings.*;
 import com.couchbase.cblitereact.Args.*;
@@ -13,6 +14,11 @@ import com.couchbase.cblitereact.util.DatabaseManager;
 
 
 import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -331,6 +337,120 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
 
     }
+
+
+
+    @ReactMethod (isBlockingSynchronousMethod = true)
+    private String createValueIndex(String dbname, String indexName, ReadableArray indexExpressions) {
+
+        try {
+
+            if(dbname==null||dbname.isEmpty())
+            {
+                return responseStrings.MissingargsDBN;
+            }
+            else if(indexName==null||indexName.isEmpty())
+            {
+                return responseStrings.MissingargsIN;
+            }
+            else if(indexExpressions==null||indexExpressions.size()<1)
+            {
+                return responseStrings.MissingargsINEX;
+            }
+            else
+            {
+                List<String> parsedIndexExpressions = new ArrayList<>();
+                for (int a=0;a<=indexExpressions.size();a++)
+                {
+                    parsedIndexExpressions.add(indexExpressions.getString(a));
+                }
+
+                IndexArgs vargs = new IndexArgs();
+                vargs.ValueIndexArgs(dbname,indexName,parsedIndexExpressions);
+                String result = dbMgr.createValueIndex(vargs);
+                return result;
+            }
+
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
+    @ReactMethod (isBlockingSynchronousMethod = true)
+    private String createFTSIndex(String dbname, String indexName,Boolean ignoreAccents, String language, ReadableArray indexExpressions) {
+
+        try {
+
+            if(dbname==null||dbname.isEmpty())
+            {
+                return responseStrings.MissingargsDBN;
+            }
+            else if(indexName==null||indexName.isEmpty())
+            {
+                return responseStrings.MissingargsIN;
+            }
+            else if(ignoreAccents==null)
+            {
+                return responseStrings.Missingargs+"ignoreAccents";
+            }
+            else if(language==null||language.isEmpty())
+            {
+                return responseStrings.Missingargs+"language";
+            }
+            else if(indexExpressions==null||indexExpressions.size()<1)
+            {
+                return responseStrings.MissingargsINEX;
+            }
+            else
+            {
+                List<String> parsedIndexExpressions = new ArrayList<>();
+                for (int a=0;a<=indexExpressions.size();a++)
+                {
+                    parsedIndexExpressions.add(indexExpressions.getString(a));
+                }
+
+                IndexArgs fargs = new IndexArgs();
+                fargs.FTSIndexArgs(dbname,indexName,ignoreAccents,language,parsedIndexExpressions);
+                String result = dbMgr.createFTSIndex(fargs);
+                return result;
+            }
+
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
+    private String deleteIndex(String dbname, String indexName) {
+
+        try {
+
+            if(dbname==null||dbname.isEmpty())
+            {
+                return responseStrings.MissingargsDBN;
+            }
+            else if(indexName==null||indexName.isEmpty())
+            {
+                return responseStrings.MissingargsIN;
+            }
+            else
+            {
+                IndexArgs fargs = new IndexArgs();
+                fargs.DeleteIndexArgs(dbname,indexName);
+                String result = dbMgr.createFTSIndex(fargs);
+                return result;
+            }
+
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
 
 
 }

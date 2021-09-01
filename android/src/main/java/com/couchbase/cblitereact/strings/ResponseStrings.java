@@ -7,7 +7,9 @@ public class ResponseStrings {
    public static String MissingargsDBD="Missing Arguments : Directory";
     public static String MissingargsDCID="Missing Arguments : Document ID";
     public static String MissingargsDCData="Missing Arguments : Document Data";
-    public static String NullDoc="Document is Null";
+ public static String MissingargsIN="Missing Arguments : Index Name";
+ public static String MissingargsINEX="Missing Arguments : Index Expressions";
+ public static String NullDoc="Document is Null";
     public static String DBCreated="Database Created";
     public static String DBClosed="Database Closed";
     public static String DBDeleted="Database Deleted";
