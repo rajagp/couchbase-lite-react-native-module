@@ -1,5 +1,6 @@
 package com.couchbase.cblitereact.util;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -15,8 +16,11 @@ import com.couchbase.lite.Document;
 import com.couchbase.lite.EncryptionKey;
 import com.couchbase.lite.FullTextIndexConfiguration;
 import com.couchbase.lite.ListenerToken;
+import com.couchbase.lite.LogDomain;
+import com.couchbase.lite.LogLevel;
 import com.couchbase.lite.MutableDocument;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,14 +29,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.couchbase.lite.Query;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.ValueIndexConfiguration;
 import com.couchbase.lite.internal.utils.JSONUtils;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
+
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.couchbase.cblitereact.Args.*;
 import com.couchbase.cblitereact.strings.*;
@@ -47,7 +56,6 @@ public class DatabaseManager {
     private ResponseStrings responseStrings;
 
     protected DatabaseManager() {
-
     }
 
     public static ReactApplicationContext context;
@@ -114,7 +122,6 @@ public class DatabaseManager {
             } else {
                 return responseStrings.MissingargsDBN;
             }
-
 
         } catch (CouchbaseLiteException exception) {
             return responseStrings.ExceptionDB + exception.getMessage();
@@ -327,9 +334,7 @@ public class DatabaseManager {
     }
 
 
-    //todo on sync phase
     public String registerForDatabaseChanges(String dbname, final String jsListener) {
-
 
         if (!databases.containsKey(dbname)) {
             return responseStrings.DBnotfound;
@@ -458,11 +463,17 @@ public class DatabaseManager {
             String indexExpressions = TextUtils.join(",", indexExpressionList);
 
             FullTextIndexConfiguration indexConfig = new FullTextIndexConfiguration(indexExpressions);
-            indexConfig.ignoreAccents(ignoreAccents);
-            indexConfig.setLanguage(language);
+
+            if(ignoreAccents!=null)
+            {
+                indexConfig.ignoreAccents(ignoreAccents);
+            }
+            if(language!=null&language.isEmpty())
+            {
+                indexConfig.setLanguage(language);
+            }
 
             db.createIndex(indexName, indexConfig);
-
 
             return responseStrings.SuccessCode;
 
@@ -491,5 +502,50 @@ public class DatabaseManager {
             return responseStrings.Exception + exception.getMessage();
         }
     }
+
+    public void queryDb(QueryArgs args, Callback sucess,Callback error) {
+
+        String database = args.getDbName();
+        String queryString = args.getQuery();
+
+       try {
+
+            if (!databases.containsKey(database)) {
+                error.invoke(responseStrings.DBnotfound);
+            }
+
+           DatabaseResource dbResource = databases.get(database);
+           Database db = dbResource.getDatabase();
+           Query query = db.createQuery(queryString);
+           ResultSet rows = query.execute();
+           Result row;
+           WritableArray json = new WritableNativeArray();
+           while ((row = rows.next()) != null) {
+                json.pushString(row.toJSON());
+           }
+
+           sucess.invoke(json);
+
+        } catch (Exception exception) {
+           error.invoke(responseStrings.ExceptionQuery + exception.getMessage());
+        }
+    }
+
+
+    public String enableLogging()
+    {
+
+        try {
+            Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS);
+            Database.log.getConsole().setLevel(LogLevel.DEBUG);
+
+            return responseStrings.SuccessCode;
+
+        } catch (Exception exception) {
+            return responseStrings.Exception + exception.getMessage();
+        }
+    }
+
+
 
 }

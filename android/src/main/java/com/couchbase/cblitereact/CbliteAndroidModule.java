@@ -138,7 +138,6 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
 
-
     @ReactMethod
     public void getDocument(String dbname, String docid, Callback OnSuccessCallback, Callback OnErrorCallback) {
         try {
@@ -235,6 +234,109 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
 
+    @ReactMethod (isBlockingSynchronousMethod = true)
+    public String createValueIndex(String dbname, String indexName, ReadableArray indexExpressions) {
+
+        try {
+
+            if(dbname==null||dbname.isEmpty())
+            {
+                return responseStrings.MissingargsDBN;
+            }
+            else if(indexName==null||indexName.isEmpty())
+            {
+                return responseStrings.MissingargsIN;
+            }
+            else if(indexExpressions==null||indexExpressions.size()<1)
+            {
+                return responseStrings.MissingargsINEX;
+            }
+            else
+            {
+                List<String> parsedIndexExpressions = new ArrayList<>();
+                for (int a=0;a<=indexExpressions.size();a++)
+                {
+                    parsedIndexExpressions.add(indexExpressions.getString(a));
+                }
+
+                IndexArgs vargs = new IndexArgs();
+                vargs.ValueIndexArgs(dbname,indexName,parsedIndexExpressions);
+                String result = dbMgr.createValueIndex(vargs);
+                return result;
+            }
+
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
+    @ReactMethod (isBlockingSynchronousMethod = true)
+    public String createFTSIndex(String dbname, String indexName,@Nullable Boolean ignoreAccents,@Nullable String language, ReadableArray indexExpressions) {
+
+        try {
+
+            if(dbname==null||dbname.isEmpty())
+            {
+                return responseStrings.MissingargsDBN;
+            }
+            else if(indexName==null||indexName.isEmpty())
+            {
+                return responseStrings.MissingargsIN;
+            }
+            else if(indexExpressions==null||indexExpressions.size()<1)
+            {
+                return responseStrings.MissingargsINEX;
+            }
+            else
+            {
+                List<String> parsedIndexExpressions = new ArrayList<>();
+                for (int a=0;a<=indexExpressions.size();a++)
+                {
+                    parsedIndexExpressions.add(indexExpressions.getString(a));
+                }
+                IndexArgs fargs = new IndexArgs();
+                fargs.FTSIndexArgs(dbname,indexName,ignoreAccents,language,parsedIndexExpressions);
+                String result = dbMgr.createFTSIndex(fargs);
+                return result;
+            }
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
+    @ReactMethod (isBlockingSynchronousMethod = true)
+    public String deleteIndex(String dbname, String indexName) {
+
+        try {
+
+            if(dbname==null||dbname.isEmpty())
+            {
+                return responseStrings.MissingargsDBN;
+            }
+            else if(indexName==null||indexName.isEmpty())
+            {
+                return responseStrings.MissingargsIN;
+            }
+            else
+            {
+                IndexArgs fargs = new IndexArgs();
+                fargs.DeleteIndexArgs(dbname,indexName);
+                String result = dbMgr.deleteIndex(fargs);
+                return result;
+            }
+
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
+
     @ReactMethod
     public void getBlob(String dbname,String data, Callback OnSuccessCallback, Callback OnErrorCallback) {
         try {
@@ -289,8 +391,9 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
     }
 
+
     @ReactMethod (isBlockingSynchronousMethod = true)
-    private String addDatabaseChangeListener(String dbname, String listener) {
+    public String addDatabaseChangeListener(String dbname, String listener) {
 
         try {
 
@@ -316,7 +419,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod (isBlockingSynchronousMethod = true)
-    private String removeDatabaseChangeListener(String dbname) {
+    public String removeDatabaseChangeListener(String dbname) {
 
         try {
 
@@ -339,117 +442,43 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
 
-
     @ReactMethod (isBlockingSynchronousMethod = true)
-    private String createValueIndex(String dbname, String indexName, ReadableArray indexExpressions) {
+    public String enableLogging() {
 
         try {
-
-            if(dbname==null||dbname.isEmpty())
-            {
-                return responseStrings.MissingargsDBN;
-            }
-            else if(indexName==null||indexName.isEmpty())
-            {
-                return responseStrings.MissingargsIN;
-            }
-            else if(indexExpressions==null||indexExpressions.size()<1)
-            {
-                return responseStrings.MissingargsINEX;
-            }
-            else
-            {
-                List<String> parsedIndexExpressions = new ArrayList<>();
-                for (int a=0;a<=indexExpressions.size();a++)
-                {
-                    parsedIndexExpressions.add(indexExpressions.getString(a));
-                }
-
-                IndexArgs vargs = new IndexArgs();
-                vargs.ValueIndexArgs(dbname,indexName,parsedIndexExpressions);
-                String result = dbMgr.createValueIndex(vargs);
-                return result;
-            }
-
-
+           return dbMgr.enableLogging();
         } catch (Exception e) {
-            return responseStrings.Exception + e.getMessage();
+            return responseStrings.ExceptionEnableLogging + e.getMessage();
         }
 
     }
 
-    @ReactMethod (isBlockingSynchronousMethod = true)
-    private String createFTSIndex(String dbname, String indexName,Boolean ignoreAccents, String language, ReadableArray indexExpressions) {
+
+    @ReactMethod
+    public void query(String dbname, String query, Callback OnSuccessCallback, Callback OnErrorCallback ) {
 
         try {
-
             if(dbname==null||dbname.isEmpty())
             {
-                return responseStrings.MissingargsDBN;
+                OnErrorCallback.invoke(responseStrings.MissingargsDBN);
             }
-            else if(indexName==null||indexName.isEmpty())
+            else if(query==null||query.isEmpty())
             {
-                return responseStrings.MissingargsIN;
-            }
-            else if(ignoreAccents==null)
-            {
-                return responseStrings.Missingargs+"ignoreAccents";
-            }
-            else if(language==null||language.isEmpty())
-            {
-                return responseStrings.Missingargs+"language";
-            }
-            else if(indexExpressions==null||indexExpressions.size()<1)
-            {
-                return responseStrings.MissingargsINEX;
+                OnErrorCallback.invoke(responseStrings.Missingargs+"Query");
             }
             else
             {
-                List<String> parsedIndexExpressions = new ArrayList<>();
-                for (int a=0;a<=indexExpressions.size();a++)
-                {
-                    parsedIndexExpressions.add(indexExpressions.getString(a));
-                }
-
-                IndexArgs fargs = new IndexArgs();
-                fargs.FTSIndexArgs(dbname,indexName,ignoreAccents,language,parsedIndexExpressions);
-                String result = dbMgr.createFTSIndex(fargs);
-                return result;
+                QueryArgs qArgs = new QueryArgs(dbname,query);
+                dbMgr.queryDb(qArgs,OnSuccessCallback,OnErrorCallback);
             }
 
 
         } catch (Exception e) {
-            return responseStrings.Exception + e.getMessage();
+            OnErrorCallback.invoke(responseStrings.ExceptionQuery + e.getMessage());
         }
 
     }
 
-    private String deleteIndex(String dbname, String indexName) {
-
-        try {
-
-            if(dbname==null||dbname.isEmpty())
-            {
-                return responseStrings.MissingargsDBN;
-            }
-            else if(indexName==null||indexName.isEmpty())
-            {
-                return responseStrings.MissingargsIN;
-            }
-            else
-            {
-                IndexArgs fargs = new IndexArgs();
-                fargs.DeleteIndexArgs(dbname,indexName);
-                String result = dbMgr.createFTSIndex(fargs);
-                return result;
-            }
-
-
-        } catch (Exception e) {
-            return responseStrings.Exception + e.getMessage();
-        }
-
-    }
 
 
 

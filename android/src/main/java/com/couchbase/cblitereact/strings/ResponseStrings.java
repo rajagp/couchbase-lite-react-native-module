@@ -23,6 +23,7 @@ public class ResponseStrings {
     public static String listenerTokenNotExists="Database listener not registered with database.";
 
     public static String ExceptionDB="Error while Creating Database : ";
+    public static String ExceptionQuery="Error while executing query : ";
     public static String ExceptionDBclose="Error while Closing Database : ";
     public static String ExceptionDBdelete="Error while Deleting Database : ";
     public static String ExceptionDBcopy="Error while Copying Database : ";
@@ -30,6 +31,7 @@ public class ResponseStrings {
     public static String ErrDBcopy="Error while Deleting Database";
     public static String ExceptionDOC="Error while Creating Document : ";
     public static String Exception="Error found : ";
+    public static String ExceptionEnableLogging="Error found while enabling logger for the database : ";
     public static String ExceptionDOCGet="Error while Fetching Document : ";
     public static String ExceptionBLOB="Error while Creating Blob : ";
     public static String ExceptionBLOBget="Error while Fetching Blob : ";
