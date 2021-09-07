@@ -27,6 +27,7 @@ public class ResponseStrings {
     public static String ExceptionDBclose="Error while Closing Database : ";
     public static String ExceptionDBdelete="Error while Deleting Database : ";
     public static String ExceptionDBcopy="Error while Copying Database : ";
+    public static String ExceptionDBfetch="Error while Fetching Database : ";
     public static String ErrDBdelete="Error while Deleting Database";
     public static String ErrDBcopy="Error while Deleting Database";
     public static String ExceptionDOC="Error while Creating Document : ";

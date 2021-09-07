@@ -37,6 +37,7 @@ import com.couchbase.lite.internal.utils.JSONUtils;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
@@ -198,6 +199,29 @@ public class DatabaseManager {
         } catch (CouchbaseLiteException exception) {
             return responseStrings.ExceptionDBcopy + exception.getMessage();
         }
+    }
+
+    public String databaseExists(DatabaseArgs args) {
+
+        String response;
+        DatabaseConfiguration dbConfig = getDatabaseConfig(args);
+        String dbName = args.getDbName();
+
+        if (dbName != null && dbConfig != null) {
+
+            boolean exists = Database.exists(dbName, new File(dbConfig.getDirectory()));
+
+            if (exists) {
+                return responseStrings.DBExists;
+            } else {
+                return responseStrings.DBNotExists;
+            }
+
+        }
+        else {
+            return responseStrings.ErrorCode;
+        }
+
     }
 
 
@@ -466,11 +490,11 @@ public class DatabaseManager {
 
             if(ignoreAccents!=null)
             {
-                indexConfig.ignoreAccents(ignoreAccents);
+               // indexConfig.ignoreAccents(ignoreAccents);
             }
             if(language!=null&language.isEmpty())
             {
-                indexConfig.setLanguage(language);
+              //  indexConfig.setLanguage(language);
             }
 
             db.createIndex(indexName, indexConfig);
