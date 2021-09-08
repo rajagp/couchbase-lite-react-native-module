@@ -265,7 +265,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
                 return responseStrings.MissingargsINEX;
             } else {
                 List<String> parsedIndexExpressions = new ArrayList<>();
-                for (int a = 0; a <= indexExpressions.size(); a++) {
+                for (int a = 0; a < indexExpressions.size(); a++) {
                     parsedIndexExpressions.add(indexExpressions.getString(a));
                 }
 
