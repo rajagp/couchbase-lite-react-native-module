@@ -77,8 +77,6 @@ mkdir libs
 cp ~/path/to/couchbase-lite-android-ee-3.0.0.aar libs/ 
 ```
 
-![](https://blog.couchbase.com/wp-content/uploads/2021/08/react-native-app-couchbase-lite.png)
-
 
 * In Android Studio, navigate to the "project structure" in order to add  couchbase lite library as a dependency.
 
