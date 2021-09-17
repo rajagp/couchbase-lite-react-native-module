@@ -246,6 +246,30 @@ _Example Response_
 
 
 
+**Database Exists**
+
+```
+
+ var dbexists = CouchbaseNativeModule.databaseExists(dbName, dbConfig);
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * config: Couchbase Database configuration JSONobject containing following.
+
+    * directory: Path of the database directory as string.
+    * encryptionKey: Encryption key as string.
+
+#### Example Response from Remove Database Change Listener:
+ * _"Database already exists"_
+ * _"Database not exists"_
+ * _"Error"_
+ * _"Missing Arguments : Database Name"_
+
+
+
 **Create/Update Document**
 
 ```
@@ -421,6 +445,132 @@ _Params_
  * _"Database not found"_
  * _"Database listener not registered with database."_
  * _"Missing Arguments : Database Name"_
+
+
+
+**Create Value Index**
+
+```
+
+let indexExpressions = ['name', 'location'];
+let indexName = "nameLocationIndex";
+
+ var response = CouchbaseNativeModule.createValueIndex(dbName, indexName, indexExpressions);
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * indexName: String name of index to be created.
+  * indexExpressions: Array of Expressions of index to be created.
+ 
+
+#### Example Response from Remove Database Change Listener:
+ * _"Success"_
+ * _"Database not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : Index Name"_
+ * _"Missing Arguments : Index Expressions"_
+
+
+
+**Create FTS Index**
+
+```
+
+let indexExpressions = ['name', 'location'];
+let indexName = "nameLocationIndex";
+boolean ignoreAccents = true;
+let language = "English";
+
+ var response = CouchbaseNativeModule.createValueIndex(dbName, indexName, ignoreAccents, language, indexExpressions);
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * indexName: String name of index to be created.
+  * ignoreAccents (nullable) : Boolean value for ignoreAccents of index to be created.
+  * language (nullable) : String language for index to be created.
+  * indexExpressions: Array of Expressions of index to be created.
+ 
+
+#### Example Response from Remove Database Change Listener:
+ * _"Success"_
+ * _"Database not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : Index Name"_
+ * _"Missing Arguments : Index Expressions"_
+
+
+
+
+**Delete Index**
+
+```
+
+ let indexName = "nameLocationIndex";
+
+ var response = CouchbaseNativeModule.deleteIndex(dbName, indexName);
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * indexName: String name of index to be deleted.
+ 
+
+#### Example Response from Remove Database Change Listener:
+ * _"Success"_
+ * _"Database not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : Index Name"_
+
+
+
+
+**Enable Logging**
+
+```
+ var response = CouchbaseNativeModule.enableLogging();
+        
+```
+
+
+#### Example Response from Remove Database Change Listener:
+ * _"Success"_
+ * _"Error"_
+
+
+
+
+**Query**
+
+```
+
+  let query = "select * from universities limit 1";
+
+  CouchbaseNativeModule.query(dbName, query,function(rs) { console.log("Query result "+ rs.toString())}, function(error) { console.log(error.toString())}););
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * query: String query to be executed.
+  * Error Callback: Asynchronously triggers when the function fails execution. Contains Error string as param, If there is an exception while execution the param will have the string exception.
+  * Success Callback:Asynchronously triggers when the function succeeds execution. Contains string Response as param, If there is no exception while execution the param can contain one of the following responses.
+
+
+#### Example Response from Remove Database Change Listener:
+ * _"[Query response]"_
+ * _"Database not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : Query"_
+
 
 
 ## Updates to Native Module
