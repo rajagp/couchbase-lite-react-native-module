@@ -348,7 +348,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
                     String Blobresponse = dbMgr.getBlob(dbname, data);
 
-                    if (!Blobresponse.equals(responseStrings.invalidblob) && !Blobresponse.equals(responseStrings.invalidblob)) {
+                    if (!Blobresponse.equals(responseStrings.DBnotfound) && !Blobresponse.equals(responseStrings.invalidblob)) {
                         OnSuccessCallback.invoke(Blobresponse);
                     } else {
                         OnErrorCallback.invoke(Blobresponse);
@@ -446,7 +446,14 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
                 OnErrorCallback.invoke(responseStrings.Missingargs + "Query");
             } else {
                 QueryArgs qArgs = new QueryArgs(dbname, query);
-                dbMgr.queryDb(qArgs, OnSuccessCallback, OnErrorCallback);
+               String response = dbMgr.queryDb(qArgs);
+               if(!response.equals(responseStrings.DBnotfound)&&!response.equals(responseStrings.ExceptionInvalidQuery)&&!response.equals(responseStrings.invaliddata)){
+                   OnSuccessCallback.invoke(response);
+               }
+               else
+               {
+                   OnErrorCallback.invoke(response);
+               }
             }
 
 

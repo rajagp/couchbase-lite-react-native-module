@@ -527,32 +527,39 @@ public class DatabaseManager {
         }
     }
 
-    public void queryDb(QueryArgs args, Callback sucess,Callback error) {
+    public String queryDb(QueryArgs args) {
 
         String database = args.getDbName();
         String queryString = args.getQuery();
 
-       try {
 
             if (!databases.containsKey(database)) {
-                error.invoke(responseStrings.DBnotfound);
+                return responseStrings.DBnotfound;
             }
 
            DatabaseResource dbResource = databases.get(database);
            Database db = dbResource.getDatabase();
            Query query = db.createQuery(queryString);
-           ResultSet rows = query.execute();
-           Result row;
-           WritableArray json = new WritableNativeArray();
+        ResultSet rows = null;
+        try {
+            rows = query.execute();
+        } catch (CouchbaseLiteException e) {
+           return responseStrings.ExceptionInvalidQuery;
+        }
+        Result row;
+           JSONArray json = new JSONArray();
            while ((row = rows.next()) != null) {
-                json.pushString(row.toJSON());
+               JSONObject rowObject = null;
+               try {
+                   rowObject = new JSONObject(row.toJSON());
+               } catch (JSONException e) {
+                   return responseStrings.invaliddata;
+               }
+               json.put(rowObject);
            }
 
-           sucess.invoke(json);
+          return json.toString();
 
-        } catch (Exception exception) {
-           error.invoke(responseStrings.ExceptionQuery + exception.getMessage());
-        }
     }
 
 

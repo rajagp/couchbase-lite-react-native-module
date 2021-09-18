@@ -24,6 +24,7 @@ public class ResponseStrings {
 
     public static String ExceptionDB="Error while Creating Database : ";
     public static String ExceptionQuery="Error while executing query : ";
+    public static String ExceptionInvalidQuery="Error while executing query : Invalid Query";
     public static String ExceptionDBclose="Error while Closing Database : ";
     public static String ExceptionDBdelete="Error while Deleting Database : ";
     public static String ExceptionDBcopy="Error while Copying Database : ";
@@ -44,4 +45,5 @@ public class ResponseStrings {
     public static String DBnotfound="Database not found";
     public static String Missingargs="Missing Arguments : ";
     public static String invalidblob="Invalid Object : Blob Data";
+    public static String invaliddata="Invalid data from query response.";
 }
