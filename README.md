@@ -211,14 +211,15 @@ _Example Response_
 **Close Database**
 
 ```
-let response = CBL.closeDatabase(dbName);
-console.log("close" + dbName+ " database reponse is :" + response);
+let response = CBL.closeDatabase(dbName,function(rs) { console.log("database "+ dbName + " closing : "+ rs.toString())}, function(error) { console.log(error.toString())});
 ```
 
 _Params_
 
  * dbName:  Name of the Database as string.
-
+ * Error Callback: Asynchronously triggers when the function fails execution. Contains Error string as param, If there is an exception while execution the param will have the string exception.
+ * Success Callback:Asynchronously triggers when the function succeeds execution. Contains string Response as param, If there is no exception while execution the param can contain one of the following responses.
+ 
 _Example Response_
 
  * _"Success"_

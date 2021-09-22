@@ -108,17 +108,24 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
     }
 
-    @ReactMethod(isBlockingSynchronousMethod = true)
-    public String closeDatabase(String dbname) {
+    @ReactMethod
+    public void closeDatabase(String dbname, Callback OnSuccessCallback, Callback OnErrorCallback) {
 
         try {
             if (dbname != null && !dbname.isEmpty()) {
-                return dbMgr.closeDatabase(dbname);
+                String response = dbMgr.closeDatabase(dbname);
+                if(response.equals(responseStrings.SuccessCode))
+                {
+                    OnSuccessCallback.invoke(response);
+                }
+                else {
+                    OnErrorCallback.invoke(response);
+                }
             } else {
-                return responseStrings.MissingargsDBN;
+                OnErrorCallback.invoke( responseStrings.MissingargsDBN);
             }
         } catch (Exception e) {
-            return (responseStrings.ExceptionDBclose + e.getMessage());
+            OnErrorCallback.invoke(responseStrings.ExceptionDBclose + e.getMessage());
         }
     }
 
