@@ -490,11 +490,11 @@ public class DatabaseManager {
 
             if(ignoreAccents!=null)
             {
-               // indexConfig.ignoreAccents(ignoreAccents);
+                indexConfig.ignoreAccents(ignoreAccents);
             }
             if(language!=null&language.isEmpty())
             {
-              //  indexConfig.setLanguage(language);
+                indexConfig.setLanguage(language);
             }
 
             db.createIndex(indexName, indexConfig);
