@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.couchbase.cblitereact.strings.*;
 import com.couchbase.cblitereact.Args.*;
@@ -13,6 +14,11 @@ import com.couchbase.cblitereact.util.DatabaseManager;
 
 
 import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -46,8 +52,11 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
             if (dbname != null) {
 
-                if(config!=null) { databaseArgs = new DatabaseArgs(dbname, config);}
-                else { databaseArgs = new DatabaseArgs(dbname);}
+                if (config != null) {
+                    databaseArgs = new DatabaseArgs(dbname, config);
+                } else {
+                    databaseArgs = new DatabaseArgs(dbname);
+                }
                 response = dbMgr.openOrCreateDatabase(databaseArgs);
 
                 if (response.equals(responseStrings.DBExists) || response.equals(responseStrings.SuccessCode)) {
@@ -66,42 +75,32 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void copyDatabase(String currentdbname, String newDBName,@Nullable ReadableMap currentConfig,@Nullable ReadableMap newConfig, Callback OnSuccessCallback, Callback OnErrorCallback) {
+    public void copyDatabase(String currentdbname, String newDBName, @Nullable ReadableMap currentConfig, @Nullable ReadableMap newConfig, Callback OnSuccessCallback, Callback OnErrorCallback) {
         try {
 
             String response;
-            DatabaseArgs currentDatabaseArgs = new DatabaseArgs(currentdbname, currentConfig);;
-            DatabaseArgs newDatabaseArgs = new DatabaseArgs(newDBName, newConfig);;
+            DatabaseArgs currentDatabaseArgs = new DatabaseArgs(currentdbname, currentConfig);
+            ;
+            DatabaseArgs newDatabaseArgs = new DatabaseArgs(newDBName, newConfig);
+            ;
 
-            if(currentdbname==null||currentdbname.isEmpty())
-            {
-                OnErrorCallback.invoke(responseStrings.Missingargs+"Current Database Name");
-            }
-            else if(newDBName==null||newDBName.isEmpty())
-            {
-                OnErrorCallback.invoke(responseStrings.Missingargs+"New Database Name");
-            }
-            else if(currentDatabaseArgs.databaseConfig==null)
-            {
-                OnErrorCallback.invoke(responseStrings.Missingargs+"Current Database Config");
-            }
-            else if(newDatabaseArgs.databaseConfig==null)
-            {
-                OnErrorCallback.invoke(responseStrings.Missingargs+"New Database Config");
-            }
-            else {
-                response = dbMgr.copyDatabase(currentDatabaseArgs,newDatabaseArgs);
+            if (currentdbname == null || currentdbname.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.Missingargs + "Current Database Name");
+            } else if (newDBName == null || newDBName.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.Missingargs + "New Database Name");
+            } else if (currentDatabaseArgs.databaseConfig == null) {
+                OnErrorCallback.invoke(responseStrings.Missingargs + "Current Database Config");
+            } else if (newDatabaseArgs.databaseConfig == null) {
+                OnErrorCallback.invoke(responseStrings.Missingargs + "New Database Config");
+            } else {
+                response = dbMgr.copyDatabase(currentDatabaseArgs, newDatabaseArgs);
 
-                if(response.equals(responseStrings.SuccessCode))
-                {
+                if (response.equals(responseStrings.SuccessCode)) {
                     OnSuccessCallback.invoke(response);
-                }
-                else
-                {
+                } else {
                     OnErrorCallback.invoke(response);
                 }
             }
-
 
 
         } catch (Exception e) {
@@ -109,29 +108,60 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
     }
 
-    @ReactMethod(isBlockingSynchronousMethod = true)
-    public String closeDatabase(String dbname) {
+    @ReactMethod
+    public void closeDatabase(String dbname, Callback OnSuccessCallback, Callback OnErrorCallback) {
 
-        if (dbname!=null&&!dbname.isEmpty()) {
-            return dbMgr.closeDatabase(dbname);
-        } else {
-            return responseStrings.MissingargsDBN;
+        try {
+            if (dbname != null && !dbname.isEmpty()) {
+                String response = dbMgr.closeDatabase(dbname);
+                if(response.equals(responseStrings.SuccessCode))
+                {
+                    OnSuccessCallback.invoke(response);
+                }
+                else {
+                    OnErrorCallback.invoke(response);
+                }
+            } else {
+                OnErrorCallback.invoke( responseStrings.MissingargsDBN);
+            }
+        } catch (Exception e) {
+            OnErrorCallback.invoke(responseStrings.ExceptionDBclose + e.getMessage());
         }
-
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     public String deleteDatabase(String dbname) {
-
-        if (dbname!=null&&!dbname.isEmpty()) {
-            return dbMgr.deleteDatabase(dbname);
-        } else {
-            return responseStrings.MissingargsDBN;
+        try {
+            if (dbname != null && !dbname.isEmpty()) {
+                return dbMgr.deleteDatabase(dbname);
+            } else {
+                return responseStrings.MissingargsDBN;
+            }
+        } catch (Exception e) {
+            return (responseStrings.ExceptionDBdelete + e.getMessage());
         }
-
     }
 
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String databaseExists(String dbname, ReadableMap config) {
+        try {
+            if (dbname != null) {
+                DatabaseArgs databaseArgs = null;
+                if (config != null) {
+                    databaseArgs = new DatabaseArgs(dbname, config);
+                } else {
+                    databaseArgs = new DatabaseArgs(dbname);
+                }
 
+                return dbMgr.databaseExists(databaseArgs);
+
+            } else {
+                return responseStrings.MissingargsDBN;
+            }
+        } catch (Exception e) {
+            return (responseStrings.ExceptionDBdelete + e.getMessage());
+        }
+    }
 
     @ReactMethod
     public void getDocument(String dbname, String docid, Callback OnSuccessCallback, Callback OnErrorCallback) {
@@ -140,9 +170,9 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
             DocumentArgs documentArgs = null;
 
-            if (docid==null||docid.isEmpty()) {
+            if (docid == null || docid.isEmpty()) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDCID);
-            } else if (dbname==null||dbname.isEmpty()) {
+            } else if (dbname == null || dbname.isEmpty()) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDBN);
             } else {
                 documentArgs = new DocumentArgs(dbname, docid);
@@ -171,11 +201,11 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         try {
             DocumentArgs documentArgs = null;
 
-            if (dbname==null||dbname.isEmpty()) {
+            if (dbname == null || dbname.isEmpty()) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDBN);
-            } else if (docid==null||docid.isEmpty()) {
+            } else if (docid == null || docid.isEmpty()) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDCID);
-            } else if (data==null||data.isEmpty()) {
+            } else if (data == null || data.isEmpty()) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDCData);
             } else {
                 try {
@@ -202,9 +232,9 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         try {
             DocumentArgs documentArgs = null;
 
-            if (docid==null||docid.isEmpty()) {
+            if (docid == null || docid.isEmpty()) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDCID);
-            } else if (dbname==null||dbname.isEmpty()) {
+            } else if (dbname == null || dbname.isEmpty()) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDBN);
             } else {
                 documentArgs = new DocumentArgs(dbname, docid);
@@ -212,7 +242,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
                 String documentResponse = dbMgr.deleteDocument(documentArgs);
                 if (!documentResponse.isEmpty()) {
 
-                    if(documentResponse.equals(responseStrings.SuccessCode))
+                    if (documentResponse.equals(responseStrings.SuccessCode))
                         OnSuccessCallback.invoke(documentResponse);
                     else
                         OnErrorCallback.invoke(documentResponse);
@@ -229,24 +259,103 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
 
-    @ReactMethod
-    public void getBlob(String dbname,String data, Callback OnSuccessCallback, Callback OnErrorCallback) {
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String createValueIndex(String dbname, String indexName, ReadableArray indexExpressions) {
+
         try {
 
-            if(dbname==null||dbname.isEmpty())
-            {
-                OnErrorCallback.invoke(responseStrings.MissingargsDBN);
-            }
-            else
-            {
+            if (dbname == null || dbname.isEmpty()) {
+                return responseStrings.MissingargsDBN;
+            } else if (indexName == null || indexName.isEmpty()) {
+                return responseStrings.MissingargsIN;
+            } else if (indexExpressions == null || indexExpressions.size() < 1) {
+                return responseStrings.MissingargsINEX;
+            } else {
+                List<String> parsedIndexExpressions = new ArrayList<>();
+                for (int a = 0; a < indexExpressions.size(); a++) {
+                    parsedIndexExpressions.add(indexExpressions.getString(a));
+                }
 
-                if (data==null||data.isEmpty()) {
+                IndexArgs vargs = new IndexArgs();
+                vargs.ValueIndexArgs(dbname, indexName, parsedIndexExpressions);
+                String result = dbMgr.createValueIndex(vargs);
+                return result;
+            }
+
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String createFTSIndex(String dbname, String indexName, @Nullable Boolean ignoreAccents, @Nullable String language, ReadableArray indexExpressions) {
+
+        try {
+
+            if (dbname == null || dbname.isEmpty()) {
+                return responseStrings.MissingargsDBN;
+            } else if (indexName == null || indexName.isEmpty()) {
+                return responseStrings.MissingargsIN;
+            } else if (indexExpressions == null || indexExpressions.size() < 1) {
+                return responseStrings.MissingargsINEX;
+            } else {
+                List<String> parsedIndexExpressions = new ArrayList<>();
+                for (int a = 0; a <= indexExpressions.size(); a++) {
+                    parsedIndexExpressions.add(indexExpressions.getString(a));
+                }
+                IndexArgs fargs = new IndexArgs();
+                fargs.FTSIndexArgs(dbname, indexName, ignoreAccents, language, parsedIndexExpressions);
+                String result = dbMgr.createFTSIndex(fargs);
+                return result;
+            }
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String deleteIndex(String dbname, String indexName) {
+
+        try {
+
+            if (dbname == null || dbname.isEmpty()) {
+                return responseStrings.MissingargsDBN;
+            } else if (indexName == null || indexName.isEmpty()) {
+                return responseStrings.MissingargsIN;
+            } else {
+                IndexArgs fargs = new IndexArgs();
+                fargs.DeleteIndexArgs(dbname, indexName);
+                String result = dbMgr.deleteIndex(fargs);
+                return result;
+            }
+
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
+
+    @ReactMethod
+    public void getBlob(String dbname, String data, Callback OnSuccessCallback, Callback OnErrorCallback) {
+        try {
+
+            if (dbname == null || dbname.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.MissingargsDBN);
+            } else {
+
+                if (data == null || data.isEmpty()) {
                     OnErrorCallback.invoke(responseStrings.Missingargs + "Blob Data");
                 } else {
 
-                    String Blobresponse = dbMgr.getBlob(dbname,data);
+                    String Blobresponse = dbMgr.getBlob(dbname, data);
 
-                    if (!Blobresponse.equals(responseStrings.invalidblob)&&!Blobresponse.equals(responseStrings.invalidblob)) {
+                    if (!Blobresponse.equals(responseStrings.DBnotfound) && !Blobresponse.equals(responseStrings.invalidblob)) {
                         OnSuccessCallback.invoke(Blobresponse);
                     } else {
                         OnErrorCallback.invoke(Blobresponse);
@@ -261,21 +370,18 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public String setBlob(String dbname,String type, String docObject) {
+    public String setBlob(String dbname, String type, String docObject) {
 
-        if(dbname==null||dbname.isEmpty())
-        {
+        if (dbname == null || dbname.isEmpty()) {
             return responseStrings.MissingargsDBN;
-        }
-        else
-        {
+        } else {
             if (type.isEmpty()) {
                 return responseStrings.Missingargs + "Content type";
             } else if (docObject.isEmpty()) {
                 return responseStrings.Missingargs + "Blob Data";
             } else {
                 try {
-                    return dbMgr.setBlob(dbname,type, docObject);
+                    return dbMgr.setBlob(dbname, type, docObject);
                 } catch (Exception exception) {
                     return responseStrings.ExceptionBLOB + exception.getMessage();
                 }
@@ -283,21 +389,17 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
     }
 
-    @ReactMethod (isBlockingSynchronousMethod = true)
-    private String addDatabaseChangeListener(String dbname, String listener) {
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String addDatabaseChangeListener(String dbname, String listener) {
 
         try {
 
-            if(dbname==null||dbname.isEmpty())
-            {
+            if (dbname == null || dbname.isEmpty()) {
                 return responseStrings.MissingargsDBN;
-            }
-            else if(listener==null||listener.isEmpty())
-            {
-                return responseStrings.Missingargs+"JSListener";
-            }
-            else
-            {
+            } else if (listener == null || listener.isEmpty()) {
+                return responseStrings.Missingargs + "JSListener";
+            } else {
                 String result = dbMgr.registerForDatabaseChanges(dbname, listener);
                 return result;
             }
@@ -309,18 +411,14 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
     }
 
-    @ReactMethod (isBlockingSynchronousMethod = true)
-    private String removeDatabaseChangeListener(String dbname) {
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String removeDatabaseChangeListener(String dbname) {
 
         try {
 
-            if(dbname==null||dbname.isEmpty())
-            {
+            if (dbname == null || dbname.isEmpty()) {
                 return responseStrings.MissingargsDBN;
-            }
-
-            else
-            {
+            } else {
                 String result = dbMgr.deregisterForDatabaseChanges(dbname);
                 return result;
             }
@@ -328,6 +426,46 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
         } catch (Exception e) {
             return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String enableLogging() {
+
+        try {
+            return dbMgr.enableLogging();
+        } catch (Exception e) {
+            return responseStrings.ExceptionEnableLogging + e.getMessage();
+        }
+
+    }
+
+
+    @ReactMethod
+    public void query(String dbname, String query, Callback OnSuccessCallback, Callback OnErrorCallback) {
+
+        try {
+            if (dbname == null || dbname.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.MissingargsDBN);
+            } else if (query == null || query.isEmpty()) {
+                OnErrorCallback.invoke(responseStrings.Missingargs + "Query");
+            } else {
+                QueryArgs qArgs = new QueryArgs(dbname, query);
+               String response = dbMgr.queryDb(qArgs);
+               if(!response.equals(responseStrings.DBnotfound)&&!response.equals(responseStrings.ExceptionInvalidQuery)&&!response.equals(responseStrings.invaliddata)){
+                   OnSuccessCallback.invoke(response);
+               }
+               else
+               {
+                   OnErrorCallback.invoke(response);
+               }
+            }
+
+
+        } catch (Exception e) {
+            OnErrorCallback.invoke(responseStrings.ExceptionQuery + e.getMessage());
         }
 
     }

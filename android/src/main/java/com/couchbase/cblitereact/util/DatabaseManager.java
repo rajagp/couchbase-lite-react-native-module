@@ -1,5 +1,7 @@
 package com.couchbase.cblitereact.util;
 
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -12,23 +14,35 @@ import com.couchbase.lite.DatabaseChangeListener;
 import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.EncryptionKey;
+import com.couchbase.lite.FullTextIndexConfiguration;
 import com.couchbase.lite.ListenerToken;
+import com.couchbase.lite.LogDomain;
+import com.couchbase.lite.LogLevel;
 import com.couchbase.lite.MutableDocument;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.couchbase.lite.Query;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.ValueIndexConfiguration;
 import com.couchbase.lite.internal.utils.JSONUtils;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
+
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.couchbase.cblitereact.Args.*;
 import com.couchbase.cblitereact.strings.*;
@@ -43,7 +57,6 @@ public class DatabaseManager {
     private ResponseStrings responseStrings;
 
     protected DatabaseManager() {
-
     }
 
     public static ReactApplicationContext context;
@@ -85,32 +98,31 @@ public class DatabaseManager {
     }
 
 
-    public String openOrCreateDatabase(DatabaseArgs dars) {
+    public String openOrCreateDatabase(DatabaseArgs args) {
 
         String response;
         try {
-            DatabaseConfiguration dbConfig = getDatabaseConfig(dars);
+            DatabaseConfiguration dbConfig = getDatabaseConfig(args);
 
-            if (databases.containsKey(dars.dbName)) {
+            if (databases.containsKey(args.dbName)) {
                 return responseStrings.DBExists;
             }
 
-            if (dars.dbName != null && dars.databaseConfig != null) {
+            if (args.dbName != null && args.databaseConfig != null) {
 
                 Database database = null;
-                database = new Database(dars.dbName, dbConfig);
-                databases.put(dars.dbName, new DatabaseResource(database, dbConfig));
+                database = new Database(args.dbName, dbConfig);
+                databases.put(args.dbName, new DatabaseResource(database, dbConfig));
                 return responseStrings.SuccessCode;
 
-            } else if (dars.dbName != null) {
+            } else if (args.dbName != null) {
 
-                Database database = new Database(dars.dbName);
-                databases.put(dars.dbName, new DatabaseResource(database));
+                Database database = new Database(args.dbName);
+                databases.put(args.dbName, new DatabaseResource(database));
                 return responseStrings.SuccessCode;
             } else {
                 return responseStrings.MissingargsDBN;
             }
-
 
         } catch (CouchbaseLiteException exception) {
             return responseStrings.ExceptionDB + exception.getMessage();
@@ -189,23 +201,46 @@ public class DatabaseManager {
         }
     }
 
+    public String databaseExists(DatabaseArgs args) {
+
+        String response;
+        DatabaseConfiguration dbConfig = getDatabaseConfig(args);
+        String dbName = args.getDbName();
+
+        if (dbName != null && dbConfig != null) {
+
+            boolean exists = Database.exists(dbName, new File(dbConfig.getDirectory()));
+
+            if (exists) {
+                return responseStrings.DBExists;
+            } else {
+                return responseStrings.DBNotExists;
+            }
+
+        }
+        else {
+            return responseStrings.ErrorCode;
+        }
+
+    }
+
 
     public String deleteDocument(DocumentArgs documentArgs) {
 
         String response;
-        DocumentArgs dars = null;
+        DocumentArgs args = null;
 
         //Check args object
 
         try {
-            dars = new DocumentArgs(documentArgs.databaseName, documentArgs.docid);
+            args = new DocumentArgs(documentArgs.databaseName, documentArgs.docid);
         } catch (JSONException exception) {
             return response = responseStrings.invalidArgs;
         }
 
 
         // Check id
-        if (dars.docid.isEmpty()) {
+        if (args.docid.isEmpty()) {
             return response = responseStrings.MissingargsDCID;
         }
 
@@ -214,7 +249,7 @@ public class DatabaseManager {
         try {
             if (databases.get(documentArgs.databaseName) != null) {
                 Database db = databases.get(documentArgs.databaseName).getDatabase();
-                document = db.getDocument(dars.docid);
+                document = db.getDocument(args.docid);
                 db.delete(document);
                 return responseStrings.SuccessCode;
             } else {
@@ -226,11 +261,11 @@ public class DatabaseManager {
 
     }
 
-    public String getDocument(DocumentArgs dars) throws Exception {
+    public String getDocument(DocumentArgs args) throws Exception {
 
         String response;
-        String dbName = dars.getDatabaseName();
-        String docId = dars.getDocid();
+        String dbName = args.getDatabaseName();
+        String docId = args.getDocid();
 
         if (!databases.containsKey(dbName)) {
             return responseStrings.DBnotfound;
@@ -240,7 +275,7 @@ public class DatabaseManager {
         Document document = null;
 
         if (databases.get(dbName) != null) {
-            document = databases.get(dbName).getDatabase().getDocument(dars.docid);
+            document = databases.get(dbName).getDatabase().getDocument(args.docid);
         } else {
             return responseStrings.DBnotfound;
         }
@@ -252,11 +287,11 @@ public class DatabaseManager {
 
     }
 
-    public String setDocument(DocumentArgs dars) {
-        MutableDocument mutableDocument = new MutableDocument(dars.docid, dars.data);
+    public String setDocument(DocumentArgs args) {
+        MutableDocument mutableDocument = new MutableDocument(args.docid, args.data);
         try {
-            if (databases.get(dars.getDatabaseName()) != null) {
-                Database database = databases.get(dars.getDatabaseName()).getDatabase();
+            if (databases.get(args.getDatabaseName()) != null) {
+                Database database = databases.get(args.getDatabaseName()).getDatabase();
                 database.save(mutableDocument);
                 return responseStrings.SuccessCode;
 
@@ -323,9 +358,7 @@ public class DatabaseManager {
     }
 
 
-    //todo on sync phase
     public String registerForDatabaseChanges(String dbname, final String jsListener) {
-
 
         if (!databases.containsKey(dbname)) {
             return responseStrings.DBnotfound;
@@ -396,10 +429,10 @@ public class DatabaseManager {
         }
 
         DatabaseResource dbResource = databases.get(dbname);
-        Database db = dbResource.getDatabase();
-
-        if (dbResource.getListenerToken() != null) {
+        final Database db = dbResource.getDatabase();
+        if(dbResource.getListenerToken()!=null){
             db.removeChangeListener(dbResource.getListenerToken());
+            databases.get(dbname).setListenerToken(null);
         }
         else
         {
@@ -408,4 +441,142 @@ public class DatabaseManager {
 
         return responseStrings.SuccessCode;
     }
+
+
+    public String createValueIndex(IndexArgs args) {
+
+        String database = args.getDbName();
+        String indexName = args.getIndexName();
+        List<String> indexExpressionList = args.getIndexExpressions();
+
+        try {
+
+            if (!databases.containsKey(database)) {
+                return responseStrings.DBnotfound;
+            }
+            DatabaseResource dbResource = databases.get(database);
+            Database db = dbResource.getDatabase();
+
+            String indexExpression = TextUtils.join(",", indexExpressionList);
+            ValueIndexConfiguration indexConfig = new ValueIndexConfiguration(indexExpression);
+            db.createIndex(indexName, indexConfig);
+
+            return responseStrings.SuccessCode;
+
+        } catch (CouchbaseLiteException exception) {
+            return responseStrings.Exception + exception.getMessage();
+        }
+    }
+
+    public String createFTSIndex(IndexArgs args) {
+
+        String database = args.getDbName();
+        String indexName = args.getIndexName();
+        Boolean ignoreAccents = args.isIgnoreAccents();
+        String language = args.getLanguage();
+        List<String> indexExpressionList = args.getIndexExpressions();
+
+        try {
+
+            if (!databases.containsKey(database)) {
+                return responseStrings.DBnotfound;
+            }
+            DatabaseResource dbResource = databases.get(database);
+            Database db = dbResource.getDatabase();
+
+            String indexExpressions = TextUtils.join(",", indexExpressionList);
+
+            FullTextIndexConfiguration indexConfig = new FullTextIndexConfiguration(indexExpressions);
+
+            if(ignoreAccents!=null)
+            {
+                indexConfig.ignoreAccents(ignoreAccents);
+            }
+            if(language!=null&language.isEmpty())
+            {
+                indexConfig.setLanguage(language);
+            }
+
+            db.createIndex(indexName, indexConfig);
+
+            return responseStrings.SuccessCode;
+
+        } catch (CouchbaseLiteException exception) {
+            return responseStrings.Exception + exception.getMessage();
+        }
+    }
+
+    public String deleteIndex(IndexArgs args) {
+
+        String database = args.getDbName();
+        String indexName = args.getIndexName();
+
+       try {
+
+            if (!databases.containsKey(database)) {
+                return responseStrings.DBnotfound;
+            }
+           DatabaseResource dbResource = databases.get(database);
+           Database db = dbResource.getDatabase();
+           db.deleteIndex(indexName);
+
+            return responseStrings.SuccessCode;
+
+        } catch (CouchbaseLiteException exception) {
+            return responseStrings.Exception + exception.getMessage();
+        }
+    }
+
+    public String queryDb(QueryArgs args) {
+
+        String database = args.getDbName();
+        String queryString = args.getQuery();
+
+
+            if (!databases.containsKey(database)) {
+                return responseStrings.DBnotfound;
+            }
+
+           DatabaseResource dbResource = databases.get(database);
+           Database db = dbResource.getDatabase();
+           Query query = db.createQuery(queryString);
+        ResultSet rows = null;
+        try {
+            rows = query.execute();
+        } catch (CouchbaseLiteException e) {
+           return responseStrings.ExceptionInvalidQuery;
+        }
+        Result row;
+           JSONArray json = new JSONArray();
+           while ((row = rows.next()) != null) {
+               JSONObject rowObject = null;
+               try {
+                   rowObject = new JSONObject(row.toJSON());
+               } catch (JSONException e) {
+                   return responseStrings.invaliddata;
+               }
+               json.put(rowObject);
+           }
+
+          return json.toString();
+
+    }
+
+
+    public String enableLogging()
+    {
+
+        try {
+            Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS);
+            Database.log.getConsole().setLevel(LogLevel.DEBUG);
+
+            return responseStrings.SuccessCode;
+
+        } catch (Exception exception) {
+            return responseStrings.Exception + exception.getMessage();
+        }
+    }
+
+
+
 }

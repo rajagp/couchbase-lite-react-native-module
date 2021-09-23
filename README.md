@@ -1,8 +1,9 @@
 # Overview
 A reference implementation of a [React Native Module](https://reactnative.dev/docs/native-modules-intro) for couchbase lite on Android. 
 
-In order to use Couchbase Lite as embedded database within your React Native app, you will need a way to access Couchbase Lite’s native APIs from within your React Native JS application. React Native Modules allow mobile apps written in React Native to access native platform APIs.
+**NOTE**: The plugin implementation is not officially supported by Couchbase and there are no guarantees that the APIs exported by the module are up to date with the latest version of Couchbase Lite. The module implementation is available as an open source reference implementation for developers to use as a starting point.
 
+In order to use Couchbase Lite as embedded database within your React Native app, you will need a way to access Couchbase Lite’s native APIs from within your React Native JS application. React Native Modules allow mobile apps written in React Native to access native platform APIs.
 
 The React Native Module example exports a subset of native Couchbase Lite API functionality and makes it available to React native JS apps. This is intended to be used as a reference. You can extend this module to expose other relevant APIs per [module development guide](https://reactnative.dev/docs/native-modules-ios) 
 
@@ -26,12 +27,16 @@ This is WIP
 
 ## Getting Started
 
+The instructions assume some familiarity with [React Native app development](https://reactnative.dev/docs/environment-setup).
+
 ### Integrating the native module into your React Native App
 
 
-The step-by-step instructions below illustrates how you can integrate and use the react native module within a sample React Native app for Android platform. You will do something similar when building your own app. 
+The step-by-step instructions below illustrates how you can integrate and use the react native module within a sample React Native app for Android platform. You will do something similar when integrating into your own React Native app. 
 
-*  Create a sample React Native app named "AwesomeProject" per instructions in the [Starter's Guide](https://reactnative.dev/docs/environment-setup). The instructions also guide you through the steps to set up your environment for React Native app development for Android (and iOS). For the rest of the instructions, we will assume that you have created a sample React Native project named "AwesomeProject". **NOTE** You will need node version 12+ for Android app development. 
+*  Create a sample React Native app named "AwesomeProject" for Android as per instructions in the [Starter's Guide](https://reactnative.dev/docs/environment-setup). The instructions also guide you through the steps to set up your environment for React Native app development for Android (and iOS).
+ 
+ For the rest of the instructions, we will assume that you have created a sample React Native project named "AwesomeProject" for Android. **NOTE:** You will need node version 12+ for Android app development. 
 
 *  Install yarn from within your root folder
 
@@ -50,7 +55,9 @@ yarn add https://github.com/rajagp/couchbase-lite-react-native-module
 
 ### Adding couchbase-lite-android framework as a dependency
 
-The module does not come bundled with the couchbase lite framework. You will have to include the appropriately licensed Couchbase Lite Android library as dependency within your app. The React native reference module requires minimal version of **Couchbase Lite v3.0.0**. 
+The module does not come bundled with the couchbase lite framework. You will have to include the appropriately licensed Couchbase Lite Android library as dependency within your app.
+ 
+The React native reference module requires minimal version of **Couchbase Lite v3.0.0**. 
 
 Couchbase Lite can be downloaded from Couchbase [downloads](https://www.couchbase.com/downloads) page or can be pulled in via maven as described in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html).
 
@@ -60,11 +67,28 @@ We discuss the steps to add the Couchbase Lite framework dependency depending on
 
 **To add couchbase-lite-android as an .aar file**
 
-* Create a a new directory called 'libs' under your "android/app" folder
-* Copy the .aar files from within your downloaded Couchbase Lite package to the 'libs' folder 
+* Create a a new directory called 'libs' under your "**/path/to/AwesomeProject/node_modules/react-native-cblite/android**" folder
+* Copy the .aar files from within your downloaded Couchbase Lite package into the newly created'libs' folder
+```bash
+cd /path/to/AwesomeProject/node_modules/react-native-cblite/android
+
+mkdir libs
+
+cp ~/path/to/couchbase-lite-android-ee-3.0.0.aar libs/ 
+```
 
 
-![](https://blog.couchbase.com/wp-content/uploads/2021/08/react-native-app-couchbase-lite.png)
+* In Android Studio, navigate to the "project structure" in order to add  couchbase lite library as a dependency.
+
+![](https://blog.couchbase.com/wp-content/uploads/2021/09/project-structure.png)
+
+* Add "lib/couchbase-lite-android-ee-3.0.0.aar" as dependency to the couchbase lite React native module
+
+![](https://blog.couchbase.com/wp-content/uploads/2021/09/adding-library-react-native.png)
+
+* Your dependency tree would look something like this
+
+![](https://blog.couchbase.com/wp-content/uploads/2021/09/dependency-tree.png)
 
 * In your 'Project' level `build.gradle` file, add the "libs" directory path using "flatDir"
 ```
@@ -94,14 +118,17 @@ allprojects {
 ```bash
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation files('libs/couchbase-lite-android-ee-3.0.0.aar')
+    implementation files('com.couchbase.couchbase-lite-android-ee-3.0.0')
+
 }
 ```
 
 
 **Include couchbase-lite-android sdk from maven**
 
-- In your 'app' level `build.gradle` file, add your library file path. Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL or maven repository etc.
+Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL or maven repository etc.
+
+- In your 'app' level `build.gradle` file, add your library file path. 
  ```
  dependencies {
     implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
@@ -128,7 +155,13 @@ buildscript {
 
 ### Build and Run your React Native project
 
-You can run the app directly from Android Studio or per instructions in [Gettig Started Guide]()"https://reactnative.dev/docs/environment-setup")
+Build and run the app per instructions in [Getting Started Guide]("https://reactnative.dev/docs/environment-setup"). You can run the app direcly from Android Studio or from command line.
+
+Don't forget to start the Metro bundler before running your app!
+
+```bash
+npx react-native start
+```
 
 
 ## Usage
@@ -178,14 +211,15 @@ _Example Response_
 **Close Database**
 
 ```
-let response = CBL.closeDatabase(dbName);
-console.log("close" + dbName+ " database reponse is :" + response);
+let response = CBL.closeDatabase(dbName,function(rs) { console.log("database "+ dbName + " closing : "+ rs.toString())}, function(error) { console.log(error.toString())});
 ```
 
 _Params_
 
  * dbName:  Name of the Database as string.
-
+ * Error Callback: Asynchronously triggers when the function fails execution. Contains Error string as param, If there is an exception while execution the param will have the string exception.
+ * Success Callback:Asynchronously triggers when the function succeeds execution. Contains string Response as param, If there is no exception while execution the param can contain one of the following responses.
+ 
 _Example Response_
 
  * _"Success"_
@@ -210,6 +244,30 @@ _Example Response_
  * _"Success"_
  * _"Database not found"_
  * _"Error while Deleting Database : \{exception\}"_
+
+
+
+**Database Exists**
+
+```
+
+ var dbexists = CouchbaseNativeModule.databaseExists(dbName, dbConfig);
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * config: Couchbase Database configuration JSONobject containing following.
+
+    * directory: Path of the database directory as string.
+    * encryptionKey: Encryption key as string.
+
+#### Example Response from Remove Database Change Listener:
+ * _"Database already exists"_
+ * _"Database not exists"_
+ * _"Error"_
+ * _"Missing Arguments : Database Name"_
 
 
 
@@ -329,8 +387,12 @@ var JSListenerEvent = 'OnDatabaseChanged'
 
 var response = CBL.addDatabaseChangeListener(dbName,JSListenerEvent);
 
-if(response=='Success')
-DeviceEventEmitter.addListener(JSListener, (eventResponse) => { console.log(eventResponse) });
+if(response=='Success') {
+    DeviceEventEmitter.addListener(JSListener, (eventResponse) => { console.log(eventResponse) });
+    }
+    else {
+        console.log("ERROR: " + response);
+    }
 
 
 ```
@@ -365,8 +427,12 @@ var JSListenerEvent = 'OnDatabaseChanged'
 
 var response = CBL.removeDatabaseChangeListener(dbName);
 
-if(response=='Success')
-DeviceEventEmitter.removeAllListeners(JSListenerEvent);
+if(response=='Success') {
+     DeviceEventEmitter.removeAllListeners(JSListenerEvent);
+     }
+     else {
+        console.log("ERROR: " + response);
+     }
 ```
 
 _Params_
@@ -382,6 +448,148 @@ _Params_
  * _"Missing Arguments : Database Name"_
 
 
+
+**Create Value Index**
+
+```
+
+let indexExpressions = ['name', 'location'];
+let indexName = "nameLocationIndex";
+
+ var response = CouchbaseNativeModule.createValueIndex(dbName, indexName, indexExpressions);
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * indexName: String name of index to be created.
+  * indexExpressions: Array of Expressions of index to be created.
+ 
+
+#### Example Response from Remove Database Change Listener:
+ * _"Success"_
+ * _"Database not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : Index Name"_
+ * _"Missing Arguments : Index Expressions"_
+
+
+
+**Create FTS Index**
+
+```
+
+let indexExpressions = ['name', 'location'];
+let indexName = "nameLocationIndex";
+boolean ignoreAccents = true;
+let language = "English";
+
+ var response = CouchbaseNativeModule.createValueIndex(dbName, indexName, ignoreAccents, language, indexExpressions);
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * indexName: String name of index to be created.
+  * ignoreAccents (nullable) : Boolean value for ignoreAccents of index to be created.
+  * language (nullable) : String language for index to be created.
+  * indexExpressions: Array of Expressions of index to be created.
+ 
+
+#### Example Response from Remove Database Change Listener:
+ * _"Success"_
+ * _"Database not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : Index Name"_
+ * _"Missing Arguments : Index Expressions"_
+
+
+
+
+**Delete Index**
+
+```
+
+ let indexName = "nameLocationIndex";
+
+ var response = CouchbaseNativeModule.deleteIndex(dbName, indexName);
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * indexName: String name of index to be deleted.
+ 
+
+#### Example Response from Remove Database Change Listener:
+ * _"Success"_
+ * _"Database not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : Index Name"_
+
+
+
+
+**Enable Logging**
+
+```
+ var response = CouchbaseNativeModule.enableLogging();
+        
+```
+
+
+#### Example Response from Remove Database Change Listener:
+ * _"Success"_
+ * _"Error"_
+
+
+
+
+**Query**
+
+```
+
+  let query = "select * from universities limit 1";
+
+  CouchbaseNativeModule.query(dbName, query,function(rs) { console.log("Query result "+ rs.toString())}, function(error) { console.log(error.toString())}););
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * query: String query to be executed.
+  * Error Callback: Asynchronously triggers when the function fails execution. Contains Error string as param, If there is an exception while execution the param will have the string exception.
+  * Success Callback:Asynchronously triggers when the function succeeds execution. Contains string Response as param, If there is no exception while execution the param can contain one of the following responses.
+
+
+#### Example Response from Remove Database Change Listener:
+ * _"[Query response]"_
+ * _"Database not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : Query"_
+
+
+
 ## Updates to Native Module
 
-If you update the plugin such as adding a new API, don't forget to  remove the plugin and re-add it to the app
+If you update the plugin such as adding a new API, don't forget to  remove the plugin and re-add it to the app. 
+
+### Removing the module
+```bash
+yarn remove react-native-cblite
+```
+
+### Adding the module
+```bash
+yarn add https://github.com/rajagp/couchbase-lite-react-native-module
+```
+
+*Troubleshooting Tip*:
+ On occasion.  if the app isn't recognizing the latest plugin changes it may help to do a complete clean
+  - remove the root level `node_modules` folder
+  - Run "npm install"
+  - Repeat the steps to add the module and couchbase lite package.
