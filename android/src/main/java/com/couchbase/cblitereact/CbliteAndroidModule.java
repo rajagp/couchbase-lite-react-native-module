@@ -114,15 +114,13 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         try {
             if (dbname != null && !dbname.isEmpty()) {
                 String response = dbMgr.closeDatabase(dbname);
-                if(response.equals(responseStrings.SuccessCode))
-                {
+                if (response.equals(responseStrings.SuccessCode)) {
                     OnSuccessCallback.invoke(response);
-                }
-                else {
+                } else {
                     OnErrorCallback.invoke(response);
                 }
             } else {
-                OnErrorCallback.invoke( responseStrings.MissingargsDBN);
+                OnErrorCallback.invoke(responseStrings.MissingargsDBN);
             }
         } catch (Exception e) {
             OnErrorCallback.invoke(responseStrings.ExceptionDBclose + e.getMessage());
@@ -453,14 +451,12 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
                 OnErrorCallback.invoke(responseStrings.Missingargs + "Query");
             } else {
                 QueryArgs qArgs = new QueryArgs(dbname, query);
-               String response = dbMgr.queryDb(qArgs);
-               if(!response.equals(responseStrings.DBnotfound)&&!response.equals(responseStrings.ExceptionInvalidQuery)&&!response.equals(responseStrings.invaliddata)){
-                   OnSuccessCallback.invoke(response);
-               }
-               else
-               {
-                   OnErrorCallback.invoke(response);
-               }
+                String response = dbMgr.queryDb(qArgs);
+                if (!response.equals(responseStrings.DBnotfound) && !response.equals(responseStrings.ExceptionInvalidQuery) && !response.equals(responseStrings.invaliddata)) {
+                    OnSuccessCallback.invoke(response);
+                } else {
+                    OnErrorCallback.invoke(response);
+                }
             }
 
 
@@ -468,6 +464,83 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
             OnErrorCallback.invoke(responseStrings.ExceptionQuery + e.getMessage());
         }
 
+    }
+
+
+    @ReactMethod
+    public void replicatorStart(String dbname, ReadableMap replicatorConfig, Callback OnSuccessCallback, Callback OnErrorCallback) {
+
+        try {
+
+            String response;
+            if (replicatorConfig == null) {
+                OnErrorCallback.invoke(responseStrings.Missingargs + "ReplicatorConfig");
+                return;
+            }
+            if (dbname != null) {
+
+                response = dbMgr.replicatorStart(dbname, replicatorConfig);
+
+                if (response.equals(responseStrings.DBExists) || response.equals(responseStrings.SuccessCode)) {
+                    OnSuccessCallback.invoke(response);
+                } else {
+                    OnErrorCallback.invoke(response);
+                }
+
+            } else {
+                OnErrorCallback.invoke(responseStrings.MissingargsDBN);
+            }
+
+        } catch (Exception e) {
+            OnErrorCallback.invoke(responseStrings.ExceptionDB + e.getMessage());
+        }
+
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String replicatorStop(String dbname) {
+        try {
+
+            if (dbname != null) {
+                return dbMgr.replicatorStop(dbname);
+            } else {
+                return responseStrings.MissingargsDBN;
+            }
+
+        } catch (Exception e) {
+            return responseStrings.ExceptionDB + e.getMessage();
+        }
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String replicationRemoveListener(String dbname) {
+        try {
+
+            if (dbname != null) {
+                return dbMgr.replicationRemoveChangeListener(dbname);
+            } else {
+                return responseStrings.MissingargsDBN;
+            }
+
+        } catch (Exception e) {
+            return responseStrings.ExceptionDB + e.getMessage();
+        }
+    }
+
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String replicationAddListener(String dbname, String JSListener) {
+        try {
+
+            if (dbname != null) {
+                return dbMgr.replicationAddChangeListener(dbname, JSListener);
+            } else {
+                return responseStrings.MissingargsDBN;
+            }
+
+        } catch (Exception e) {
+            return responseStrings.ExceptionDB + e.getMessage();
+        }
     }
 
 

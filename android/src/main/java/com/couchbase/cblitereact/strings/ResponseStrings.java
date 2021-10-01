@@ -4,12 +4,12 @@ public class ResponseStrings {
 
 
     public static String MissingargsDBN="Missing Arguments : Database Name";
-   public static String MissingargsDBD="Missing Arguments : Directory";
+    public static String MissingargsDBD="Missing Arguments : Directory";
     public static String MissingargsDCID="Missing Arguments : Document ID";
     public static String MissingargsDCData="Missing Arguments : Document Data";
- public static String MissingargsIN="Missing Arguments : Index Name";
- public static String MissingargsINEX="Missing Arguments : Index Expressions";
- public static String NullDoc="Document is Null";
+    public static String MissingargsIN="Missing Arguments : Index Name";
+    public static String MissingargsINEX="Missing Arguments : Index Expressions";
+    public static String NullDoc="Document is Null";
     public static String DBCreated="Database Created";
     public static String DBClosed="Database Closed";
     public static String DBDeleted="Database Deleted";
@@ -17,6 +17,9 @@ public class ResponseStrings {
     public static String SuccessCode="Success";
     public static String ErrorCode="Error";
     public static String DBNotExists="Database not exists";
+    public static String ReplicatorNotExists="Replicator does not exists";
+    public static String ReplicatorListenerExists="Replicator listener already exists";
+    public static String ReplicatorListenerNotExists="Replicator listener does not exists";
     public static String DocCreated="Document Created";
     public static String DocDeleted="Document Deleted";
     public static String listenerTokenExists="Database listener already registered with database. Please remove the database listener before registering new one.";

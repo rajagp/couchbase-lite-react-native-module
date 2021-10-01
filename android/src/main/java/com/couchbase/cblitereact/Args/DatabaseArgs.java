@@ -39,14 +39,14 @@ public class DatabaseArgs {
     }
 
 
-    public DatabaseArgs(String dbName) throws JSONException {
+    public DatabaseArgs(String dbName) {
 
         this.dbName = dbName;
 
 
     }
 
-    public DatabaseArgs(String dbName, ReadableMap databaseConfig) throws JSONException {
+    public DatabaseArgs(String dbName, ReadableMap databaseConfig) {
 
         this.dbName = dbName;
         this.databaseConfig = databaseConfig;

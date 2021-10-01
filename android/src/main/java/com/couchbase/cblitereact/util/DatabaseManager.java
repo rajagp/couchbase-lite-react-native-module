@@ -1,10 +1,14 @@
 package com.couchbase.cblitereact.util;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -25,18 +29,30 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.couchbase.lite.Query;
+import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorChange;
+import com.couchbase.lite.ReplicatorChangeListener;
+import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SessionAuthenticator;
+import com.couchbase.lite.URLEndpoint;
 import com.couchbase.lite.ValueIndexConfiguration;
 import com.couchbase.lite.internal.utils.JSONUtils;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -181,7 +197,6 @@ public class DatabaseManager {
                 return responsecreate;
             }
 
-
             if (new File(nargs.getDirectory() + "/" + nargs.getDbName() + ".cblite2").isDirectory()) {
                 return responseStrings.DBExists;
             }
@@ -217,8 +232,7 @@ public class DatabaseManager {
                 return responseStrings.DBNotExists;
             }
 
-        }
-        else {
+        } else {
             return responseStrings.ErrorCode;
         }
 
@@ -366,56 +380,53 @@ public class DatabaseManager {
 
         DatabaseResource dbResource = databases.get(dbname);
         final Database db = dbResource.getDatabase();
-        if(dbResource.getListenerToken()==null){
-        ListenerToken listenerToken = db.addChangeListener(new DatabaseChangeListener() {
-            @Override
-            public void changed(DatabaseChange change) {
+        if (dbResource.getListenerToken() == null) {
+            ListenerToken listenerToken = db.addChangeListener(new DatabaseChangeListener() {
+                @Override
+                public void changed(DatabaseChange change) {
 
-                WritableMap changeDocMap = new WritableNativeMap();
-                WritableMap deletedDocMap = new WritableNativeMap();
+                    WritableMap changeDocMap = new WritableNativeMap();
+                    WritableMap deletedDocMap = new WritableNativeMap();
 
-                WritableMap finalmap = new WritableNativeMap();
+                    WritableMap finalmap = new WritableNativeMap();
 
-                Boolean hasmodified = false;
-                Boolean hasdeleted = false;
+                    Boolean hasmodified = false;
+                    Boolean hasdeleted = false;
 
-                if (change != null) {
+                    if (change != null) {
 
-                    for (String docId : change.getDocumentIDs()) {
-                        Document doc = db.getDocument(docId);
-                        if (doc != null) {
-                            Log.i("DatabaseChangeEvent", "Document: " + doc.getId() + " was modified");
-                            changeDocMap.putString(doc.getId(),doc.toJSON());
-                            hasmodified = true;
-                        } else {
-                            Log.i("DatabaseChangeEvent", "Document: " + doc.getId() + " was deleted");
-                            hasdeleted = true;
-                            deletedDocMap.putString(doc.getId(),doc.toJSON());
+                        for (String docId : change.getDocumentIDs()) {
+                            Document doc = db.getDocument(docId);
+                            if (doc != null) {
+                                Log.i("DatabaseChangeEvent", "Document: " + doc.getId() + " was modified");
+                                changeDocMap.putString(doc.getId(), doc.toJSON());
+                                hasmodified = true;
+                            } else {
+                                Log.i("DatabaseChangeEvent", "Document: " + doc.getId() + " was deleted");
+                                hasdeleted = true;
+                                deletedDocMap.putString(doc.getId(), doc.toJSON());
+                            }
                         }
+
+
+                        if (hasmodified) {
+                            finalmap.putMap("Modified", changeDocMap);
+                        }
+
+                        if (hasdeleted) {
+                            finalmap.putMap("Deleted", deletedDocMap);
+                        }
+
+
+                        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(jsListener, finalmap);
+
                     }
-
-
-                    if(hasmodified)
-                    {
-                        finalmap.putMap("Modified",changeDocMap);
-                    }
-
-                    if(hasdeleted)
-                    {
-                        finalmap.putMap("Deleted",deletedDocMap);
-                    }
-
-
-                    context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(jsListener, finalmap);
 
                 }
+            });
 
-            }
-        });
-
-        dbResource.setListenerToken(listenerToken);
-        }
-        else {
+            dbResource.setListenerToken(listenerToken);
+        } else {
             return responseStrings.listenerTokenExists;
         }
 
@@ -430,12 +441,10 @@ public class DatabaseManager {
 
         DatabaseResource dbResource = databases.get(dbname);
         final Database db = dbResource.getDatabase();
-        if(dbResource.getListenerToken()!=null){
+        if (dbResource.getListenerToken() != null) {
             db.removeChangeListener(dbResource.getListenerToken());
             databases.get(dbname).setListenerToken(null);
-        }
-        else
-        {
+        } else {
             return responseStrings.listenerTokenNotExists;
         }
 
@@ -488,12 +497,10 @@ public class DatabaseManager {
 
             FullTextIndexConfiguration indexConfig = new FullTextIndexConfiguration(indexExpressions);
 
-            if(ignoreAccents!=null)
-            {
+            if (ignoreAccents != null) {
                 indexConfig.ignoreAccents(ignoreAccents);
             }
-            if(language!=null&language.isEmpty())
-            {
+            if (language != null & language.isEmpty()) {
                 indexConfig.setLanguage(language);
             }
 
@@ -511,14 +518,14 @@ public class DatabaseManager {
         String database = args.getDbName();
         String indexName = args.getIndexName();
 
-       try {
+        try {
 
             if (!databases.containsKey(database)) {
                 return responseStrings.DBnotfound;
             }
-           DatabaseResource dbResource = databases.get(database);
-           Database db = dbResource.getDatabase();
-           db.deleteIndex(indexName);
+            DatabaseResource dbResource = databases.get(database);
+            Database db = dbResource.getDatabase();
+            db.deleteIndex(indexName);
 
             return responseStrings.SuccessCode;
 
@@ -533,38 +540,37 @@ public class DatabaseManager {
         String queryString = args.getQuery();
 
 
-            if (!databases.containsKey(database)) {
-                return responseStrings.DBnotfound;
-            }
+        if (!databases.containsKey(database)) {
+            return responseStrings.DBnotfound;
+        }
 
-           DatabaseResource dbResource = databases.get(database);
-           Database db = dbResource.getDatabase();
-           Query query = db.createQuery(queryString);
+        DatabaseResource dbResource = databases.get(database);
+        Database db = dbResource.getDatabase();
+        Query query = db.createQuery(queryString);
         ResultSet rows = null;
         try {
             rows = query.execute();
         } catch (CouchbaseLiteException e) {
-           return responseStrings.ExceptionInvalidQuery;
+            return responseStrings.ExceptionInvalidQuery;
         }
         Result row;
-           JSONArray json = new JSONArray();
-           while ((row = rows.next()) != null) {
-               JSONObject rowObject = null;
-               try {
-                   rowObject = new JSONObject(row.toJSON());
-               } catch (JSONException e) {
-                   return responseStrings.invaliddata;
-               }
-               json.put(rowObject);
-           }
+        JSONArray json = new JSONArray();
+        while ((row = rows.next()) != null) {
+            JSONObject rowObject = null;
+            try {
+                rowObject = new JSONObject(row.toJSON());
+            } catch (JSONException e) {
+                return responseStrings.invaliddata;
+            }
+            json.put(rowObject);
+        }
 
-          return json.toString();
+        return json.toString();
 
     }
 
 
-    public String enableLogging()
-    {
+    public String enableLogging() {
 
         try {
             Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS);
@@ -578,5 +584,290 @@ public class DatabaseManager {
     }
 
 
+    public ReplicatorConfiguration getReplicatorConfig(Database database, ReadableMap repConfig) {
 
+
+        ReplicatorConfiguration config = null;
+        ReadableMap dictionary = repConfig;
+
+
+        try {
+            String dbName = dictionary.hasKey("databaseName") ? dictionary.getString("databaseName").toLowerCase() : null;
+            String targetUrl = dictionary.hasKey("target") ? dictionary.getString("target") : null;
+
+
+            URI url = new URI(targetUrl);
+
+            if (database.getName().equals(dbName)) {
+                config = new ReplicatorConfiguration(database, new URLEndpoint(url));
+
+                if (dictionary.hasKey("continuous")) {
+                    config.setContinuous(dictionary.getBoolean("continuous"));
+                }
+
+                if (dictionary.hasKey("headers")) {
+
+                    ReadableArray headersArr = dictionary.getArray("headers");
+
+                    if (headersArr.size() > 0) {
+                        Map<String, String> headerMap = new HashMap<>();
+                        for (int i = 0; i < headersArr.size(); i++) {
+                            ReadableMap obj = headersArr.getMap(i);
+                            String k = obj.keySetIterator().nextKey();
+                            String v = obj.getString(k);
+                            headerMap.put(k, v);
+                        }
+                        config.setHeaders(headerMap);
+                    } else {
+                        config.setHeaders(null);
+                    }
+                }
+
+                if (dictionary.hasKey("channels")) {
+
+                    ReadableArray channelsArr = dictionary.getArray("channels");
+
+                    if (channelsArr.size() > 0) {
+
+                        List<String> channels = new ArrayList<>();
+                        for (int i = 0; i < channelsArr.size(); i++) {
+                            channels.add(channelsArr.getString(i));
+                        }
+                        config.setChannels(channels);
+                    } else {
+                        config.setChannels(null);
+                    }
+                }
+
+                if (dictionary.hasKey("documentIds")) {
+
+                    ReadableArray documentIdsArr = dictionary.getArray("documentIds");
+
+                    if (documentIdsArr.size() > 0) {
+
+                        List<String> documentIds = new ArrayList<>();
+                        for (int i = 0; i < documentIdsArr.size(); i++) {
+                            documentIds.add(documentIdsArr.getString(i));
+                        }
+                        config.setDocumentIDs(documentIds);
+                    } else {
+                        config.setDocumentIDs(null);
+                    }
+                }
+
+                if (dictionary.hasKey("acceptOnlySelfSignedServerCertificate")) {
+                    config.setAcceptOnlySelfSignedServerCertificate(dictionary.getBoolean("acceptOnlySelfSignedServerCertificate"));
+                }
+
+                if (dictionary.hasKey("pinnedServerCertificateUri")) {
+                    String pinnedServerCertificateUri = dictionary.getString("pinnedServerCertificateUri");
+                    byte[] pinnedServerCert = this.getPinnedCertFile(context, pinnedServerCertificateUri);
+                    // Set pinned certificate.
+                    config.setPinnedServerCertificate(pinnedServerCert);
+                }
+
+                if (dictionary.hasKey("heartbeat")) {
+                    config.setHeartbeat(dictionary.getInt("heartbeat"));
+                }
+
+                if (dictionary.hasKey("authenticator")) {
+                    ReadableMap authObj = dictionary.getMap("authenticator");
+
+                    if (authObj.hasKey("authType") && authObj.getString("authType").equalsIgnoreCase("Basic")) {
+                        String username = authObj.hasKey("username") ? authObj.getString("username") : null;
+                        String password = authObj.hasKey("password") ? authObj.getString("password") : null;
+
+                        if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
+                            char[] passwordCharArray = new char[password.length()];
+
+                            for (int i = 0; i < password.length(); i++) {
+                                passwordCharArray[i] = password.charAt(i);
+                            }
+                            config.setAuthenticator(new BasicAuthenticator(username, passwordCharArray));
+                        }
+                    } else if (authObj.hasKey("authType") && authObj.getString("authType").equalsIgnoreCase("Session")) {
+                        String sessionId = authObj.getString("sessionId");
+                        if (!sessionId.isEmpty()) {
+                            String cookieName = authObj.getString("cookieName");
+                            if (!cookieName.isEmpty()) {
+                                config.setAuthenticator(new SessionAuthenticator(sessionId, cookieName));
+                            } else {
+                                config.setAuthenticator(new SessionAuthenticator(sessionId));
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (URISyntaxException e) {
+            config = null;
+            e.printStackTrace();
+        }
+        return config;
+    }
+
+    public String replicatorStart(String dbname, ReadableMap replicatorConfig) {
+
+        try {
+
+            if (databases.isEmpty()) {
+                return responseStrings.DBNotExists;
+            }
+            String response;
+            Database database;
+
+            if (dbname == null || dbname.isEmpty()) {
+                return responseStrings.MissingargsDBN;
+            }
+            if (!replicatorConfig.hasKey("target") || replicatorConfig.getString("target") == null || replicatorConfig.getString("target").isEmpty()) {
+                return responseStrings.Missingargs + "Target Url";
+            }
+
+
+            DatabaseResource dbr = getDatabases().get(dbname);
+            if (dbr != null) {
+                database = dbr.getDatabase();
+            } else {
+                DatabaseArgs dbArgs = new DatabaseArgs(dbname);
+
+                response = openOrCreateDatabase(dbArgs);
+
+                if (response != responseStrings.SuccessCode) {
+                    return responseStrings.ErrorCode + " Message : couldn't open database for replication.";
+                } else {
+                    DatabaseResource dbr2 = getDatabases().get(dbname);
+                    database = dbr2.getDatabase();
+                }
+            }
+
+
+            dbr.setReplicator(new Replicator(getReplicatorConfig(database, replicatorConfig)));
+            dbr.getReplicator().start();
+            return responseStrings.SuccessCode;
+
+
+        } catch (Exception exception) {
+            return responseStrings.Exception + exception.getMessage();
+        }
+    }
+
+
+    public String replicatorStop(String dbName) {
+        if (databases.isEmpty()) {
+            return responseStrings.DBNotExists;
+        } else {
+            DatabaseResource dbr = databases.get(dbName);
+            if (dbr != null) {
+                Replicator rp = dbr.getReplicator();
+                if (rp != null) {
+                    rp.stop();
+                    dbr.setReplicator(null);
+                    return responseStrings.SuccessCode;
+                }
+            } else {
+                return responseStrings.ReplicatorNotExists;
+            }
+        }
+        return responseStrings.ErrorCode;
+    }
+
+
+    public String replicationAddChangeListener(String dbname, final String JSListener) {
+
+        if (!databases.isEmpty()) {
+            DatabaseResource dbr = databases.get(dbname);
+            dbr.setReplicatorChangeListenerJSFunction(JSListener);
+
+            if (dbr.getReplicatorChangeListenerToken() == null) {
+
+                Replicator replicator = dbr.getReplicator();
+
+                if (replicator != null) {
+                    ListenerToken replicationListenerToken = replicator.addChangeListener(new ReplicatorChangeListener() {
+                        @Override
+                        public void changed(@NonNull ReplicatorChange change) {
+                            DatabaseResource ldbr = databases.get(change.getReplicator().getConfig().getDatabase().getName());
+
+                            try {
+                                JSONObject replicatorChange = new JSONObject();
+                                switch (change.getStatus().getActivityLevel()) {
+                                    case BUSY:
+                                        replicatorChange.put("status", "busy");
+                                        break;
+                                    case CONNECTING:
+                                        replicatorChange.put("status", "connecting");
+                                        break;
+                                    case OFFLINE:
+                                        replicatorChange.put("status", "offline");
+                                        break;
+                                    case STOPPED:
+                                        replicatorChange.put("status", "stopped");
+                                        break;
+                                    default:
+                                        replicatorChange.put("status", "idle");
+                                }
+
+                                replicatorChange.put("completed", change.getStatus().getProgress().getCompleted());
+                                replicatorChange.put("total", change.getStatus().getProgress().getTotal());
+
+                                String jsCallbackFn = ldbr.getReplicatorChangeListenerJSFunction();
+
+                                if (jsCallbackFn != null && !jsCallbackFn.isEmpty()) {
+                                    String params = replicatorChange.toString();
+                                    context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(JSListener, params);
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    dbr.setReplicatorChangeListenerToken(replicationListenerToken);
+                } else {
+                    return responseStrings.ReplicatorNotExists;
+                }
+
+            } else {
+                return responseStrings.ReplicatorListenerExists;
+            }
+
+        } else {
+            return responseStrings.DBNotExists;
+        }
+
+        return responseStrings.SuccessCode;
+    }
+
+    public String replicationRemoveChangeListener(String dbname) {
+
+        if (!databases.containsKey(dbname)) {
+            return responseStrings.DBNotExists;
+        }
+
+        DatabaseResource dbResource = databases.get(dbname);
+        Replicator rp = dbResource.getReplicator();
+
+        if (dbResource.getReplicatorChangeListenerToken() != null) {
+            rp.removeChangeListener(dbResource.getReplicatorChangeListenerToken());
+            dbResource.setReplicatorChangeListenerToken(null);
+        } else {
+            return responseStrings.ReplicatorListenerNotExists;
+        }
+
+        return responseStrings.SuccessCode;
+    }
+
+
+    private byte[] getPinnedCertFile(Context context, String resource) {
+        AssetManager assetManager = context.getAssets();
+        InputStream is = null;
+        try {
+            is = assetManager.open(resource + ".cer");
+            return new byte[is.available()];
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
