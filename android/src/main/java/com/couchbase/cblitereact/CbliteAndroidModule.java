@@ -430,10 +430,16 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public String enableLogging() {
+    public String enableConsoleLogging(String domain,String loglevel) {
 
         try {
-            return dbMgr.enableLogging();
+            if (domain == null || domain.isEmpty()) {
+                return responseStrings.Missingargs+"Domain";
+            }else if (loglevel == null || loglevel.isEmpty()) {
+                return responseStrings.Missingargs+"Loglevel";
+            } else {
+                return dbMgr.enableLogging(domain, loglevel);
+            }
         } catch (Exception e) {
             return responseStrings.ExceptionEnableLogging + e.getMessage();
         }

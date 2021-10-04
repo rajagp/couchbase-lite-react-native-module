@@ -570,11 +570,19 @@ public class DatabaseManager {
     }
 
 
-    public String enableLogging() {
+    public String enableLogging(String domain,String loglevel) {
 
         try {
-            Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS);
-            Database.log.getConsole().setLevel(LogLevel.DEBUG);
+            if(domain.isEmpty()||domain==null)
+                Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS);
+            else
+                Database.log.getConsole().setDomains(LogDomain.valueOf(domain));
+
+            if(loglevel.isEmpty()||loglevel==null)
+                Database.log.getConsole().setLevel(LogLevel.DEBUG);
+            else
+                Database.log.getConsole().setLevel(LogLevel.valueOf(loglevel));
+
 
             return responseStrings.SuccessCode;
 
