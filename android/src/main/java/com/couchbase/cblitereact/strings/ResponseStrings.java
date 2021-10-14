@@ -19,6 +19,10 @@ public class ResponseStrings {
     public static String DBNotExists="Database not exists";
     public static String ReplicatorNotExists="Replicator does not exists";
     public static String ReplicatorListenerExists="Replicator listener already exists";
+    public static String QueryListenerExists="Query listener already exists";
+    public static String QueryNotListenerExists="Query listener not exists";
+    public static String QueryResourceNotExists="Query resource not exists";
+    public static String DBorQueryNotListenerExists="Database or Query Resource not exists";
     public static String ReplicatorListenerNotExists="Replicator listener does not exists";
     public static String DocCreated="Document Created";
     public static String DocDeleted="Document Deleted";

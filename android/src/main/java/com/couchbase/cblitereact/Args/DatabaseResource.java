@@ -5,6 +5,8 @@ import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.Replicator;
 
+import java.util.ArrayList;
+
 public class DatabaseResource {
     private Database database;
     private DatabaseConfiguration configuration;
@@ -12,7 +14,7 @@ public class DatabaseResource {
 
     private ListenerToken listenerToken;
     //replication
-    private Replicator replicator;
+    private ArrayList<Replicator> replicator;
     private ListenerToken replicatorChangeListenerToken;
     private String replicatorChangeListenerJSFunction;
 
@@ -49,12 +51,13 @@ public class DatabaseResource {
         this.listenerToken = listenerToken;
     }
 
-    public Replicator getReplicator() {
-        return replicator;
+    public Replicator getReplicator(int i) {
+        return replicator.get(i);
     }
 
-    public void setReplicator(Replicator replicator) {
-        this.replicator = replicator;
+    public int setReplicator(Replicator replicator) {
+        this.replicator.add(replicator);
+        return this.replicator.indexOf(replicator);
     }
 
     public ListenerToken getReplicatorChangeListenerToken() {

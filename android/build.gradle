@@ -81,9 +81,8 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
-    //compileOnly fileTree(dir: "libs", include: ["*.aar"])
     implementation 'com.couchbase.lite:couchbase-lite-android-ee:3.0.0-beta01'
-   // compileOnly fileTree(dir: "$rootDir/../android/app/libs", include: ["couchbase-lite-android-ee-3.0.0.aar"])
+
 }
 
 def configureReactNativePom(def pom) {

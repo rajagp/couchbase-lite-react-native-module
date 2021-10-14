@@ -74,6 +74,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
     }
 
+
     @ReactMethod
     public void copyDatabase(String currentdbname, String newDBName, @Nullable ReadableMap currentConfig, @Nullable ReadableMap newConfig, Callback OnSuccessCallback, Callback OnErrorCallback) {
         try {
@@ -472,6 +473,51 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
     }
 
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String addQueryChangeListener(String dbname,String query, String listener) {
+
+        try {
+
+            if (dbname == null || dbname.isEmpty()) {
+                return responseStrings.MissingargsDBN;
+            } else if (query == null || query.isEmpty()) {
+                return responseStrings.Missingargs + "Query";
+            }  else if (listener == null || listener.isEmpty()) {
+                return responseStrings.Missingargs + "JSListener";
+            } else {
+                String result = dbMgr.registerForQueryChanges(dbname,query,listener);
+                return result;
+            }
+
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String removeQueryChangeListener(String dbname,String query) {
+
+        try {
+
+            if (dbname == null || dbname.isEmpty()) {
+                return responseStrings.MissingargsDBN;
+            } else if (query == null || query.isEmpty()) {
+                return responseStrings.Missingargs + "Query";
+            }else {
+                String result = dbMgr.deregisterForQueryChanges(dbname,query);
+                return result;
+            }
+
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+
+    }
+
+
 
     @ReactMethod
     public void replicatorStart(String dbname, ReadableMap replicatorConfig, Callback OnSuccessCallback, Callback OnErrorCallback) {
@@ -487,7 +533,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
                 response = dbMgr.replicatorStart(dbname, replicatorConfig);
 
-                if (response.equals(responseStrings.DBExists) || response.equals(responseStrings.SuccessCode)) {
+                if (response.equals(responseStrings.DBExists) || response.contains("ReplicatorID")) {
                     OnSuccessCallback.invoke(response);
                 } else {
                     OnErrorCallback.invoke(response);
@@ -498,17 +544,17 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
             }
 
         } catch (Exception e) {
-            OnErrorCallback.invoke(responseStrings.ExceptionDB + e.getMessage());
+            OnErrorCallback.invoke(responseStrings.Exception + e.getMessage());
         }
 
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public String replicatorStop(String dbname) {
+    public String replicatorStop(String dbname,int ReplicatorID) {
         try {
 
             if (dbname != null) {
-                return dbMgr.replicatorStop(dbname);
+                return dbMgr.replicatorStop(dbname,ReplicatorID);
             } else {
                 return responseStrings.MissingargsDBN;
             }
@@ -519,11 +565,11 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public String replicationRemoveListener(String dbname) {
+    public String replicationRemoveListener(String dbname,int replicatorId) {
         try {
 
             if (dbname != null) {
-                return dbMgr.replicationRemoveChangeListener(dbname);
+                return dbMgr.replicationRemoveChangeListener(dbname,replicatorId);
             } else {
                 return responseStrings.MissingargsDBN;
             }
@@ -535,11 +581,11 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public String replicationAddListener(String dbname, String JSListener) {
+    public String replicationAddListener(String dbname, int replicatorId, String JSListener) {
         try {
 
             if (dbname != null) {
-                return dbMgr.replicationAddChangeListener(dbname, JSListener);
+                return dbMgr.replicationAddChangeListener(dbname,replicatorId, JSListener);
             } else {
                 return responseStrings.MissingargsDBN;
             }

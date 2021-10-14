@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryChange;
+import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorChange;
 import com.couchbase.lite.ReplicatorChangeListener;
@@ -66,6 +68,7 @@ import com.couchbase.cblitereact.strings.*;
 public class DatabaseManager {
 
     private static Map<String, DatabaseResource> databases;
+    private static Map<Integer, QueryListenerResource> queryResources;
 
 
     private static DatabaseManager instance = null;
@@ -83,6 +86,7 @@ public class DatabaseManager {
         }
         DatabaseManager.context = context;
         databases = new HashMap<>();
+        queryResources = new HashMap<>();
         CouchbaseLite.init(context);
         return instance;
     }
@@ -569,6 +573,116 @@ public class DatabaseManager {
 
     }
 
+    public String registerForQueryChanges(String dbname, String query, final String jsListener) {
+
+        if (!databases.isEmpty()) {
+            String dbName = dbname;
+            String callbackFn = jsListener;
+
+            DatabaseResource dbr = databases.get(dbName);
+            if (dbr != null) {
+                Database db = dbr.getDatabase();
+                Query newQuery = db.createQuery(query);
+                try {
+                    if (queryResources.get(newQuery.explain().hashCode()) != null && queryResources.get(newQuery.explain().hashCode()).getQueryChangeListenerToken() != null) {
+                        return responseStrings.QueryListenerExists;
+                    } else {
+                        QueryListenerResource qlr = new QueryListenerResource();
+                        qlr.setQuery(newQuery);
+                        qlr.setQueryChangeListenerJSFunction(callbackFn);
+
+                        ListenerToken queryListenerToken = newQuery.addChangeListener(new QueryChangeListener() {
+                            @Override
+                            public void changed(@NonNull QueryChange change) {
+                                QueryListenerResource qr = null;
+                                try {
+                                    qr = queryResources.get(change.getQuery().explain().hashCode());
+                                    String jsCallback = qr.getQueryChangeListenerJSFunction();
+
+                                    if (change.getError() != null) {
+                                        JSONObject listenerResults = new JSONObject();
+                                        listenerResults.put("message", change.getError().getMessage());
+
+                                        if (jsCallback != null && !jsCallback.isEmpty()) {
+                                            String params = listenerResults.toString();
+                                            context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(jsCallback, params);
+                                        }
+                                    } else {
+                                        Result row;
+                                        JSONArray json = new JSONArray();
+
+                                        if (change.getResults() != null) {
+                                            while ((row = change.getResults().next()) != null) {
+                                                JSONObject rowObject = new JSONObject(row.toJSON());
+                                                json.put(rowObject);
+                                            }
+                                        }
+
+                                        if (jsCallback != null && !jsCallback.isEmpty()) {
+                                            String params = json.toString();
+                                            context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(jsCallback, params);
+                                        }
+                                    }
+                                } catch (CouchbaseLiteException | JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
+                        qlr.setQueryChangeListenerToken(queryListenerToken);
+                        queryResources.put(newQuery.explain().hashCode(), qlr);
+                    }
+                } catch (CouchbaseLiteException e) {
+                    e.printStackTrace();
+                    return responseStrings.ExceptionInvalidQuery;
+                }
+            } else {
+                return responseStrings.DBNotExists;
+            }
+        } else {
+            return responseStrings.DBNotExists;
+        }
+        return responseStrings.SuccessCode;
+    }
+
+    public String deregisterForQueryChanges(String dbname, String queryString) {
+
+        if (queryResources.isEmpty()) {
+            return responseStrings.DBorQueryNotListenerExists;
+        } else {
+            try {
+                DatabaseResource dbr = databases.get(dbname);
+
+                if (dbr != null) {
+                    Database database = dbr.getDatabase();
+                    Query query = database.createQuery(queryString);
+                    QueryListenerResource qlr = queryResources.get(query.explain().hashCode());
+
+                    if (qlr != null) {
+                        ListenerToken token = qlr.getQueryChangeListenerToken();
+
+                        if (token != null) {
+                            qlr.getQuery().removeChangeListener(token);
+                            qlr.setQueryChangeListenerToken(null);
+                        } else {
+                            return responseStrings.QueryNotListenerExists;
+                        }
+                    } else {
+                        return responseStrings.QueryResourceNotExists;
+                    }
+
+                } else {
+                    return responseStrings.DBNotExists;
+                }
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return responseStrings.SuccessCode;
+
+    }
+
 
     public String enableLogging(String domain,String loglevel) {
 
@@ -749,9 +863,11 @@ public class DatabaseManager {
             }
 
 
-            dbr.setReplicator(new Replicator(getReplicatorConfig(database, replicatorConfig)));
-            dbr.getReplicator().start();
-            return responseStrings.SuccessCode;
+            int index = dbr.setReplicator(new Replicator(getReplicatorConfig(database, replicatorConfig)));
+            dbr.getReplicator(index).start();
+            JSONObject jon = new JSONObject();
+            jon.put("ReplicatorID",index);
+            return jon.toString();
 
 
         } catch (Exception exception) {
@@ -759,14 +875,13 @@ public class DatabaseManager {
         }
     }
 
-
-    public String replicatorStop(String dbName) {
+    public String replicatorStop(String dbName,int id) {
         if (databases.isEmpty()) {
             return responseStrings.DBNotExists;
         } else {
             DatabaseResource dbr = databases.get(dbName);
             if (dbr != null) {
-                Replicator rp = dbr.getReplicator();
+                Replicator rp = dbr.getReplicator(id);
                 if (rp != null) {
                     rp.stop();
                     dbr.setReplicator(null);
@@ -779,8 +894,7 @@ public class DatabaseManager {
         return responseStrings.ErrorCode;
     }
 
-
-    public String replicationAddChangeListener(String dbname, final String JSListener) {
+    public String replicationAddChangeListener(String dbname, int replicatorId, final String JSListener) {
 
         if (!databases.isEmpty()) {
             DatabaseResource dbr = databases.get(dbname);
@@ -788,7 +902,7 @@ public class DatabaseManager {
 
             if (dbr.getReplicatorChangeListenerToken() == null) {
 
-                Replicator replicator = dbr.getReplicator();
+                Replicator replicator = dbr.getReplicator(replicatorId);
 
                 if (replicator != null) {
                     ListenerToken replicationListenerToken = replicator.addChangeListener(new ReplicatorChangeListener() {
@@ -847,14 +961,14 @@ public class DatabaseManager {
         return responseStrings.SuccessCode;
     }
 
-    public String replicationRemoveChangeListener(String dbname) {
+    public String replicationRemoveChangeListener(String dbname,int replicatorId) {
 
         if (!databases.containsKey(dbname)) {
             return responseStrings.DBNotExists;
         }
 
         DatabaseResource dbResource = databases.get(dbname);
-        Replicator rp = dbResource.getReplicator();
+        Replicator rp = dbResource.getReplicator(replicatorId);
 
         if (dbResource.getReplicatorChangeListenerToken() != null) {
             rp.removeChangeListener(dbResource.getReplicatorChangeListenerToken());
