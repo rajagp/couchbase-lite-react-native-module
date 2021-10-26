@@ -894,13 +894,13 @@ public class DatabaseManager {
         return responseStrings.ErrorCode;
     }
 
-    public String replicationAddChangeListener(String dbname, int replicatorId, final String JSListener) {
+    public String replicationAddChangeListener(String dbname, final int replicatorId, final String JSListener) {
 
         if (!databases.isEmpty()) {
             DatabaseResource dbr = databases.get(dbname);
-            dbr.setReplicatorChangeListenerJSFunction(JSListener);
+            dbr.setReplicatorChangeListenerJSFunction(JSListener,replicatorId);
 
-            if (dbr.getReplicatorChangeListenerToken() == null) {
+            if (dbr.getReplicatorChangeListenerToken(replicatorId) == null) {
 
                 Replicator replicator = dbr.getReplicator(replicatorId);
 
@@ -932,7 +932,7 @@ public class DatabaseManager {
                                 replicatorChange.put("completed", change.getStatus().getProgress().getCompleted());
                                 replicatorChange.put("total", change.getStatus().getProgress().getTotal());
 
-                                String jsCallbackFn = ldbr.getReplicatorChangeListenerJSFunction();
+                                String jsCallbackFn = ldbr.getReplicatorChangeListenerJSFunction(replicatorId);
 
                                 if (jsCallbackFn != null && !jsCallbackFn.isEmpty()) {
                                     String params = replicatorChange.toString();
@@ -945,7 +945,7 @@ public class DatabaseManager {
                         }
                     });
 
-                    dbr.setReplicatorChangeListenerToken(replicationListenerToken);
+                    dbr.setReplicatorChangeListenerToken(replicationListenerToken,replicatorId);
                 } else {
                     return responseStrings.ReplicatorNotExists;
                 }
@@ -970,9 +970,9 @@ public class DatabaseManager {
         DatabaseResource dbResource = databases.get(dbname);
         Replicator rp = dbResource.getReplicator(replicatorId);
 
-        if (dbResource.getReplicatorChangeListenerToken() != null) {
-            rp.removeChangeListener(dbResource.getReplicatorChangeListenerToken());
-            dbResource.setReplicatorChangeListenerToken(null);
+        if (dbResource.getReplicatorChangeListenerToken(replicatorId) != null) {
+            rp.removeChangeListener(dbResource.getReplicatorChangeListenerToken(replicatorId));
+            dbResource.setReplicatorChangeListenerToken(null,replicatorId);
         } else {
             return responseStrings.ReplicatorListenerNotExists;
         }

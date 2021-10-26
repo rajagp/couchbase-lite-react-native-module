@@ -516,8 +516,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
 
     }
-
-
+    
 
     @ReactMethod
     public void replicatorStart(String dbname, ReadableMap replicatorConfig, Callback OnSuccessCallback, Callback OnErrorCallback) {

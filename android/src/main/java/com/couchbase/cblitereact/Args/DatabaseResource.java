@@ -14,13 +14,12 @@ public class DatabaseResource {
 
     private ListenerToken listenerToken;
     //replication
-    private ArrayList<Replicator> replicator;
-    private ListenerToken replicatorChangeListenerToken;
-    private String replicatorChangeListenerJSFunction;
+    private ArrayList<ReplicatorResource> replicator = new ArrayList<>();
 
     public DatabaseResource(Database db, DatabaseConfiguration config) {
         this.database = db;
         this.configuration = config;
+
     }
 
     public DatabaseResource(Database db) {
@@ -51,29 +50,31 @@ public class DatabaseResource {
         this.listenerToken = listenerToken;
     }
 
-    public Replicator getReplicator(int i) {
-        return replicator.get(i);
+    public Replicator getReplicator(int replicatorID) {
+        return replicator.get(replicatorID).getReplicator();
     }
 
     public int setReplicator(Replicator replicator) {
-        this.replicator.add(replicator);
-        return this.replicator.indexOf(replicator);
+        ReplicatorResource setreplicator = new ReplicatorResource();
+        setreplicator.setReplicator(replicator);
+        this.replicator.add(setreplicator);
+        return this.replicator.indexOf(setreplicator);
     }
 
-    public ListenerToken getReplicatorChangeListenerToken() {
-        return replicatorChangeListenerToken;
+    public ListenerToken getReplicatorChangeListenerToken(int replicatorID) {
+        return replicator.get(replicatorID).getReplicatorChangeListenerToken();
     }
 
-    public void setReplicatorChangeListenerToken(ListenerToken replicatorChangeListenerToken) {
-        this.replicatorChangeListenerToken = replicatorChangeListenerToken;
+    public void setReplicatorChangeListenerToken(ListenerToken replicatorChangeListenerToken,int replicatorID) {
+        this.replicator.get(replicatorID).setReplicatorChangeListenerToken(replicatorChangeListenerToken);
     }
 
-    public String getReplicatorChangeListenerJSFunction() {
-        return replicatorChangeListenerJSFunction;
+    public String getReplicatorChangeListenerJSFunction(int replicatorID) {
+        return this.replicator.get(replicatorID).getReplicatorChangeListenerJSFunction();
     }
 
-    public void setReplicatorChangeListenerJSFunction(String replicatorChangeListenerJSFunction) {
-        this.replicatorChangeListenerJSFunction = replicatorChangeListenerJSFunction;
+    public void setReplicatorChangeListenerJSFunction(String replicatorChangeListenerJSFunction,int replicatorID) {
+        this.replicator.get(replicatorID).setReplicatorChangeListenerJSFunction(replicatorChangeListenerJSFunction);
     }
 
 
