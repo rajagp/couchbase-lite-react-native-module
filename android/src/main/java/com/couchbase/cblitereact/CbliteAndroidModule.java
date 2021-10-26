@@ -549,7 +549,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public String replicatorStop(String dbname,int ReplicatorID) {
+    public String replicatorStop(String dbname,String ReplicatorID) {
         try {
 
             if (dbname != null) {
@@ -564,7 +564,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public String replicationRemoveListener(String dbname,int replicatorId) {
+    public String replicationRemoveListener(String dbname,String replicatorId) {
         try {
 
             if (dbname != null) {
@@ -580,7 +580,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public String replicationAddListener(String dbname, int replicatorId, String JSListener) {
+    public String replicationAddListener(String dbname, String replicatorId, String JSListener) {
         try {
 
             if (dbname != null) {

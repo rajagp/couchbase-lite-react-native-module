@@ -31,8 +31,11 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -863,10 +866,13 @@ public class DatabaseManager {
             }
 
 
-            int index = dbr.setReplicator(new Replicator(getReplicatorConfig(database, replicatorConfig)));
-            dbr.getReplicator(index).start();
+            ReplicatorConfiguration replicatorConfiguration = getReplicatorConfig(database, replicatorConfig);
+            String ID = dbr.setReplicator(new Replicator(replicatorConfiguration));
+            dbr.getReplicator(ID).start();
+
             JSONObject jon = new JSONObject();
-            jon.put("ReplicatorID",index);
+            jon.put("status",responseStrings.SuccessCode);
+            jon.put("ReplicatorID",ID);
             return jon.toString();
 
 
@@ -875,7 +881,7 @@ public class DatabaseManager {
         }
     }
 
-    public String replicatorStop(String dbName,int id) {
+    public String replicatorStop(String dbName,String id){
         if (databases.isEmpty()) {
             return responseStrings.DBNotExists;
         } else {
@@ -884,7 +890,11 @@ public class DatabaseManager {
                 Replicator rp = dbr.getReplicator(id);
                 if (rp != null) {
                     rp.stop();
-                    dbr.setReplicator(null);
+                    try {
+                        dbr.setReplicator(null);
+                    } catch (NoSuchAlgorithmException e) {
+                        return responseStrings.ErrorCode;
+                    }
                     return responseStrings.SuccessCode;
                 }
             } else {
@@ -894,7 +904,7 @@ public class DatabaseManager {
         return responseStrings.ErrorCode;
     }
 
-    public String replicationAddChangeListener(String dbname, final int replicatorId, final String JSListener) {
+    public String replicationAddChangeListener(String dbname, final String replicatorId, final String JSListener) {
 
         if (!databases.isEmpty()) {
             DatabaseResource dbr = databases.get(dbname);
@@ -961,7 +971,7 @@ public class DatabaseManager {
         return responseStrings.SuccessCode;
     }
 
-    public String replicationRemoveChangeListener(String dbname,int replicatorId) {
+    public String replicationRemoveChangeListener(String dbname,String replicatorId) {
 
         if (!databases.containsKey(dbname)) {
             return responseStrings.DBNotExists;
