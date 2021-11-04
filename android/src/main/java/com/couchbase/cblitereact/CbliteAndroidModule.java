@@ -434,9 +434,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     public String enableConsoleLogging(String domain,String loglevel) {
 
         try {
-            if (domain == null || domain.isEmpty()) {
-                return responseStrings.Missingargs+"Domain";
-            }else if (loglevel == null || loglevel.isEmpty()) {
+            if (loglevel == null || loglevel.isEmpty()) {
                 return responseStrings.Missingargs+"Loglevel";
             } else {
                 return dbMgr.enableLogging(domain, loglevel);
@@ -559,7 +557,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
             }
 
         } catch (Exception e) {
-            return responseStrings.ExceptionDB + e.getMessage();
+            return responseStrings.Exception + e.getMessage();
         }
     }
 
@@ -574,7 +572,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
             }
 
         } catch (Exception e) {
-            return responseStrings.ExceptionDB + e.getMessage();
+            return responseStrings.Exception + e.getMessage();
         }
     }
 

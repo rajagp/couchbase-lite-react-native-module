@@ -89,6 +89,10 @@ public class DatabaseResource {
         return hash;
     }
 
+    public void removeReplicator(String replicatorId) {
+        this.replicator.remove(replicatorId);
+    }
+
     public ListenerToken getReplicatorChangeListenerToken(String replicatorID) {
         return replicator.get(replicatorID).getReplicatorChangeListenerToken();
     }

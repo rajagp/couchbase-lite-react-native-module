@@ -73,7 +73,6 @@ public class DatabaseManager {
     private static Map<String, DatabaseResource> databases;
     private static Map<Integer, QueryListenerResource> queryResources;
 
-
     private static DatabaseManager instance = null;
     private ListenerToken listenerToken;
     private ResponseStrings responseStrings;
@@ -546,7 +545,6 @@ public class DatabaseManager {
         String database = args.getDbName();
         String queryString = args.getQuery();
 
-
         if (!databases.containsKey(database)) {
             return responseStrings.DBnotfound;
         }
@@ -690,12 +688,12 @@ public class DatabaseManager {
     public String enableLogging(String domain,String loglevel) {
 
         try {
-            if(domain.isEmpty()||domain==null)
+            if(domain==null||domain.isEmpty())
                 Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS);
             else
                 Database.log.getConsole().setDomains(LogDomain.valueOf(domain));
 
-            if(loglevel.isEmpty()||loglevel==null)
+            if(loglevel==null||loglevel.isEmpty())
                 Database.log.getConsole().setLevel(LogLevel.DEBUG);
             else
                 Database.log.getConsole().setLevel(LogLevel.valueOf(loglevel));
@@ -890,11 +888,7 @@ public class DatabaseManager {
                 Replicator rp = dbr.getReplicator(id);
                 if (rp != null) {
                     rp.stop();
-                    try {
-                        dbr.setReplicator(null);
-                    } catch (NoSuchAlgorithmException e) {
-                        return responseStrings.ErrorCode;
-                    }
+                    dbr.removeReplicator(id);
                     return responseStrings.SuccessCode;
                 }
             } else {
