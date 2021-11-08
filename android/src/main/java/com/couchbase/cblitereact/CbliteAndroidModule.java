@@ -14,6 +14,7 @@ import com.couchbase.cblitereact.util.DatabaseManager;
 
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -429,7 +430,6 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
     }
 
-
     @ReactMethod(isBlockingSynchronousMethod = true)
     public String enableConsoleLogging(String domain,String loglevel) {
 
@@ -447,7 +447,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void query(String dbname, String query, Callback OnSuccessCallback, Callback OnErrorCallback) {
+    public void executeQuery(String dbname, String query, Callback OnSuccessCallback, Callback OnErrorCallback) {
 
         try {
             if (dbname == null || dbname.isEmpty()) {
@@ -467,6 +467,31 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
         } catch (Exception e) {
             OnErrorCallback.invoke(responseStrings.ExceptionQuery + e.getMessage());
+        }
+
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String createQuery(String dbname, String query) {
+
+        try {
+            if (dbname == null || dbname.isEmpty()) {
+                return responseStrings.MissingargsDBN;
+            } else if (query == null || query.isEmpty()) {
+                return responseStrings.Missingargs + "Query";
+            } else {
+                QueryArgs qArgs = new QueryArgs(dbname, query);
+                String response = dbMgr.createQuery(qArgs);
+                if (!response.equals(responseStrings.DBnotfound) && !response.equals(responseStrings.ExceptionInvalidQuery) && !response.equals(responseStrings.invaliddata)) {
+                    return response;
+                } else {
+                    return response;
+                }
+            }
+
+
+        } catch (Exception e) {
+            return (responseStrings.ExceptionQuery + e.getMessage());
         }
 
     }
@@ -514,34 +539,34 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
 
     }
-    
 
-    @ReactMethod
-    public void replicatorStart(String dbname, ReadableMap replicatorConfig, Callback OnSuccessCallback, Callback OnErrorCallback) {
+
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String createReplicator(String dbname, ReadableMap replicatorConfig) {
 
         try {
 
-            String response;
+            JSONObject response;
             if (replicatorConfig == null) {
-                OnErrorCallback.invoke(responseStrings.Missingargs + "ReplicatorConfig");
-                return;
+                return (responseStrings.Missingargs + "ReplicatorConfig");
             }
             if (dbname != null) {
 
-                response = dbMgr.replicatorStart(dbname, replicatorConfig);
+                response = dbMgr.createReplicator(dbname, replicatorConfig);
 
-                if (response.equals(responseStrings.DBExists) || response.contains("ReplicatorID")) {
-                    OnSuccessCallback.invoke(response);
+                if (response.has("ReplicatorID")) {
+                    return (response.getString("ReplicatorID"));
                 } else {
-                    OnErrorCallback.invoke(response);
+                    return (response.getString(responseStrings.ErrorCode));
                 }
 
             } else {
-                OnErrorCallback.invoke(responseStrings.MissingargsDBN);
+                return (responseStrings.MissingargsDBN);
             }
 
         } catch (Exception e) {
-            OnErrorCallback.invoke(responseStrings.Exception + e.getMessage());
+            return responseStrings.Exception + e.getMessage();
         }
 
     }
@@ -552,6 +577,21 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
             if (dbname != null) {
                 return dbMgr.replicatorStop(dbname,ReplicatorID);
+            } else {
+                return responseStrings.MissingargsDBN;
+            }
+
+        } catch (Exception e) {
+            return responseStrings.Exception + e.getMessage();
+        }
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String replicatorStart(String dbname,String ReplicatorID) {
+        try {
+
+            if (dbname != null) {
+                return dbMgr.replicatorStart(dbname,ReplicatorID);
             } else {
                 return responseStrings.MissingargsDBN;
             }
@@ -575,7 +615,6 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
             return responseStrings.Exception + e.getMessage();
         }
     }
-
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     public String replicationAddListener(String dbname, String replicatorId, String JSListener) {

@@ -19,7 +19,7 @@ public class ReplicatorResource {
     }
 
     public ListenerToken getReplicatorChangeListenerToken() {
-        return replicatorChangeListenerToken;
+        return this.replicatorChangeListenerToken;
     }
 
     public void setReplicatorChangeListenerToken(ListenerToken replicatorChangeListenerToken) {

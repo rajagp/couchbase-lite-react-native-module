@@ -20,8 +20,8 @@ public class ResponseStrings {
     public static String ReplicatorNotExists="Replicator does not exists";
     public static String ReplicatorListenerExists="Replicator listener already exists";
     public static String QueryListenerExists="Query listener already exists";
-    public static String QueryNotListenerExists="Query listener not exists";
-    public static String QueryResourceNotExists="Query resource not exists";
+    public static String QueryNotListenerExists="Query listener does not exists";
+    public static String QueryResourceNotExists="Query resource does not exists";
     public static String DBorQueryNotListenerExists="Database or Query Resource not exists";
     public static String ReplicatorListenerNotExists="Replicator listener does not exists";
     public static String DocCreated="Document Created";
@@ -32,6 +32,7 @@ public class ResponseStrings {
     public static String ExceptionDB="Error while Creating Database : ";
     public static String ExceptionQuery="Error while executing query : ";
     public static String ExceptionInvalidQuery="Error while executing query : Invalid Query";
+    public static String ExceptionQuerynotExists="Query not exists, Please create or exceute this query fist.";
     public static String ExceptionDBclose="Error while Closing Database : ";
     public static String ExceptionDBdelete="Error while Deleting Database : ";
     public static String ExceptionDBcopy="Error while Copying Database : ";

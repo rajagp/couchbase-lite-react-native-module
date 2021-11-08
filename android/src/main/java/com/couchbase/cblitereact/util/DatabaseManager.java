@@ -71,7 +71,6 @@ import com.couchbase.cblitereact.strings.*;
 public class DatabaseManager {
 
     private static Map<String, DatabaseResource> databases;
-    private static Map<Integer, QueryListenerResource> queryResources;
 
     private static DatabaseManager instance = null;
     private ListenerToken listenerToken;
@@ -88,7 +87,7 @@ public class DatabaseManager {
         }
         DatabaseManager.context = context;
         databases = new HashMap<>();
-        queryResources = new HashMap<>();
+
         CouchbaseLite.init(context);
         return instance;
     }
@@ -554,10 +553,18 @@ public class DatabaseManager {
         Query query = db.createQuery(queryString);
         ResultSet rows = null;
         try {
-            rows = query.execute();
+            if(dbResource.getQuery(query.explain().hashCode())!=null) {
+                rows = dbResource.getQuery(query.explain().hashCode()).execute();
+            }
+            else {
+                dbResource.setQuery(query);
+                rows = dbResource.getQuery(query.explain().hashCode()).execute();
+            }
+
         } catch (CouchbaseLiteException e) {
             return responseStrings.ExceptionInvalidQuery;
         }
+
         Result row;
         JSONArray json = new JSONArray();
         while ((row = rows.next()) != null) {
@@ -574,31 +581,61 @@ public class DatabaseManager {
 
     }
 
+    public String createQuery(QueryArgs args) {
+
+        String database = args.getDbName();
+        String queryString = args.getQuery();
+
+        if (!databases.containsKey(database)) {
+            return responseStrings.DBnotfound;
+        }
+        try {
+
+        DatabaseResource dbResource = databases.get(database);
+        Database db = dbResource.getDatabase();
+        Query query = db.createQuery(queryString);
+
+        Integer queryID = dbResource.setQuery(query);
+        return queryID.toString();
+
+        } catch (CouchbaseLiteException e) {
+            return responseStrings.ExceptionQuery + e.getMessage();
+        }
+
+    }
+
     public String registerForQueryChanges(String dbname, String query, final String jsListener) {
 
         if (!databases.isEmpty()) {
             String dbName = dbname;
             String callbackFn = jsListener;
 
-            DatabaseResource dbr = databases.get(dbName);
+            final DatabaseResource dbr = databases.get(dbName);
             if (dbr != null) {
                 Database db = dbr.getDatabase();
                 Query newQuery = db.createQuery(query);
+
                 try {
-                    if (queryResources.get(newQuery.explain().hashCode()) != null && queryResources.get(newQuery.explain().hashCode()).getQueryChangeListenerToken() != null) {
+
+                    final Integer newQueryID = newQuery.explain().hashCode();
+
+                    if(dbr.getQuery(newQueryID) == null)
+                    {
+                        dbr.setQuery(newQuery);
+                    }
+                    else if (dbr.getQuery(newQueryID) != null && dbr.getQueryChangeListenerToken(newQueryID) != null) {
                         return responseStrings.QueryListenerExists;
                     } else {
-                        QueryListenerResource qlr = new QueryListenerResource();
-                        qlr.setQuery(newQuery);
-                        qlr.setQueryChangeListenerJSFunction(callbackFn);
 
-                        ListenerToken queryListenerToken = newQuery.addChangeListener(new QueryChangeListener() {
+                        dbr.setQueryChangeListenerJSFunction(callbackFn,newQueryID);
+
+                        ListenerToken queryListenerToken = dbr.getQuery(newQueryID).addChangeListener(new QueryChangeListener() {
                             @Override
                             public void changed(@NonNull QueryChange change) {
-                                QueryListenerResource qr = null;
+
                                 try {
-                                    qr = queryResources.get(change.getQuery().explain().hashCode());
-                                    String jsCallback = qr.getQueryChangeListenerJSFunction();
+
+                                    String jsCallback = dbr.getQueryChangeListenerJSFunction(newQueryID);
 
                                     if (change.getError() != null) {
                                         JSONObject listenerResults = new JSONObject();
@@ -624,14 +661,13 @@ public class DatabaseManager {
                                             context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(jsCallback, params);
                                         }
                                     }
-                                } catch (CouchbaseLiteException | JSONException e) {
+                                } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
 
                             }
                         });
-                        qlr.setQueryChangeListenerToken(queryListenerToken);
-                        queryResources.put(newQuery.explain().hashCode(), qlr);
+                        dbr.setQueryChangeListenerToken(queryListenerToken,newQueryID);
                     }
                 } catch (CouchbaseLiteException e) {
                     e.printStackTrace();
@@ -648,28 +684,26 @@ public class DatabaseManager {
 
     public String deregisterForQueryChanges(String dbname, String queryString) {
 
-        if (queryResources.isEmpty()) {
-            return responseStrings.DBorQueryNotListenerExists;
-        } else {
+
             try {
                 DatabaseResource dbr = databases.get(dbname);
 
                 if (dbr != null) {
                     Database database = dbr.getDatabase();
                     Query query = database.createQuery(queryString);
-                    QueryListenerResource qlr = queryResources.get(query.explain().hashCode());
+                    Integer queryID = query.explain().hashCode();
 
-                    if (qlr != null) {
-                        ListenerToken token = qlr.getQueryChangeListenerToken();
+                    if (dbr.getQuery(queryID) != null) {
+                        ListenerToken token = dbr.getQueryChangeListenerToken(queryID);
 
                         if (token != null) {
-                            qlr.getQuery().removeChangeListener(token);
-                            qlr.setQueryChangeListenerToken(null);
+                            dbr.getQuery(queryID).removeChangeListener(token);
+                            dbr.setQueryChangeListenerToken(null,queryID);
                         } else {
                             return responseStrings.QueryNotListenerExists;
                         }
                     } else {
-                        return responseStrings.QueryResourceNotExists;
+                        return responseStrings.ExceptionQuerynotExists;
                     }
 
                 } else {
@@ -679,11 +713,10 @@ public class DatabaseManager {
                 e.printStackTrace();
             }
 
-        }
+
         return responseStrings.SuccessCode;
 
     }
-
 
     public String enableLogging(String domain,String loglevel) {
 
@@ -704,6 +737,7 @@ public class DatabaseManager {
         } catch (Exception exception) {
             return responseStrings.Exception + exception.getMessage();
         }
+
     }
 
 
@@ -713,13 +747,13 @@ public class DatabaseManager {
         ReplicatorConfiguration config = null;
         ReadableMap dictionary = repConfig;
 
-
         try {
             String dbName = dictionary.hasKey("databaseName") ? dictionary.getString("databaseName").toLowerCase() : null;
             String targetUrl = dictionary.hasKey("target") ? dictionary.getString("target") : null;
 
 
             URI url = new URI(targetUrl);
+
 
             if (database.getName().equals(dbName)) {
                 config = new ReplicatorConfiguration(database, new URLEndpoint(url));
@@ -829,21 +863,25 @@ public class DatabaseManager {
         return config;
     }
 
-    public String replicatorStart(String dbname, ReadableMap replicatorConfig) {
+    public JSONObject createReplicator(String dbname, ReadableMap replicatorConfig) {
 
+        JSONObject response = new JSONObject();
         try {
 
             if (databases.isEmpty()) {
-                return responseStrings.DBNotExists;
+                response.put(responseStrings.ErrorCode,responseStrings.DBNotExists);
+                return response;
             }
-            String response;
+
             Database database;
 
             if (dbname == null || dbname.isEmpty()) {
-                return responseStrings.MissingargsDBN;
+                response.put(responseStrings.ErrorCode, responseStrings.MissingargsDBN);
+                return response;
             }
             if (!replicatorConfig.hasKey("target") || replicatorConfig.getString("target") == null || replicatorConfig.getString("target").isEmpty()) {
-                return responseStrings.Missingargs + "Target Url";
+                response.put(responseStrings.ErrorCode,responseStrings.Missingargs + "Target Url");
+                return response;
             }
 
 
@@ -853,10 +891,11 @@ public class DatabaseManager {
             } else {
                 DatabaseArgs dbArgs = new DatabaseArgs(dbname);
 
-                response = openOrCreateDatabase(dbArgs);
+                String dbresponse = openOrCreateDatabase(dbArgs);
 
-                if (response != responseStrings.SuccessCode) {
-                    return responseStrings.ErrorCode + " Message : couldn't open database for replication.";
+                if (dbresponse != responseStrings.SuccessCode || dbresponse != responseStrings.DBExists ) {
+                    response.put(responseStrings.ErrorCode, responseStrings.ErrorCode + " Message : couldn't open database for replication.");
+                    return response;
                 } else {
                     DatabaseResource dbr2 = getDatabases().get(dbname);
                     database = dbr2.getDatabase();
@@ -865,17 +904,18 @@ public class DatabaseManager {
 
 
             ReplicatorConfiguration replicatorConfiguration = getReplicatorConfig(database, replicatorConfig);
-            String ID = dbr.setReplicator(new Replicator(replicatorConfiguration));
-            dbr.getReplicator(ID).start();
+            Replicator newReplicator = new Replicator(replicatorConfiguration);
+
+            String ID = dbr.setReplicator(newReplicator);
 
             JSONObject jon = new JSONObject();
-            jon.put("status",responseStrings.SuccessCode);
             jon.put("ReplicatorID",ID);
-            return jon.toString();
+            return jon;
 
 
         } catch (Exception exception) {
-            return responseStrings.Exception + exception.getMessage();
+            exception.printStackTrace();
+            return response;
         }
     }
 
@@ -885,10 +925,26 @@ public class DatabaseManager {
         } else {
             DatabaseResource dbr = databases.get(dbName);
             if (dbr != null) {
-                Replicator rp = dbr.getReplicator(id);
-                if (rp != null) {
-                    rp.stop();
+                if (dbr.getReplicator(id) != null) {
+                    dbr.getReplicator(id).stop();
                     dbr.removeReplicator(id);
+                    return responseStrings.SuccessCode;
+                }
+            } else {
+                return responseStrings.ReplicatorNotExists;
+            }
+        }
+        return responseStrings.ErrorCode;
+    }
+
+    public String replicatorStart(String dbName,String id){
+        if (databases.isEmpty()) {
+            return responseStrings.DBNotExists;
+        } else {
+            DatabaseResource dbr = databases.get(dbName);
+            if (dbr != null) {
+                if (dbr.getReplicator(id) != null) {
+                    dbr.getReplicator(id).start();
                     return responseStrings.SuccessCode;
                 }
             } else {
@@ -909,7 +965,7 @@ public class DatabaseManager {
                 Replicator replicator = dbr.getReplicator(replicatorId);
 
                 if (replicator != null) {
-                    ListenerToken replicationListenerToken = replicator.addChangeListener(new ReplicatorChangeListener() {
+                    ListenerToken replicationListenerToken = dbr.getReplicator(replicatorId).addChangeListener(new ReplicatorChangeListener() {
                         @Override
                         public void changed(@NonNull ReplicatorChange change) {
                             DatabaseResource ldbr = databases.get(change.getReplicator().getConfig().getDatabase().getName());
