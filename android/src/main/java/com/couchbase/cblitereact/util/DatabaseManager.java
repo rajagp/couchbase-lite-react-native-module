@@ -2,7 +2,7 @@ package com.couchbase.cblitereact.util;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.os.Bundle;
+
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -623,7 +623,8 @@ public class DatabaseManager {
                     {
                         dbr.setQuery(newQuery);
                     }
-                    else if (dbr.getQuery(newQueryID) != null && dbr.getQueryChangeListenerToken(newQueryID) != null) {
+
+                    if (dbr.getQuery(newQueryID) != null && dbr.getQueryChangeListenerToken(newQueryID) != null) {
                         return responseStrings.QueryListenerExists;
                     } else {
 
@@ -712,7 +713,6 @@ public class DatabaseManager {
             } catch (CouchbaseLiteException e) {
                 e.printStackTrace();
             }
-
 
         return responseStrings.SuccessCode;
 

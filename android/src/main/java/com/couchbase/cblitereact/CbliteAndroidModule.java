@@ -1,5 +1,3 @@
-// CbliteAndroidModule.java
-
 package com.couchbase.cblitereact;
 
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -17,9 +15,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -75,7 +72,6 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
     }
 
-
     @ReactMethod
     public void copyDatabase(String currentdbname, String newDBName, @Nullable ReadableMap currentConfig, @Nullable ReadableMap newConfig, Callback OnSuccessCallback, Callback OnErrorCallback) {
         try {
@@ -129,44 +125,9 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
         }
     }
 
-    @ReactMethod(isBlockingSynchronousMethod = true)
-    public String deleteDatabase(String dbname) {
-        try {
-            if (dbname != null && !dbname.isEmpty()) {
-                return dbMgr.deleteDatabase(dbname);
-            } else {
-                return responseStrings.MissingargsDBN;
-            }
-        } catch (Exception e) {
-            return (responseStrings.ExceptionDBdelete + e.getMessage());
-        }
-    }
-
-    @ReactMethod(isBlockingSynchronousMethod = true)
-    public String databaseExists(String dbname, ReadableMap config) {
-        try {
-            if (dbname != null) {
-                DatabaseArgs databaseArgs = null;
-                if (config != null) {
-                    databaseArgs = new DatabaseArgs(dbname, config);
-                } else {
-                    databaseArgs = new DatabaseArgs(dbname);
-                }
-
-                return dbMgr.databaseExists(databaseArgs);
-
-            } else {
-                return responseStrings.MissingargsDBN;
-            }
-        } catch (Exception e) {
-            return (responseStrings.ExceptionDBdelete + e.getMessage());
-        }
-    }
-
     @ReactMethod
     public void getDocument(String dbname, String docid, Callback OnSuccessCallback, Callback OnErrorCallback) {
         try {
-
 
             DocumentArgs documentArgs = null;
 
@@ -255,6 +216,40 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
             }
         } catch (Exception e) {
             OnErrorCallback.invoke(responseStrings.Exception + e.getMessage());
+        }
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String deleteDatabase(String dbname) {
+        try {
+            if (dbname != null && !dbname.isEmpty()) {
+                return dbMgr.deleteDatabase(dbname);
+            } else {
+                return responseStrings.MissingargsDBN;
+            }
+        } catch (Exception e) {
+            return (responseStrings.ExceptionDBdelete + e.getMessage());
+        }
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public String databaseExists(String dbname, ReadableMap config) {
+        try {
+            if (dbname != null) {
+                DatabaseArgs databaseArgs = null;
+                if (config != null) {
+                    databaseArgs = new DatabaseArgs(dbname, config);
+                } else {
+                    databaseArgs = new DatabaseArgs(dbname);
+                }
+
+                return dbMgr.databaseExists(databaseArgs);
+
+            } else {
+                return responseStrings.MissingargsDBN;
+            }
+        } catch (Exception e) {
+            return (responseStrings.ExceptionDBdelete + e.getMessage());
         }
     }
 
@@ -447,7 +442,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void executeQuery(String dbname, String query, Callback OnSuccessCallback, Callback OnErrorCallback) {
+    public void query(String dbname, String query, Callback OnSuccessCallback, Callback OnErrorCallback) {
 
         try {
             if (dbname == null || dbname.isEmpty()) {
@@ -489,7 +484,6 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
                 }
             }
 
-
         } catch (Exception e) {
             return (responseStrings.ExceptionQuery + e.getMessage());
         }
@@ -497,7 +491,7 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public String addQueryChangeListener(String dbname,String query, String listener) {
+    public String queryWithChangeListener(String dbname,String query, String listener) {
 
         try {
 
