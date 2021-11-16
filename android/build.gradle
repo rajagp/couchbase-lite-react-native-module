@@ -70,9 +70,6 @@ repositories {
         // Android JSC is installed from npm
         url "$rootDir/../node_modules/jsc-android/dist"
     }
-    maven {
-        url "https://mobile.maven.couchbase.com/maven2/dev/"
-    }
     flatDir {
         dirs 'libs'
     }
@@ -81,7 +78,7 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.couchbase.lite:couchbase-lite-android-ee:3.0.0-beta02'
+    implementation rootProject.dependencies.module("com.couchbase.lite:couchbase-lite-android-ee:3.0.0-beta02")
 
 }
 
