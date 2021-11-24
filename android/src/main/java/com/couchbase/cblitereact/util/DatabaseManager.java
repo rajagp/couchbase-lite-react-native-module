@@ -3,7 +3,8 @@ package com.couchbase.cblitereact.util;
 import android.content.Context;
 import android.content.res.AssetManager;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -45,9 +46,11 @@ import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryChange;
 import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorActivityLevel;
 import com.couchbase.lite.ReplicatorChange;
 import com.couchbase.lite.ReplicatorChangeListener;
 import com.couchbase.lite.ReplicatorConfiguration;
+import com.couchbase.lite.ReplicatorStatus;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SessionAuthenticator;
@@ -162,6 +165,8 @@ public class DatabaseManager {
                 DatabaseResource resource = databases.get(dbName);
                 resource.getDatabase().close();
                 databases.remove(dbName);
+
+
                 return responseStrings.SuccessCode;
             } else {
                 return responseStrings.MissingargsDBN;
@@ -294,7 +299,7 @@ public class DatabaseManager {
         Document document = null;
 
         if (databases.get(dbName) != null) {
-            document = databases.get(dbName).getDatabase().getDocument(args.docid);
+            document = databases.get(dbName).getDatabase().getDocument(docId);
         } else {
             return responseStrings.DBnotfound;
         }
@@ -927,7 +932,10 @@ public class DatabaseManager {
             if (dbr != null) {
                 if (dbr.getReplicator(id) != null) {
                     dbr.getReplicator(id).stop();
+
+                    if(dbr.getReplicatorChangeListenerToken(id)==null)
                     dbr.removeReplicator(id);
+
                     return responseStrings.SuccessCode;
                 }
             } else {
@@ -989,10 +997,23 @@ public class DatabaseManager {
                                         replicatorChange.put("status", "idle");
                                 }
 
+                                if(change.getStatus().getError()!=null&&!change.getStatus().getError().getMessage().isEmpty()) {
+                                    replicatorChange.put("error", change.getStatus().getError().getMessage());
+                                    replicatorChange.put("errorCode", change.getStatus().getError().getCode());
+                                }
+
                                 replicatorChange.put("completed", change.getStatus().getProgress().getCompleted());
                                 replicatorChange.put("total", change.getStatus().getProgress().getTotal());
 
-                                String jsCallbackFn = ldbr.getReplicatorChangeListenerJSFunction(replicatorId);
+                                String jsCallbackFn=null;
+
+                                try {
+                                    jsCallbackFn = ldbr.getReplicatorChangeListenerJSFunction(replicatorId);
+                                }
+                                catch (NullPointerException ex)
+                                {
+                                    ex.printStackTrace();
+                                }
 
                                 if (jsCallbackFn != null && !jsCallbackFn.isEmpty()) {
                                     String params = replicatorChange.toString();
@@ -1031,8 +1052,14 @@ public class DatabaseManager {
         Replicator rp = dbResource.getReplicator(replicatorId);
 
         if (dbResource.getReplicatorChangeListenerToken(replicatorId) != null) {
+
             rp.removeChangeListener(dbResource.getReplicatorChangeListenerToken(replicatorId));
             dbResource.setReplicatorChangeListenerToken(null,replicatorId);
+            if(rp.getStatus().getActivityLevel() == ReplicatorActivityLevel.STOPPED)
+            {
+                dbResource.removeReplicator(replicatorId);
+            }
+
         } else {
             return responseStrings.ReplicatorListenerNotExists;
         }

@@ -29,7 +29,6 @@ public class DatabaseResource {
     public DatabaseResource(Database db, DatabaseConfiguration config) {
         this.database = db;
         this.configuration = config;
-
     }
 
     public DatabaseResource(Database db) {

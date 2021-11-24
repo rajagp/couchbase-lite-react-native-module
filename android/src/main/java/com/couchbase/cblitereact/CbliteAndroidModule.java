@@ -32,14 +32,13 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
     public CbliteAndroidModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-        dbMgr = DatabaseManager.getSharedInstance(reactContext);
+        this.dbMgr = DatabaseManager.getSharedInstance(reactContext);
     }
 
     @Override
     public String getName() {
         return TAG;
     }
-
 
     @ReactMethod
     public void CreateOrOpenDatabase(String dbname, @Nullable ReadableMap config, Callback OnSuccessCallback, Callback OnErrorCallback) {
@@ -169,7 +168,6 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
             } else if (data == null || data.isEmpty()) {
                 OnErrorCallback.invoke(responseStrings.MissingargsDCData);
             } else {
-                try {
                     documentArgs = new DocumentArgs(dbname, docid, data);
                     String response = dbMgr.setDocument(documentArgs);
 
@@ -177,10 +175,6 @@ public class CbliteAndroidModule extends ReactContextBaseJavaModule {
                         OnSuccessCallback.invoke(response);
                     else
                         OnErrorCallback.invoke(response);
-
-                } catch (JSONException exception) {
-                    OnErrorCallback.invoke(responseStrings.invalidargsDCData);
-                }
 
             }
         } catch (Exception e) {
