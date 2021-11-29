@@ -1,11 +1,14 @@
 package com.couchbase.cblitereact.Args;
 
+import com.facebook.react.bridge.ReadableMap;
+
 import org.json.JSONException;
 
 public class DocumentArgs {
 
     public String docid;
     public String data;
+    public ReadableMap jsondata;
     public String databaseName;
 
     public String getDocid() {
@@ -23,10 +26,17 @@ public class DocumentArgs {
     protected DocumentArgs() {
     }
 
-    public DocumentArgs(String dbname, String docid, String data) throws JSONException {
+    public DocumentArgs(String dbname, String docid, String data) {
         this.docid = docid;
         this.databaseName = dbname;
         this.data = data;
+
+    }
+
+    public DocumentArgs(String dbname, String docid, ReadableMap jsondata) throws JSONException {
+        this.docid = docid;
+        this.databaseName = dbname;
+        this.jsondata = jsondata;
 
     }
 

@@ -70,17 +70,16 @@ repositories {
         // Android JSC is installed from npm
         url "$rootDir/../node_modules/jsc-android/dist"
     }
-    flatDir {
-        dirs 'libs'
-    }
+
 }
 
 dependencies {
     //noinspection GradleDynamicVersion
-    implementation 'com.facebook.react:react-native:+'
-    //compileOnly fileTree(dir: "libs", include: ["*.aar"])
-    compileOnly fileTree(dir: "$rootDir/../android/app/libs", include: ["couchbase-lite-android-ee-3.0.0.aar"])
+    implementation 'com.facebook.react:react-native:+';
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation rootProject.dependencies.module(safeExtGet('cblVersion', 'com.couchbase.lite:versionName:versionCode'));
 }
+
 
 def configureReactNativePom(def pom) {
     def packageJson = new groovy.json.JsonSlurper().parseText(file('../package.json').text)

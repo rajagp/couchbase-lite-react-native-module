@@ -4,12 +4,12 @@ public class ResponseStrings {
 
 
     public static String MissingargsDBN="Missing Arguments : Database Name";
-   public static String MissingargsDBD="Missing Arguments : Directory";
+    public static String MissingargsDBD="Missing Arguments : Directory";
     public static String MissingargsDCID="Missing Arguments : Document ID";
     public static String MissingargsDCData="Missing Arguments : Document Data";
- public static String MissingargsIN="Missing Arguments : Index Name";
- public static String MissingargsINEX="Missing Arguments : Index Expressions";
- public static String NullDoc="Document is Null";
+    public static String MissingargsIN="Missing Arguments : Index Name";
+    public static String MissingargsINEX="Missing Arguments : Index Expressions";
+    public static String NullDoc="Document is Null";
     public static String DBCreated="Database Created";
     public static String DBClosed="Database Closed";
     public static String DBDeleted="Database Deleted";
@@ -17,6 +17,13 @@ public class ResponseStrings {
     public static String SuccessCode="Success";
     public static String ErrorCode="Error";
     public static String DBNotExists="Database not exists";
+    public static String ReplicatorNotExists="Replicator does not exists";
+    public static String ReplicatorListenerExists="Replicator listener already exists";
+    public static String QueryListenerExists="Query listener already exists";
+    public static String QueryNotListenerExists="Query listener does not exists";
+    public static String QueryResourceNotExists="Query resource does not exists";
+    public static String DBorQueryNotListenerExists="Database or Query Resource not exists";
+    public static String ReplicatorListenerNotExists="Replicator listener does not exists";
     public static String DocCreated="Document Created";
     public static String DocDeleted="Document Deleted";
     public static String listenerTokenExists="Database listener already registered with database. Please remove the database listener before registering new one.";
@@ -25,6 +32,7 @@ public class ResponseStrings {
     public static String ExceptionDB="Error while Creating Database : ";
     public static String ExceptionQuery="Error while executing query : ";
     public static String ExceptionInvalidQuery="Error while executing query : Invalid Query";
+    public static String ExceptionQuerynotExists="Query not exists, Please create or exceute this query fist.";
     public static String ExceptionDBclose="Error while Closing Database : ";
     public static String ExceptionDBdelete="Error while Deleting Database : ";
     public static String ExceptionDBcopy="Error while Copying Database : ";
