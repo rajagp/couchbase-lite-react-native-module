@@ -190,7 +190,7 @@ To use the module, open your react-native app project using a suitable IDE and d
 import CBL from 'react-native-cblite';
 ```
 
-**Create Database**
+### Create Database
 ```
 let config = {
     encryptionKey: "{{ENCRYPTION_KEY}}",
@@ -228,7 +228,7 @@ _Example Response_
 
 
 
-**Close Database**
+### Close Database
 
 ```
 let response = CBL.closeDatabase(dbName,function(rs) { 
@@ -252,7 +252,7 @@ _Example Response_
 
 
 
-**Delete Database**
+### Delete Database
 
 ```
 let response = CBL.deleteDatabase(dbName);
@@ -271,7 +271,7 @@ _Example Response_
 
 
 
-**Database Exists**
+### Database Exists
 
 ```
 
@@ -287,7 +287,8 @@ _Params_
     * directory: Path of the database directory as string.
     * encryptionKey: Encryption key as string.
 
-#### Example Response from Remove Database Change Listener:
+_Example Response_
+
  * _"Database already exists"_
  * _"Database not exists"_
  * _"Error"_
@@ -295,7 +296,7 @@ _Params_
 
 
 
-**Create/Update Document**
+### Create/Update Document
 
 ```
 let docid = "{{DOCUMENT_ID}}";
@@ -332,7 +333,7 @@ _Example Response_
 
 
 
-**Get Document**
+### Get Document
 
 ```
 let docid = "{{DOCUMENT_ID}}";
@@ -362,7 +363,7 @@ _Example Response_
  * _"Error while Fetching Document : \{exception\}"_
 
 
-**Save Blob**
+### Save Blob
 
 ```
 var blobMeta = CBL.setBlob(dbName,contentType,blob);
@@ -383,7 +384,7 @@ _Example Response_
  * _"Error while Creating Blob : \{exception\}"_
 
 
-**Get Blob**
+### Get Blob
 
 ```
 CBL.getBlob(dbName,blobMeta,this.success_callback,this.error_callback);
@@ -409,7 +410,7 @@ _Example Response_
 
 
 
-**Add Database Change Listener**
+### Add Database Change Listener
 
 ```
 import {DeviceEventEmitter} from 'react-native';
@@ -450,7 +451,7 @@ _Example Response in eventResponse_
 
 
 
-**Remove Database Change Listener**
+### Remove Database Change Listener
 
 ```
 
@@ -473,7 +474,8 @@ _Params_
   * _JSListenerEvent_: String name of the Javascript listener event.
 
 
-#### Example Response from Remove Database Change Listener:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Database listener not registered with database."_
@@ -481,7 +483,7 @@ _Params_
 
 
 
-**Create Value Index**
+### Create Value Index
 
 ```
 
@@ -499,7 +501,8 @@ _Params_
   * indexExpressions: Array of Expressions of index to be created.
  
 
-#### Example Response from Remove Create value index:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Missing Arguments : Database Name"_
@@ -508,7 +511,7 @@ _Params_
 
 
 
-**Create FTS Index**
+### Create FTS Index
 
 ```
 
@@ -530,7 +533,8 @@ _Params_
   * indexExpressions: Array of Expressions of index to be created.
  
 
-#### Example Response from Create FTS index:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Missing Arguments : Database Name"_
@@ -540,7 +544,7 @@ _Params_
 
 
 
-**Delete Index**
+### Delete Index
 
 ```
 
@@ -556,7 +560,8 @@ _Params_
   * indexName: String name of index to be deleted.
  
 
-#### Example Response from Remove Database Change Listener:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Missing Arguments : Database Name"_
@@ -565,7 +570,7 @@ _Params_
 
 
 
-**Enable Logging**
+### Enable Logging
 
 ```
  var response = CouchbaseNativeModule.enableLogging();
@@ -573,14 +578,15 @@ _Params_
 ```
 
 
-#### Example Response from Enable Logging:
+_Example Response_
+
  * _"Success"_
  * _"Error"_
 
 
 
 
-**Query**
+### Query
 
 ```
 
@@ -602,7 +608,8 @@ _Params_
   * Success Callback:Asynchronously triggers when the function succeeds execution. Contains string Response as param, If there is no exception while execution the param can contain one of the following responses.
 
 
-#### Example Response from Query:
+_Example Response_
+
  * _"[Query response]"_
  * _"Database not found"_
  * _"Missing Arguments : Database Name"_
@@ -611,7 +618,7 @@ _Params_
 
 
 
-**Live Query**
+### Live Query
 
 ```
 
@@ -637,16 +644,20 @@ _Params_
   * _JSListenerEvent_: String name of the Javascript listener event.
 
 
-#### Example Response from Live Query:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Missing Arguments : Database Name"_
  * _"Missing Arguments : Query"_
 
 
+_Example Response in eventResponse_
+   * _{{"DATABASE_NAME}": {{DocumentJson}}}_
+   
 
 
-**Stop Live Query**
+### Stop Live Query
 
 ```
   let query = "{{QUERY_STRING}}"; //e.g "select * from users"
@@ -666,7 +677,8 @@ _Params_
   * query: String query to be executed.
 
 
-#### Example Response from Stop Live Query:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Query not found"_
@@ -675,7 +687,7 @@ _Params_
 
 
 
-**Create Replicator**
+### Create Replicator
 
 ```
     var config = {
@@ -701,7 +713,8 @@ _Params_
   * config: Configuration object for replicator.
 
 
-#### Example Response from Create Replicator:
+_Example Response_
+
  * _"{{REPLICATOR_ID}}"_
  * _"Database not found"_
  * _"Missing Arguments : Database Name"_
@@ -710,7 +723,7 @@ _Params_
 
 
 
-**Start Replicator**
+### Start Replicator
 
 ```
   let startReplicatorResponse = await CouchbaseNativeModule.replicatorStart(dbname, ReplicatorID);
@@ -725,7 +738,8 @@ _Params_
   * ReplicatorID: String ID of replicator, obtained from CreateReplicator function.
 
 
-#### Example Response from Start Replicator:
+_Example Response_
+
  * _"Success"_
  * _"Failed"_
  * _"Database not found"_
@@ -736,7 +750,7 @@ _Params_
 
 
 
-**Stop Replicator**
+### Stop Replicator
 
 ```
   let stopReplicatorResponse = await CouchbaseNativeModule.replicatorStop(dbname, ReplicatorID);
@@ -751,7 +765,8 @@ _Params_
   * ReplicatorID: String ID of replicator, obtained from CreateReplicator function.
 
 
-#### Example Response from Stop Replicator:
+_Example Response_
+
  * _"Success"_
  * _"Failed"_
  * _"Database not found"_
@@ -762,7 +777,7 @@ _Params_
 
 
 
-**Create Replicator Listener**
+### Create Replicator Listener
 
 ```
   let JSListenerEvent = "OnReplicatorChanged"
@@ -784,7 +799,8 @@ _Params_
   * _JSListenerEvent_: String name of the Javascript listener event.
 
 
-#### Example Response from Create Replicator Listener:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Replicator not found"_
@@ -793,9 +809,15 @@ _Params_
  * _"Missing Arguments : JSListener"_
 
 
+_Example Response in eventResponse_
+
+   * _{"status": "{STATUS}", "completed":{COMPLETED_TASKS}, "total":{TOTAL_TASKS}}_
+   * _{"status": "{STATUS}", "error":"{ERROR_MESSAGE}", "errorCode":"{ERROR_CODE}", "completed":{COMPLETED_TASKS}, "total":{TOTAL_TASKS}}_
+   
 
 
-**Remove Replicator Listener**
+
+### Remove Replicator Listener
 
 ```
   let JSListenerEvent = "OnReplicatorChanged"
@@ -814,7 +836,8 @@ _Params_
   * ReplicatorID: String ID of replicator, obtained from CreateReplicator function.
 
 
-#### Example Response from Remove Replicator Listener:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Replicator not found"_
