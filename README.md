@@ -24,6 +24,15 @@ This is WIP
 | getDocument | MutableDocument |
 | setBlob | Database |
 | getBlob  | Database |
+| query  | Query |
+| queryWithChangeListener  | Query |
+| removeQueryChangeListener  | Query |
+| enableLogging  | Database |
+| createReplicator  | Replicator |
+| replicatorStart  | Replicator |
+| replicatorStop  | Replicator |
+| replicationAddListener  | Replicator |
+| replicationRemoveListener  | Replicator |
 
 ## Getting Started
 
@@ -64,6 +73,34 @@ Couchbase Lite can be downloaded from Couchbase [downloads](https://www.couchbas
 We discuss the steps to add the Couchbase Lite framework dependency depending on how you downloaded the framework. 
 
 * Open the Android project located inside your React Native project under directory: `/path/to/AwesomeProject/android` using Android Studio.
+
+**Include couchbase-lite-android sdk from maven**
+
+Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL or maven repository etc.
+
+- In your 'app' level `build.gradle` file, add your library file path. 
+ ```
+ dependencies {
+    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
+ }
+```
+
+
+- In your 'project' level `build.gradle` file, add your library file path. 
+
+```
+ buildscript {
+    ...
+    ext {
+        ...
+        // Add this line
+        cblVersion = 'com.couchbase.lite:couchbase-lite-android:${version}'
+        ...
+        }
+    ...
+}
+```
+
 
 **To add couchbase-lite-android as an .aar file**
 
@@ -123,33 +160,6 @@ dependencies {
 }
 ```
 
-
-**Include couchbase-lite-android sdk from maven**
-
-Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL or maven repository etc.
-
-- In your 'app' level `build.gradle` file, add your library file path. 
- ```
- dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
- }
-```
-
-
-- In your 'project' level `build.gradle` file, add your library file path. 
-
-```
- buildscript {
-    ...
-    ext {
-        ...
-        // Add this line
-        cblVersion = 'com.couchbase.lite:couchbase-lite-android:${version}'
-        ...
-        }
-    ...
-}
-```
 
 **Confirm minimum SDK version**
 
@@ -573,11 +583,17 @@ _Example Response_
 ### Enable Logging
 
 ```
- var response = CouchbaseNativeModule.enableLogging();
-        
+let domain = "REPLICATOR"; // e.g for ALL_DOMAINS enter null }
+let logLevel = "verbose";
+ 
+var response = await CouchbaseNativeModule.enableLogging(domain,logLevel);
 ```
 
+_Params_
 
+  * domain: String value of log domain.
+  * logLevel: String value of logLevel.
+ 
 _Example Response_
 
  * _"Success"_
@@ -692,12 +708,20 @@ _Example Response_
 ```
     var config = {
             databaseName: "{{DATABASE_NAME}}",
-            target: "{{TARGET_URI}}", // e.g "ws://10.0.2.2:8080/",
+            target: "{{STRING_URI}}", // e.g "ws://10.0.2.2:4984/",
             authenticator: {
                 authType: "{{AUTH_TYPE}}", // e.g. "Basic"
                 username: "{{AUTH_USERNAME}}", // e.g. "user@example.com"
                 password: "{{AUTH_PASSWORD}}" // e.g. "examplePassword"
-            }
+            },
+            continuous: {{BOOLEAN}}, //optional
+            headers: [{HEADER_ARRAY}], //optional
+            channels: [{CHANNELS_LIST}], //optional
+            documentIds: [{DOCUMENT_ID_LIST}], //optional
+            acceptOnlySelfSignedServerCertificate: {{BOOLEAN}}, //optional
+            pinnedServerCertificateUri: {{STRING_URI}}, //optional
+            heartbeat:{{HEARTBEAT_INT}}, //optional
+          
         }
 
   let ReplicatorID = await CouchbaseNativeModule.createReplicator(dbname, config);
