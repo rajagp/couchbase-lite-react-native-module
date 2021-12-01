@@ -12,18 +12,35 @@ The React Native Module example exports a subset of native Couchbase Lite API fu
 ![](https://i2.wp.com/blog.couchbase.com/wp-content/uploads/2018/10/ReactNativeModule.jpg?w=900)
 
 ## Exported APIs
-The following is list of Couchbase Lite(Android) APIs exported by the plugin. 
 
-This is WIP
+The following is a list of APIs (and features) exported by the react-native plugin. See the description of Couchbase Lite Native [API Specifications](https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-android/com/couchbase/lite/package-summary.html) for an authoritative description of the API functionality. As mentioned above, in some cases, the plugin isn't a simple passthrough. The plugin implements additional logic, so there will not be an exact 1:1 mapping to the original API definition.
 
 | API methods | Native Class |
 | :---: | :---: |
-| createDatabase (with specified Configuration) | Database |
+| CreateOrOpenDatabase (with specified Configuration) | Database |
 | closeDatabase | Database |
-| saveDocument (With JSON OBJECT) | MutableDocument |
+| deleteDatabase | Database |
+| copyDatabase | Database |
+| databaseExists | Database |
+| addDatabaseChangeListener | Database |
+| removeDatabaseChangeListener | Database |
+| setDocument (With JSON OBJECT) | MutableDocument |
 | getDocument | MutableDocument |
+| deleteDocument | MutableDocument |
 | setBlob | Database |
 | getBlob  | Database |
+| createValueIndex  | Database |
+| createFTSIndex  | Database |
+| deleteIndex  | Database |
+| query  | Query |
+| queryWithChangeListener  | Query |
+| removeQueryChangeListener  | Query |
+| enableConsoleLogging  | Database |
+| createReplicator  | Replicator |
+| replicatorStart  | Replicator |
+| replicatorStop  | Replicator |
+| replicationAddListener  | Replicator |
+| replicationRemoveListener  | Replicator |
 
 ## Getting Started
 
@@ -64,6 +81,34 @@ Couchbase Lite can be downloaded from Couchbase [downloads](https://www.couchbas
 We discuss the steps to add the Couchbase Lite framework dependency depending on how you downloaded the framework. 
 
 * Open the Android project located inside your React Native project under directory: `/path/to/AwesomeProject/android` using Android Studio.
+
+**Include couchbase-lite-android sdk from maven**
+
+Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL or maven repository etc.
+
+- In your 'app' level `build.gradle` file, add your library file path. 
+ ```
+ dependencies {
+    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
+ }
+```
+
+
+- In your 'project' level `build.gradle` file, add your library file path. 
+
+```
+ buildscript {
+    ...
+    ext {
+        ...
+        // Add this line
+        cblVersion = 'com.couchbase.lite:couchbase-lite-android:${version}'
+        ...
+        }
+    ...
+}
+```
+
 
 **To add couchbase-lite-android as an .aar file**
 
@@ -124,17 +169,6 @@ dependencies {
 ```
 
 
-**Include couchbase-lite-android sdk from maven**
-
-Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL or maven repository etc.
-
-- In your 'app' level `build.gradle` file, add your library file path. 
- ```
- dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
- }
-```
-
 **Confirm minimum SDK version**
 
 Couchbase Lite required min SDK version of API 22. So confirm that the React Native app has minimum SDK of API22.
@@ -174,7 +208,7 @@ To use the module, open your react-native app project using a suitable IDE and d
 import CBL from 'react-native-cblite';
 ```
 
-**Create Database**
+### Create Database
 ```
 let config = {
     encryptionKey: "{{ENCRYPTION_KEY}}",
@@ -182,7 +216,11 @@ let config = {
 };
 
 let dbName = '{{DATABASE_NAME}}'
-CBL.CreateOrOpenDatabase(dbName,config ,function(rs) { console.log("database "+ dbName + " creation: "+ rs.toString())}, function(error) { console.log(error.toString())});
+CBL.CreateOrOpenDatabase(dbName,config, function(rs) { 
+  console.log("database "+ dbName + " creation: "+ rs.toString())
+  }, function(error) { 
+    console.log(error.toString())
+    });
 
 ```
 
@@ -208,10 +246,14 @@ _Example Response_
 
 
 
-**Close Database**
+### Close Database
 
 ```
-let response = CBL.closeDatabase(dbName,function(rs) { console.log("database "+ dbName + " closing : "+ rs.toString())}, function(error) { console.log(error.toString())});
+let response = CBL.closeDatabase(dbName,function(rs) { 
+  console.log("database "+ dbName + " closing : "+ rs.toString())
+  }, function(error) {
+     console.log(error.toString())
+     });
 ```
 
 _Params_
@@ -228,7 +270,7 @@ _Example Response_
 
 
 
-**Delete Database**
+### Delete Database
 
 ```
 let response = CBL.deleteDatabase(dbName);
@@ -247,7 +289,7 @@ _Example Response_
 
 
 
-**Database Exists**
+### Database Exists
 
 ```
 
@@ -263,7 +305,8 @@ _Params_
     * directory: Path of the database directory as string.
     * encryptionKey: Encryption key as string.
 
-#### Example Response from Remove Database Change Listener:
+_Example Response_
+
  * _"Database already exists"_
  * _"Database not exists"_
  * _"Error"_
@@ -271,14 +314,18 @@ _Params_
 
 
 
-**Create/Update Document**
+### Create/Update Document
 
 ```
 let docid = "{{DOCUMENT_ID}}";
 let data = "{{JSON_OBJECT}}"; e.g { foo : 'bar', adam : 'eve' }
 let dbName = "{{DATABASE_NAME}}";
 
-CBL.setDocument(dbName,docid, JSON.stringify(data), function(rs) { console.log("Added document with body"+JSON.stringify(data) +" to db " + dbName + " "+ rs.toString()) }, function(error) {console.log(error.toString()) });
+CBL.setDocument(dbName,docid, JSON.stringify(data), function(rs) {
+   console.log("Added document with body"+JSON.stringify(data) +" to db " + dbName + " "+ rs.toString())
+   }, function(error) {
+     console.log(error.toString()) 
+     });
 
 ```
 
@@ -304,12 +351,16 @@ _Example Response_
 
 
 
-**Get Document**
+### Get Document
 
 ```
 let docid = "{{DOCUMENT_ID}}";
 let dbName = "{{DATABASE_NAME}}";
-CBL.getDocument(dbName,docid,function(rs) {console.log("Fetched document "+docid+ " from db " + dbName + " " + rs.toString()) }, function(error) { console.log(error.toString())});
+CBL.getDocument(dbName,docid,function(rs) {
+  console.log("Fetched document "+docid+ " from db " + dbName + " " + rs.toString()) 
+  }, function(error) { 
+    console.log(error.toString())
+    });
 
 ```
 
@@ -330,7 +381,7 @@ _Example Response_
  * _"Error while Fetching Document : \{exception\}"_
 
 
-**Save Blob**
+### Save Blob
 
 ```
 var blobMeta = CBL.setBlob(dbName,contentType,blob);
@@ -351,7 +402,7 @@ _Example Response_
  * _"Error while Creating Blob : \{exception\}"_
 
 
-**Get Blob**
+### Get Blob
 
 ```
 CBL.getBlob(dbName,blobMeta,this.success_callback,this.error_callback);
@@ -377,7 +428,7 @@ _Example Response_
 
 
 
-**Add Database Change Listener**
+### Add Database Change Listener
 
 ```
 import {DeviceEventEmitter} from 'react-native';
@@ -418,7 +469,7 @@ _Example Response in eventResponse_
 
 
 
-**Remove Database Change Listener**
+### Remove Database Change Listener
 
 ```
 
@@ -441,7 +492,8 @@ _Params_
   * _JSListenerEvent_: String name of the Javascript listener event.
 
 
-#### Example Response from Remove Database Change Listener:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Database listener not registered with database."_
@@ -449,7 +501,7 @@ _Params_
 
 
 
-**Create Value Index**
+### Create Value Index
 
 ```
 
@@ -467,7 +519,8 @@ _Params_
   * indexExpressions: Array of Expressions of index to be created.
  
 
-#### Example Response from Remove Database Change Listener:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Missing Arguments : Database Name"_
@@ -476,7 +529,7 @@ _Params_
 
 
 
-**Create FTS Index**
+### Create FTS Index
 
 ```
 
@@ -498,7 +551,8 @@ _Params_
   * indexExpressions: Array of Expressions of index to be created.
  
 
-#### Example Response from Remove Database Change Listener:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Missing Arguments : Database Name"_
@@ -508,7 +562,7 @@ _Params_
 
 
 
-**Delete Index**
+### Delete Index
 
 ```
 
@@ -524,7 +578,8 @@ _Params_
   * indexName: String name of index to be deleted.
  
 
-#### Example Response from Remove Database Change Listener:
+_Example Response_
+
  * _"Success"_
  * _"Database not found"_
  * _"Missing Arguments : Database Name"_
@@ -533,28 +588,39 @@ _Params_
 
 
 
-**Enable Logging**
+### Enable Logging
 
 ```
- var response = CouchbaseNativeModule.enableLogging();
-        
+let domain = "REPLICATOR"; // e.g for ALL_DOMAINS enter null }
+let logLevel = "verbose";
+ 
+var response = await CouchbaseNativeModule.enableLogging(domain,logLevel);
 ```
 
+_Params_
 
-#### Example Response from Remove Database Change Listener:
+  * domain: String value of log domain.
+  * logLevel: String value of logLevel.
+ 
+_Example Response_
+
  * _"Success"_
  * _"Error"_
 
 
 
 
-**Query**
+### Query
 
 ```
 
-  let query = "select * from universities limit 1";
+  let query = "{{QUERY_STRING}}"; //e.g "select * from users"
 
-  CouchbaseNativeModule.query(dbName, query,function(rs) { console.log("Query result "+ rs.toString())}, function(error) { console.log(error.toString())}););
+  CouchbaseNativeModule.query(dbName, query,function(rs) {
+     console.log("Query result "+ rs.toString())
+     }, function(error) { 
+       console.log(error.toString())
+       }););
         
 ```
 
@@ -566,7 +632,8 @@ _Params_
   * Success Callback:Asynchronously triggers when the function succeeds execution. Contains string Response as param, If there is no exception while execution the param can contain one of the following responses.
 
 
-#### Example Response from Remove Database Change Listener:
+_Example Response_
+
  * _"[Query response]"_
  * _"Database not found"_
  * _"Missing Arguments : Database Name"_
@@ -574,9 +641,246 @@ _Params_
 
 
 
+
+### Live Query
+
+```
+
+  let query = "{{QUERY_STRING}}"; //e.g "select * from users"
+  let JSListenerEvent = "OnQueryChanged"
+
+  let listenerAddResponse = await CouchbaseNativeModule.queryWithChangeListener(dbName, query, JSListenerEvent);
+
+  if (listenerAddResponse == "Success") {
+      DeviceEventEmitter.addListener(JsListener, function(response){
+        conosole.log("Query Response : ", response);
+      });  
+  }
+
+
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * query: String query to be executed.
+  * _JSListenerEvent_: String name of the Javascript listener event.
+
+
+_Example Response_
+
+ * _"Success"_
+ * _"Database not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : Query"_
+
+
+_Example Response in eventResponse_
+   * _{{"DATABASE_NAME}": {{DocumentJson}}}_
+   
+
+
+### Stop Live Query
+
+```
+  let query = "{{QUERY_STRING}}"; //e.g "select * from users"
+  let JSListenerEvent = "OnQueryChanged"
+
+  var stopQueryListener = await CouchbaseNativeModule.removeQueryChangeListener(dbname, query);
+
+  if (stopQueryListener == "Success") {
+      DeviceEventEmitter.removeAllListeners(stopQueryListener);
+  }
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * query: String query to be executed.
+
+
+_Example Response_
+
+ * _"Success"_
+ * _"Database not found"_
+ * _"Query not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : Query"_
+
+
+
+### Create Replicator
+
+```
+    var config = {
+            databaseName: "{{DATABASE_NAME}}",
+            target: "{{STRING_URI}}", // e.g "ws://10.0.2.2:4984/",
+            authenticator: {
+                authType: "{{AUTH_TYPE}}", // e.g. "Basic"
+                username: "{{AUTH_USERNAME}}", // e.g. "user@example.com"
+                password: "{{AUTH_PASSWORD}}" // e.g. "examplePassword"
+            }, //optional
+            continuous: {{BOOLEAN}}, //optional
+            headers: [{HEADER_ARRAY}], //optional
+            channels: [{CHANNELS_LIST}], //optional
+            documentIds: [{DOCUMENT_ID_LIST}], //optional
+            acceptOnlySelfSignedServerCertificate: {{BOOLEAN}}, //optional
+            pinnedServerCertificateUri: {{STRING_URI}}, //optional
+            heartbeat:{{HEARTBEAT_INT}}, //optional
+          
+        }
+
+  let ReplicatorID = await CouchbaseNativeModule.createReplicator(dbname, config);
+  
+  console.log("ReplicatorID", ReplicatorID);
+
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * config: Configuration object for replicator.
+
+
+_Example Response_
+
+ * _"{{REPLICATOR_ID}}"_
+ * _"Database not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : Config"_
+
+
+
+
+### Start Replicator
+
+```
+  let startReplicatorResponse = await CouchbaseNativeModule.replicatorStart(dbname, ReplicatorID);
+     
+  console.log("Replicator Started", startReplicatorResponse)
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * ReplicatorID: String ID of replicator, obtained from CreateReplicator function.
+
+
+_Example Response_
+
+ * _"Success"_
+ * _"Failed"_
+ * _"Database not found"_
+ * _"Replicator not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : ReplicatorID"_
+
+
+
+
+### Stop Replicator
+
+```
+  let stopReplicatorResponse = await CouchbaseNativeModule.replicatorStop(dbname, ReplicatorID);
+     
+  console.log("Replicator Stopped", stopReplicatorResponse)
+    
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * ReplicatorID: String ID of replicator, obtained from CreateReplicator function.
+
+
+_Example Response_
+
+ * _"Success"_
+ * _"Failed"_
+ * _"Database not found"_
+ * _"Replicator not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : ReplicatorID"_
+
+
+
+
+### Create Replicator Listener
+
+```
+  let JSListenerEvent = "OnReplicatorChanged"
+
+  let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationAddListener(dbname, ReplicatorID, JSListenerEvent);
+     
+   if (ReplicatorListenerResponse == "Success") {
+      DeviceEventEmitter.addListener(JSListenerEvent, function(response){
+        conosole.log("Replicator Status Response : ", response);
+      });  
+  }
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * ReplicatorID: String ID of replicator, obtained from CreateReplicator function.
+  * _JSListenerEvent_: String name of the Javascript listener event.
+
+
+_Example Response_
+
+ * _"Success"_
+ * _"Database not found"_
+ * _"Replicator not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : ReplicatorID"_
+ * _"Missing Arguments : JSListener"_
+
+
+_Example Response in eventResponse_
+
+   * _{"status": "{STATUS}", "completed":{COMPLETED_TASKS}, "total":{TOTAL_TASKS}}_
+   * _{"status": "{STATUS}", "error":"{ERROR_MESSAGE}", "errorCode":"{ERROR_CODE}", "completed":{COMPLETED_TASKS}, "total":{TOTAL_TASKS}}_
+   
+
+
+
+### Remove Replicator Listener
+
+```
+  let JSListenerEvent = "OnReplicatorChanged"
+
+  var stopReplicatorListener = await CouchbaseNativeModule.replicationRemoveListener(dbname, ReplicatorID);
+
+  if (stopReplicatorListener == "Success") {
+      DeviceEventEmitter.removeAllListeners(JSListenerEvent);
+  }
+        
+```
+
+_Params_
+
+  * dbName: Name of the Database as string.
+  * ReplicatorID: String ID of replicator, obtained from CreateReplicator function.
+
+
+_Example Response_
+
+ * _"Success"_
+ * _"Database not found"_
+ * _"Replicator not found"_
+ * _"Missing Arguments : Database Name"_
+ * _"Missing Arguments : ReplicatorID"_
+
+
+
 ## Updates to Native Module
 
-If you update the plugin such as adding a new API, don't forget to  remove the plugin and re-add it to the app. 
+If you update the plugin such as adding a new API, don't forget to remove the plugin and re-add it to the app. 
 
 ### Removing the module
 ```bash
