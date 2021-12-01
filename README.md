@@ -12,22 +12,30 @@ The React Native Module example exports a subset of native Couchbase Lite API fu
 ![](https://i2.wp.com/blog.couchbase.com/wp-content/uploads/2018/10/ReactNativeModule.jpg?w=900)
 
 ## Exported APIs
-The following is list of Couchbase Lite(Android) APIs exported by the plugin. 
 
-This is WIP
+The following is a list of APIs (and features) exported by the react-native plugin. See the description of Couchbase Lite Native [API Specifications](https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-android/com/couchbase/lite/package-summary.html) for an authoritative description of the API functionality. As mentioned above, in some cases, the plugin isn't a simple passthrough. The plugin implements additional logic, so there will not be an exact 1:1 mapping to the original API definition.
 
 | API methods | Native Class |
 | :---: | :---: |
-| createDatabase (with specified Configuration) | Database |
+| CreateOrOpenDatabase (with specified Configuration) | Database |
 | closeDatabase | Database |
-| saveDocument (With JSON OBJECT) | MutableDocument |
+| deleteDatabase | Database |
+| copyDatabase | Database |
+| databaseExists | Database |
+| addDatabaseChangeListener | Database |
+| removeDatabaseChangeListener | Database |
+| setDocument (With JSON OBJECT) | MutableDocument |
 | getDocument | MutableDocument |
+| deleteDocument | MutableDocument |
 | setBlob | Database |
 | getBlob  | Database |
+| createValueIndex  | Database |
+| createFTSIndex  | Database |
+| deleteIndex  | Database |
 | query  | Query |
 | queryWithChangeListener  | Query |
 | removeQueryChangeListener  | Query |
-| enableLogging  | Database |
+| enableConsoleLogging  | Database |
 | createReplicator  | Replicator |
 | replicatorStart  | Replicator |
 | replicatorStop  | Replicator |
@@ -713,7 +721,7 @@ _Example Response_
                 authType: "{{AUTH_TYPE}}", // e.g. "Basic"
                 username: "{{AUTH_USERNAME}}", // e.g. "user@example.com"
                 password: "{{AUTH_PASSWORD}}" // e.g. "examplePassword"
-            },
+            }, //optional
             continuous: {{BOOLEAN}}, //optional
             headers: [{HEADER_ARRAY}], //optional
             channels: [{CHANNELS_LIST}], //optional
