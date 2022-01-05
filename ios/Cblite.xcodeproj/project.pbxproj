@@ -1,0 +1,659 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BACB7D4E277B54800099EF60 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D40277B547A0099EF60 /* DatabaseManager.swift */; };
+		BACB7D4F277B54800099EF60 /* ReplicatorArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D42277B547D0099EF60 /* ReplicatorArgs.swift */; };
+		BACB7D50277B54800099EF60 /* DatabaseResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D43277B547D0099EF60 /* DatabaseResource.swift */; };
+		BACB7D51277B54800099EF60 /* QueryArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D44277B547D0099EF60 /* QueryArgs.swift */; };
+		BACB7D52277B54800099EF60 /* DocumentArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D45277B547D0099EF60 /* DocumentArgs.swift */; };
+		BACB7D53277B54800099EF60 /* IndexArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D46277B547D0099EF60 /* IndexArgs.swift */; };
+		BACB7D54277B54800099EF60 /* QueryResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D47277B547D0099EF60 /* QueryResource.swift */; };
+		BACB7D55277B54800099EF60 /* DatabaseArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D48277B547D0099EF60 /* DatabaseArgs.swift */; };
+		BACB7D56277B54800099EF60 /* ReplicatorResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D49277B547D0099EF60 /* ReplicatorResource.swift */; };
+		BACB7D57277B54800099EF60 /* MD5Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D4B277B54800099EF60 /* MD5Digest.swift */; };
+		BACB7D58277B54800099EF60 /* ResponseStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D4C277B54800099EF60 /* ResponseStrings.swift */; };
+		BAE516602779B2BD0097916C /* CouchbaseLiteSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAE504652779AD640097916C /* CouchbaseLiteSwift.framework */; };
+		F4FF95D7245B92E800C19C63 /* Cblite.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* Cblite.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BAE504622779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9398D9121E03434200464432;
+			remoteInfo = CBL_ObjC;
+		};
+		BAE504642779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 275F92741E4D30A4007FD5A2;
+			remoteInfo = CBL_Swift;
+		};
+		BAE504662779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9398D91B1E03434200464432;
+			remoteInfo = CBL_ObjC_Tests;
+		};
+		BAE504682779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 938CF9EE1E442A3E00291631;
+			remoteInfo = CBL_Objc_Tests_iOS_App;
+		};
+		BAE5046A2779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 938CFA061E442A3E00291631;
+			remoteInfo = CBL_Objc_Tests_iOS;
+		};
+		BAE5046C2779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 93BB1C98246BB1F1004FFA00;
+			remoteInfo = CBL_Swift_Tests_iOS_App;
+		};
+		BAE5046E2779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 93BB1C89246BB1DB004FFA00;
+			remoteInfo = CBL_Swift_Tests_iOS;
+		};
+		BAE504702779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 275F927C1E4D30A4007FD5A2;
+			remoteInfo = CBL_Swift_Tests;
+		};
+		BAE504722779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 275FF6131E3FE9DB005F90DD;
+			remoteInfo = PerfTests_Mac;
+		};
+		BAE504742779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9343F00F207D611600F19A89;
+			remoteInfo = CBL_EE_ObjC;
+		};
+		BAE504762779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9343F133207D61AB00F19A89;
+			remoteInfo = CBL_EE_Swift;
+		};
+		BAE504782779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9343F151207D61EC00F19A89;
+			remoteInfo = CBL_EE_ObjC_Tests;
+		};
+		BAE5047A2779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9343F16D207D62C900F19A89;
+			remoteInfo = CBL_EE_Objc_Tests_iOS_App;
+		};
+		BAE5047C2779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9343F188207D633300F19A89;
+			remoteInfo = CBL_EE_Objc_Tests_iOS;
+		};
+		BAE5047E2779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 930B63D0246B9CD1006D94FF;
+			remoteInfo = CBL_EE_Swift_Tests_iOS_App;
+		};
+		BAE504802779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 930B63E3246B9CD2006D94FF;
+			remoteInfo = CBL_EE_Swift_Tests_iOS;
+		};
+		BAE504822779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9343F1A2207D636300F19A89;
+			remoteInfo = CBL_EE_Swift_Tests;
+		};
+		BAE504842779AD640097916C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9343F1B7207D63BF00F19A89;
+			remoteInfo = PerfTests_EE_Mac;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		58B511D91A9E6C8500147676 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		134814201AA4EA6300B7C361 /* libCblite.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCblite.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E7B5891CC2AC0600A0062D /* Cblite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Cblite.m; sourceTree = "<group>"; };
+		BACB7D40277B547A0099EF60 /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		BACB7D42277B547D0099EF60 /* ReplicatorArgs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReplicatorArgs.swift; sourceTree = "<group>"; };
+		BACB7D43277B547D0099EF60 /* DatabaseResource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseResource.swift; sourceTree = "<group>"; };
+		BACB7D44277B547D0099EF60 /* QueryArgs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryArgs.swift; sourceTree = "<group>"; };
+		BACB7D45277B547D0099EF60 /* DocumentArgs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocumentArgs.swift; sourceTree = "<group>"; };
+		BACB7D46277B547D0099EF60 /* IndexArgs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndexArgs.swift; sourceTree = "<group>"; };
+		BACB7D47277B547D0099EF60 /* QueryResource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryResource.swift; sourceTree = "<group>"; };
+		BACB7D48277B547D0099EF60 /* DatabaseArgs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseArgs.swift; sourceTree = "<group>"; };
+		BACB7D49277B547D0099EF60 /* ReplicatorResource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReplicatorResource.swift; sourceTree = "<group>"; };
+		BACB7D4B277B54800099EF60 /* MD5Digest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MD5Digest.swift; sourceTree = "<group>"; };
+		BACB7D4C277B54800099EF60 /* ResponseStrings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseStrings.swift; sourceTree = "<group>"; };
+		BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CouchbaseLite.xcodeproj; path = "couchbase-lite-ios/CouchbaseLite.xcodeproj"; sourceTree = "<group>"; };
+		F4FF95D5245B92E700C19C63 /* Cblite-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cblite-Bridging-Header.h"; sourceTree = "<group>"; };
+		F4FF95D6245B92E800C19C63 /* Cblite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cblite.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		58B511D81A9E6C8500147676 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BAE516602779B2BD0097916C /* CouchbaseLiteSwift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		134814211AA4EA7D00B7C361 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				134814201AA4EA6300B7C361 /* libCblite.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		58B511D21A9E6C8500147676 = {
+			isa = PBXGroup;
+			children = (
+				BACB7D41277B547D0099EF60 /* Args */,
+				BACB7D40277B547A0099EF60 /* DatabaseManager.swift */,
+				BACB7D4A277B54800099EF60 /* Helpers */,
+				F4FF95D6245B92E800C19C63 /* Cblite.swift */,
+				B3E7B5891CC2AC0600A0062D /* Cblite.m */,
+				F4FF95D5245B92E700C19C63 /* Cblite-Bridging-Header.h */,
+				134814211AA4EA7D00B7C361 /* Products */,
+				BAE5040D2779AD040097916C /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		BACB7D41277B547D0099EF60 /* Args */ = {
+			isa = PBXGroup;
+			children = (
+				BACB7D42277B547D0099EF60 /* ReplicatorArgs.swift */,
+				BACB7D43277B547D0099EF60 /* DatabaseResource.swift */,
+				BACB7D44277B547D0099EF60 /* QueryArgs.swift */,
+				BACB7D45277B547D0099EF60 /* DocumentArgs.swift */,
+				BACB7D46277B547D0099EF60 /* IndexArgs.swift */,
+				BACB7D47277B547D0099EF60 /* QueryResource.swift */,
+				BACB7D48277B547D0099EF60 /* DatabaseArgs.swift */,
+				BACB7D49277B547D0099EF60 /* ReplicatorResource.swift */,
+			);
+			path = Args;
+			sourceTree = "<group>";
+		};
+		BACB7D4A277B54800099EF60 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				BACB7D4B277B54800099EF60 /* MD5Digest.swift */,
+				BACB7D4C277B54800099EF60 /* ResponseStrings.swift */,
+				BACB7D4D277B54800099EF60 /* BigInteger */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		BACB7D4D277B54800099EF60 /* BigInteger */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = BigInteger;
+			sourceTree = "<group>";
+		};
+		BAE5040D2779AD040097916C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BAE5044B2779AD640097916C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BAE504632779AD640097916C /* CouchbaseLite.framework */,
+				BAE504652779AD640097916C /* CouchbaseLiteSwift.framework */,
+				BAE504672779AD640097916C /* CouchbaseLiteTests.xctest */,
+				BAE504692779AD640097916C /* CBL_Tests.app */,
+				BAE5046B2779AD640097916C /* CBL_Objc_Tests_iOS.xctest */,
+				BAE5046D2779AD640097916C /* CBL_Swift_Tests.app */,
+				BAE5046F2779AD640097916C /* CBL_Swift_Tests_iOS.xctest */,
+				BAE504712779AD640097916C /* CouchbaseLiteSwiftTests.xctest */,
+				BAE504732779AD640097916C /* CBLPerfTests */,
+				BAE504752779AD640097916C /* CouchbaseLite.framework */,
+				BAE504772779AD640097916C /* CouchbaseLiteSwift.framework */,
+				BAE504792779AD640097916C /* CouchbaseLiteTests.xctest */,
+				BAE5047B2779AD640097916C /* CBL_EE_Tests.app */,
+				BAE5047D2779AD640097916C /* CBL_EE_Objc_Tests_iOS.xctest */,
+				BAE5047F2779AD640097916C /* CBL_EE_Swift_Tests.app */,
+				BAE504812779AD640097916C /* CBL_EE_Swift_Tests_iOS.xctest */,
+				BAE504832779AD640097916C /* CouchbaseLiteSwiftTests.xctest */,
+				BAE504852779AD640097916C /* CBLPerfTests */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		58B511DA1A9E6C8500147676 /* Cblite */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "Cblite" */;
+			buildPhases = (
+				58B511D71A9E6C8500147676 /* Sources */,
+				58B511D81A9E6C8500147676 /* Frameworks */,
+				58B511D91A9E6C8500147676 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Cblite;
+			packageProductDependencies = (
+			);
+			productName = RCTDataManager;
+			productReference = 134814201AA4EA6300B7C361 /* libCblite.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		58B511D31A9E6C8500147676 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = Facebook;
+				TargetAttributes = {
+					58B511DA1A9E6C8500147676 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "Cblite" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				en,
+				Base,
+			);
+			mainGroup = 58B511D21A9E6C8500147676;
+			packageReferences = (
+			);
+			productRefGroup = 58B511D21A9E6C8500147676;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = BAE5044B2779AD640097916C /* Products */;
+					ProjectRef = BAE5044A2779AD640097916C /* CouchbaseLite.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				58B511DA1A9E6C8500147676 /* Cblite */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		BAE504632779AD640097916C /* CouchbaseLite.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CouchbaseLite.framework;
+			remoteRef = BAE504622779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE504652779AD640097916C /* CouchbaseLiteSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CouchbaseLiteSwift.framework;
+			remoteRef = BAE504642779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE504672779AD640097916C /* CouchbaseLiteTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CouchbaseLiteTests.xctest;
+			remoteRef = BAE504662779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE504692779AD640097916C /* CBL_Tests.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = CBL_Tests.app;
+			remoteRef = BAE504682779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE5046B2779AD640097916C /* CBL_Objc_Tests_iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CBL_Objc_Tests_iOS.xctest;
+			remoteRef = BAE5046A2779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE5046D2779AD640097916C /* CBL_Swift_Tests.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = CBL_Swift_Tests.app;
+			remoteRef = BAE5046C2779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE5046F2779AD640097916C /* CBL_Swift_Tests_iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CBL_Swift_Tests_iOS.xctest;
+			remoteRef = BAE5046E2779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE504712779AD640097916C /* CouchbaseLiteSwiftTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CouchbaseLiteSwiftTests.xctest;
+			remoteRef = BAE504702779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE504732779AD640097916C /* CBLPerfTests */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = CBLPerfTests;
+			remoteRef = BAE504722779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE504752779AD640097916C /* CouchbaseLite.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CouchbaseLite.framework;
+			remoteRef = BAE504742779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE504772779AD640097916C /* CouchbaseLiteSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CouchbaseLiteSwift.framework;
+			remoteRef = BAE504762779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE504792779AD640097916C /* CouchbaseLiteTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CouchbaseLiteTests.xctest;
+			remoteRef = BAE504782779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE5047B2779AD640097916C /* CBL_EE_Tests.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = CBL_EE_Tests.app;
+			remoteRef = BAE5047A2779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE5047D2779AD640097916C /* CBL_EE_Objc_Tests_iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CBL_EE_Objc_Tests_iOS.xctest;
+			remoteRef = BAE5047C2779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE5047F2779AD640097916C /* CBL_EE_Swift_Tests.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = CBL_EE_Swift_Tests.app;
+			remoteRef = BAE5047E2779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE504812779AD640097916C /* CBL_EE_Swift_Tests_iOS.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CBL_EE_Swift_Tests_iOS.xctest;
+			remoteRef = BAE504802779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE504832779AD640097916C /* CouchbaseLiteSwiftTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CouchbaseLiteSwiftTests.xctest;
+			remoteRef = BAE504822779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BAE504852779AD640097916C /* CBLPerfTests */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = CBLPerfTests;
+			remoteRef = BAE504842779AD640097916C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXSourcesBuildPhase section */
+		58B511D71A9E6C8500147676 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BACB7D53277B54800099EF60 /* IndexArgs.swift in Sources */,
+				BACB7D51277B54800099EF60 /* QueryArgs.swift in Sources */,
+				BACB7D4F277B54800099EF60 /* ReplicatorArgs.swift in Sources */,
+				BACB7D57277B54800099EF60 /* MD5Digest.swift in Sources */,
+				BACB7D4E277B54800099EF60 /* DatabaseManager.swift in Sources */,
+				BACB7D58277B54800099EF60 /* ResponseStrings.swift in Sources */,
+				BACB7D54277B54800099EF60 /* QueryResource.swift in Sources */,
+				BACB7D52277B54800099EF60 /* DocumentArgs.swift in Sources */,
+				BACB7D56277B54800099EF60 /* ReplicatorResource.swift in Sources */,
+				BACB7D55277B54800099EF60 /* DatabaseArgs.swift in Sources */,
+				BACB7D50277B54800099EF60 /* DatabaseResource.swift in Sources */,
+				F4FF95D7245B92E800C19C63 /* Cblite.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		58B511ED1A9E6C8500147676 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		58B511EE1A9E6C8500147676 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		58B511F01A9E6C8500147676 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../../React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/couchbase-lite-ios/vendor/couchbase-lite-core/vendor/ios-cmake/example/example-app/example-lib/lib",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = Cblite;
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Cblite-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		58B511F11A9E6C8500147676 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../../React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/couchbase-lite-ios/vendor/couchbase-lite-core/vendor/ios-cmake/example/example-app/example-lib/lib",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = Cblite;
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Cblite-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "Cblite" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				58B511ED1A9E6C8500147676 /* Debug */,
+				58B511EE1A9E6C8500147676 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "Cblite" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				58B511F01A9E6C8500147676 /* Debug */,
+				58B511F11A9E6C8500147676 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 58B511D31A9E6C8500147676 /* Project object */;
+}

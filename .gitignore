@@ -2,6 +2,8 @@
 .git
 android/.gradle
 android/.idea
+node_modules/
+example/
 .DS_Store
 android/.DS_Store
 android/src/.DS_Store
@@ -25,3 +27,7 @@ android/src/main/.DS_Store
 android/build/
 android/local.properties
 android/local.properties
+android/src/.DS_Store
+android/src/main/.DS_Store
+android/src/main/java/.DS_Store
+android/src/main/java/com/.DS_Store

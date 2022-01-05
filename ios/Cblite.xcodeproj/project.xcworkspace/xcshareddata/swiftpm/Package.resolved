@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "CouchbaseLiteSwift",
+        "repositoryURL": "https://github.com/couchbase/couchbase-lite-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "862a079791dc8b269bfd44e227c43eb35c1a3cdb",
+          "version": "2.8.4"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
