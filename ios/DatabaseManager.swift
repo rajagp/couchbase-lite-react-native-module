@@ -34,7 +34,7 @@ class DatabaseManager: RCTEventEmitter {
             return nil
         }
         
-        let dbConfig = DatabaseConfiguration()
+        var dbConfig = DatabaseConfiguration()
         if directory != nil && !directory!.isEmpty{
             dbConfig.directory = directory!
         }
@@ -186,7 +186,7 @@ class DatabaseManager: RCTEventEmitter {
             if let parentDb = databases[dbName], let db = parentDb.database {
                 if let document = db.document(withID: docId) {
                     do {
-                        return try document.toJSONString()
+                        return document.toJSON();
                     } catch let error {
                         throw error
                     }
@@ -203,9 +203,9 @@ class DatabaseManager: RCTEventEmitter {
     }
     
     func setDocument(args: DocumentArgs) -> String {
-        if let docId = args.docid, let data = args.jsondata {
-            let mutableDocument = MutableDocument(id: docId, data: data)
+        if let docId = args.docid, let data = args.data {
             do {
+                let mutableDocument = try MutableDocument.init(id: docId, json: data)
                 if let dbname = args.databaseName, let db = databases[dbname], let database = db.database {
                     try database.saveDocument(mutableDocument)
                     return ResponseStrings.SuccessCode
@@ -215,26 +215,22 @@ class DatabaseManager: RCTEventEmitter {
             } catch let error {
                 return ResponseStrings.ExceptionDOC + error.localizedDescription
             }
+            
         } else {
             return ResponseStrings.ExceptionDOC
         }
     }
     
-    func setBlob(dbname: String, type: String, blobdata: String, key: String) throws -> String {
+    func setBlob(dbname: String, type: String, blobdata: String) throws -> String {
         if let db = databases[dbname], let database = db.database {
             if let data = Data(base64Encoded: blobdata) {
-                let blob = Blob(contentType: type, data: data)
-                let mutableDocument = MutableDocument()
-                mutableDocument.setBlob(blob, forKey: key)
+                let blob = Blob.init(contentType: type, data: data)
+               
                 do {
-                    try database.saveDocument(mutableDocument)
-                    if let blobJson = try blob.toJSONString() {
-                        return blobJson
-                    } else {
-                        return ResponseStrings.ExceptionBLOB
-                    }
+                    try database.saveBlob(blob:blob);
+                    return blob.toJSON();
                 } catch let error {
-                    throw error
+                    return ResponseStrings.ExceptionBLOB
                 }
             } else {
                 return ResponseStrings.invaliddata
@@ -245,25 +241,37 @@ class DatabaseManager: RCTEventEmitter {
         }
     }
     
-    func getBlob(dbname: String, documentId: String, key: String) throws -> String {
-        if let db = databases[dbname], let database = db.database, let document = database.document(withID: documentId) {
-            if let blob = document.blob(forKey: key) {
-                do {
-                    if let blobString = try blob.toJSONString() {
-                        return blobString
-                    } else {
-                        return ResponseStrings.ExceptionBLOB
-                    }
-                } catch let error {
-                    throw error
-                }
+    func getBlob(dbname: String, key: String) throws -> String {
+        do {
+        if let db = databases[dbname], let database = db.database {
+            var properties : [String : Any] = [String : Any]()
+            if let data  = key.data(using: .utf8) {
+                properties =  try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] ?? [String : Any]()
             } else {
-                return ResponseStrings.ExceptionBLOB
+                return ResponseStrings.invalidblob
             }
+
+            var blob = try database.getBlob(properties: properties)
+            return (blob?.content?.base64EncodedString())!
+        
         } else {
             return ResponseStrings.Blobnotfound
         }
+        } catch let error {
+            throw error
+        }
     }
+    
+//    func convertToDictionary(text: String) -> [String: Any]? {
+//        if let data = text.data(using: .utf8) {
+//            do {
+//                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+//            } catch {
+//                print(error.localizedDescription)
+//            }
+//        }
+//        return nil
+//    }
     
     func createValueIndex(args: IndexArgs) throws -> String {
         do {
@@ -574,22 +582,6 @@ class DatabaseManager: RCTEventEmitter {
         return ResponseStrings.SuccessCode
     }
     
-//    func dbExists(dbname: String) -> Bool {
-//        let sharedDocumentDirectory = FileManager.documentsDir()
-//        let file = sharedDocumentDirectory.appending("/\(dbname).cblite2")
-//
-//        let isDirectory = UnsafeMutablePointer<ObjCBool>.allocate(capacity: 1)
-//        isDirectory[0] = true
-//
-//        let options =  DatabaseConfiguration()
-//        options.directory = sharedDocumentDirectory
-//
-//        let fileManager = FileManager.default
-//        if fileManager.fileExists(atPath: file, isDirectory: isDirectory) {
-//            return true
-//        }
-//        return false
-//    }
     
     override func supportedEvents() -> [String]! {
         return [""]
@@ -603,46 +595,3 @@ class DatabaseManager: RCTEventEmitter {
     }
 }
 
-extension Document {
-    func toJSONString() throws -> String? {
-        do {
-            let theJSONData = try JSONSerialization.data(
-                withJSONObject: self,
-                options: [])
-                let jsonString = String(data: theJSONData,
-                                        encoding: .ascii)
-                return jsonString ?? nil
-        } catch let error {
-            throw error
-        }
-        
-    }
-}
-
-extension Blob {
-    func toJSONString() throws -> String? {
-        do {
-            let theJSONData = try JSONSerialization.data(
-                withJSONObject: self,
-                options: [])
-                let jsonString = String(data: theJSONData,
-                                        encoding: .ascii)
-                return jsonString ?? nil
-        } catch let error {
-            throw error
-        }
-        
-    }
-}
-
-extension FileManager {
-  class func documentsDir() -> String {
-    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as [String]
-    return paths[0]
-  }
-  
-  class func cachesDir() -> String {
-    let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true) as [String]
-    return paths[0]
-  }
-}

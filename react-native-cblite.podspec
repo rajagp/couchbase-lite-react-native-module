@@ -11,10 +11,10 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
 
   s.platforms    = { :ios => "10.0" }
-  s.source       = { :git => "https://github.com/shamzahasan88/react-native-cblite.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/Linkitsoft/react-native-cblite.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.dependency "React-Core"
-  s.dependency "CouchbaseLite-Swift"
+  s.dependency "CouchbaseLite-Swift" , '~> 3.0.0-beta02'
 end

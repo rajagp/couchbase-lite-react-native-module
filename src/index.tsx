@@ -2,20 +2,21 @@ import { NativeModules, Platform } from 'react-native';
 
 const LINKING_ERROR =
   `The package 'react-native-cblite' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
+  Platform.select({ ios: "- You have run 'pod install'\n", android: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
 
-const Cblite = NativeModules.Cblite
-  ? NativeModules.Cblite
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+const linkin_err = new Proxy(
+  {},
+  {
+    get() {
+      throw new Error(LINKING_ERROR);
+    },
+  }
+);
+
+const Cblite = Platform.OS == 'ios'? (NativeModules.Cblite
+  ? NativeModules.Cblite :linkin_err) : NativeModules? NativeModules : linkin_err;
 
 export function CreateOrOpenDatabase(
   dbname: string,
@@ -91,20 +92,17 @@ export function setDocument(
 export function setBlob(
   dbname: string,
   type: string,
-  docObject: string,
-  key: string,
-  config: Object
+  imagedata: string,
 ): Promise<string> {
-  return Cblite.setBlob(dbname, type, docObject, key, config);
+  return Cblite.setBlob(dbname, type, imagedata);
 }
 export function getBlob(
   dbname: string,
-  documentId: string,
-  key: string,
+  blobData: object,
   OnSuccessCallback: Function,
   OnErrorCallback: Function
 ): void {
-  Cblite.getBlob(dbname, documentId, key, OnSuccessCallback, OnErrorCallback);
+  Cblite.getBlob(dbname, blobData, OnSuccessCallback, OnErrorCallback);
 }
 export function createValueIndex(
   dbname: string,

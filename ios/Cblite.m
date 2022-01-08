@@ -19,11 +19,11 @@ RCT_EXTERN_METHOD(deleteDocument:(NSString *)dbname docid:(NSString *)docid OnSu
 
 RCT_EXTERN_METHOD(getDocument:(NSString *)dbname docid:(NSString *)docid OnSuccessCallback:(RCTResponseSenderBlock)OnSuccessCallback OnErrorCallback:(RCTResponseErrorBlock)OnErrorCallback)
 
-RCT_EXTERN_METHOD(setDocument:(NSString *)dbname docid:(NSString *)docid data:(NSDictionary *)data OnSuccessCallback:(RCTResponseSenderBlock)OnSuccessCallback OnErrorCallback:(RCTResponseErrorBlock)OnErrorCallback)
+RCT_EXTERN_METHOD(setDocument:(NSString *)dbname docid:(NSString *)docid data:(NSString *)data OnSuccessCallback:(RCTResponseSenderBlock)OnSuccessCallback OnErrorCallback:(RCTResponseErrorBlock)OnErrorCallback)
 
-RCT_EXTERN_METHOD(setBlob:(NSString *)dbname type:(NSString *)type docObject:(NSString *)docObject key:(NSString *)key config:(NSDictionary *)config resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setBlob:(NSString *)dbname type:(NSString *)type docObject:(NSString *)docObject resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(getBlob:(NSString *)dbname documentId:(NSString *)documentId key:(NSString *)key OnSuccessCallback:(RCTResponseSenderBlock)OnSuccessCallback OnErrorCallback:(RCTResponseErrorBlock)OnErrorCallback)
+RCT_EXTERN_METHOD(getBlob:(NSString *)dbname key:(NSString *)key OnSuccessCallback:(RCTResponseSenderBlock)OnSuccessCallback OnErrorCallback:(RCTResponseErrorBlock)OnErrorCallback)
 
 RCT_EXTERN_METHOD(createValueIndex:(NSString *)dbname indexName:(NSString *)indexName indexExpressions:(NSArray *)indexExpressions resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
 

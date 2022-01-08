@@ -36,13 +36,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/shamzahasan88/react-native-cblite",
-  "author": "Hamza Hasan <shamzahasan88@gmail.com> (https://github.com/shamzahasan88)",
+  "repository": "https://github.com/Linkitsoft/react-native-cblite",
+  "author": "Linkitsoft <Linkitsoft@gmail.com> (https://github.com/Linkitsoft)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shamzahasan88/react-native-cblite/issues"
+    "url": "https://github.com/Linkitsoft/react-native-cblite/issues"
   },
-  "homepage": "https://github.com/shamzahasan88/react-native-cblite#readme",
+  "homepage": "https://github.com/Linkitsoft/react-native-cblite#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

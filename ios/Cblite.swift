@@ -205,7 +205,7 @@ class Cblite: NSObject {
     @objc
     func setDocument(_ dbname: String,
                      docid: String,
-                     data: [String:Any],
+                     data: String,
                      OnSuccessCallback:RCTResponseSenderBlock,
                      OnErrorCallback: RCTResponseErrorBlock) {
         var documentArgs = DocumentArgs()
@@ -219,7 +219,7 @@ class Cblite: NSObject {
             let error = NSError(domain: "", code: 0, userInfo: ["Error":ResponseStrings.MissingargsDCData])
             OnErrorCallback(error)
         } else {
-            documentArgs = DocumentArgs(dbname: dbname, docid: docid, jsondata: data)
+            documentArgs = DocumentArgs(dbname: dbname, docid: docid, data: data)
             let response = DatabaseManager.shared.setDocument(args: documentArgs)
             if !response.isEmpty {
                 if response == ResponseStrings.SuccessCode {
@@ -239,8 +239,6 @@ class Cblite: NSObject {
     func setBlob(_ dbname: String,
                  type: String,
                  docObject: String,
-                 key: String,
-                 config: [String:Any],
                  resolve:@escaping RCTPromiseResolveBlock,
                  reject:@escaping RCTPromiseRejectBlock) {
         if dbname.isEmpty {
@@ -256,8 +254,7 @@ class Cblite: NSObject {
             do {
                 resolve(try DatabaseManager.shared.setBlob(dbname: dbname,
                                                    type: type,
-                                                   blobdata: docObject,
-                                                   key: key))
+                                                   blobdata: docObject))
             } catch let error {
                 let error = NSError(domain: "", code: 0, userInfo: ["Error":ResponseStrings.ExceptionBLOB + error.localizedDescription])
                 reject("0", "Error", error)
@@ -267,23 +264,15 @@ class Cblite: NSObject {
     
     @objc
     func getBlob(_ dbname: String,
-                 documentId: String,
                  key: String,
                  OnSuccessCallback:RCTResponseSenderBlock,
                  OnErrorCallback: RCTResponseErrorBlock) {
         if dbname.isEmpty {
             let error = NSError(domain: "", code: 0, userInfo: ["Error":ResponseStrings.MissingargsDBN])
             OnErrorCallback(error)
-        } else if documentId.isEmpty {
-            let error = NSError(domain: "", code: 0, userInfo: ["Error":ResponseStrings.MissingargsDCID])
-            OnErrorCallback(error)
-        } else if documentId.isEmpty {
-            let error = NSError(domain: "", code: 0, userInfo: ["Error":ResponseStrings.Missingargs + "Missing Key"])
-            OnErrorCallback(error)
         } else {
             do {
                 let response = try DatabaseManager.shared.getBlob(dbname: dbname,
-                                                                  documentId: documentId,
                                                                   key: key)
                 if response != ResponseStrings.DBnotfound && response != ResponseStrings.invalidblob {
                     OnSuccessCallback([response])

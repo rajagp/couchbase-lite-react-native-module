@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B46EE6872788CC5E00CE2950 /* CouchbaseLiteSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B46EE6862788CC5E00CE2950 /* CouchbaseLiteSwift */; };
 		BACB7D4E277B54800099EF60 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D40277B547A0099EF60 /* DatabaseManager.swift */; };
 		BACB7D4F277B54800099EF60 /* ReplicatorArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D42277B547D0099EF60 /* ReplicatorArgs.swift */; };
 		BACB7D50277B54800099EF60 /* DatabaseResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACB7D43277B547D0099EF60 /* DatabaseResource.swift */; };
@@ -187,6 +188,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B46EE6872788CC5E00CE2950 /* CouchbaseLiteSwift in Frameworks */,
 				BAE516602779B2BD0097916C /* CouchbaseLiteSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -298,6 +300,7 @@
 			);
 			name = Cblite;
 			packageProductDependencies = (
+				B46EE6862788CC5E00CE2950 /* CouchbaseLiteSwift */,
 			);
 			productName = RCTDataManager;
 			productReference = 134814201AA4EA6300B7C361 /* libCblite.a */;
@@ -328,6 +331,7 @@
 			);
 			mainGroup = 58B511D21A9E6C8500147676;
 			packageReferences = (
+				B46EE6852788CC5E00CE2950 /* XCRemoteSwiftPackageReference "couchbase-lite-swift-ee" */,
 			);
 			productRefGroup = 58B511D21A9E6C8500147676;
 			projectDirPath = "";
@@ -654,6 +658,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B46EE6852788CC5E00CE2950 /* XCRemoteSwiftPackageReference "couchbase-lite-swift-ee" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/couchbase/couchbase-lite-swift-ee.git";
+			requirement = {
+				kind = exactVersion;
+				version = "3.0.0-beta02";
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B46EE6862788CC5E00CE2950 /* CouchbaseLiteSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B46EE6852788CC5E00CE2950 /* XCRemoteSwiftPackageReference "couchbase-lite-swift-ee" */;
+			productName = CouchbaseLiteSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 58B511D31A9E6C8500147676 /* Project object */;
 }
