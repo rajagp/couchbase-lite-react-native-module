@@ -38,7 +38,7 @@ export function closeDatabase(
 ): void {
   Cblite.closeDatabase(dbname, OnSuccessCallback, OnErrorCallback);
 }
-export function deleteDatabase(dbname: string): Promise<string> {
+export function deleteDatabase(dbname: string): string {
   return Cblite.deleteDatabase(dbname);
 }
 export function copyDatabase(
@@ -61,7 +61,7 @@ export function copyDatabase(
 export function databaseExists(
   dbname: string,
   config: Object
-): Promise<string> {
+): string {
   return Cblite.databaseExists(dbname, config);
 }
 export function deleteDocument(
@@ -93,7 +93,7 @@ export function setBlob(
   dbname: string,
   type: string,
   imagedata: string,
-): Promise<string> {
+): string {
   return Cblite.setBlob(dbname, type, imagedata);
 }
 export function getBlob(
@@ -108,7 +108,7 @@ export function createValueIndex(
   dbname: string,
   indexName: string,
   indexExpressions: [string]
-): Promise<string> {
+): string {
   return Cblite.createValueIndex(dbname, indexName, indexExpressions);
 }
 export function createFTSIndex(
@@ -116,31 +116,31 @@ export function createFTSIndex(
   indexName: string,
   options: Object,
   indexExpressions: [string]
-): Promise<string> {
+): string {
   return Cblite.createFTSIndex(dbname, indexName, options, indexExpressions);
 }
 export function deleteIndex(
   dbname: string,
   indexName: string
-): Promise<string> {
+): string {
   return Cblite.deleteIndex(dbname, indexName);
 }
 export function addDatabaseChangeListener(
   dbname: string,
   listener: string
-): Promise<string> {
+): string {
   return Cblite.addDatabaseChangeListener(dbname, listener);
 }
-export function removeDatabaseChangeListener(dbname: string): Promise<string> {
+export function removeDatabaseChangeListener(dbname: string): string {
   return Cblite.removeDatabaseChangeListener(dbname);
 }
 export function enableConsoleLogging(
   domain: string,
   logLevel: string
-): Promise<string> {
+): string {
   return Cblite.enableConsoleLogging(domain, logLevel);
 }
-export function createQuery(dbname: string, query: string): Promise<string> {
+export function createQuery(dbname: string, query: string): string {
   return Cblite.createQuery(dbname, query);
 }
 export function query(
@@ -157,13 +157,13 @@ export function queryWithChangeListener(
   // eslint-disable-next-line no-shadow
   query: string,
   listener: string
-): Promise<string> {
+): string {
   return Cblite.queryWithChangeListener(dbname, query, listener);
 }
 export function removeQueryChangeListener(
   dbname: string,
   // eslint-disable-next-line no-shadow
   query: string
-): Promise<string> {
+): string {
   return Cblite.removeQueryChangeListener(dbname, query);
 }
