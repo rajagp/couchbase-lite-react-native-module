@@ -150,7 +150,7 @@ export function query(
   OnSuccessCallback: Function,
   OnErrorCallback: Function
 ): void {
-  Cblite.query(dbname, query, OnSuccessCallback, OnErrorCallback);
+  Cblite.querydb(dbname, query, OnSuccessCallback, OnErrorCallback);
 }
 export function queryWithChangeListener(
   dbname: string,

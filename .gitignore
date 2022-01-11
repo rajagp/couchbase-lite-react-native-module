@@ -32,3 +32,5 @@ android/src/main/.DS_Store
 android/src/main/java/.DS_Store
 android/src/main/java/com/.DS_Store
 README.md
+ios/Cblite.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+ios/Cblite.xcodeproj/project.pbxproj

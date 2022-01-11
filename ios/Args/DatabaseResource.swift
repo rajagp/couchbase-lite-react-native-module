@@ -124,7 +124,7 @@ class DatabaseResource: NSObject {
         queryResource.query = query
         var hash = 0
         do {
-            hash = try query.explain().hash
+            hash = try query.explain().hashValue
             if ((self.querys?.keys.contains(hash)) == nil) {
                 self.querys?[hash] = queryResource
             }

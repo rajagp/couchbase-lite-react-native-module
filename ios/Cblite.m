@@ -39,7 +39,7 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(enableConsoleLogging:(NSString *)domain 
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(createQuery:(NSString *)dbname query:(NSString *)query)
 
-RCT_EXTERN_METHOD(createQuery:(NSString *)dbname query:(NSString *)query OnSuccessCallback:(RCTResponseSenderBlock)OnSuccessCallback OnErrorCallback:(RCTResponseSenderBlock)OnErrorCallback)
+RCT_EXTERN_METHOD(querydb:(NSString *)dbname query:(NSString *)query OnSuccessCallback:(RCTResponseSenderBlock)OnSuccessCallback OnErrorCallback:(RCTResponseSenderBlock)OnErrorCallback)
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(queryWithChangeListener:(NSString *)dbname query:(NSString *)query listener:(NSString *)listener)
 

@@ -25,7 +25,7 @@ class DatabaseManager: RCTEventEmitter {
         get { return _hasListeners }
         set { _hasListeners = newValue }
     }
-
+    
     func getDatabaseConfig(args: DatabaseArgs) -> DatabaseConfiguration? {
         let directory = args.directory
         let encryptionKey = args.encryptionKey
@@ -225,7 +225,7 @@ class DatabaseManager: RCTEventEmitter {
         if let db = databases[dbname], let database = db.database {
             if let data = Data(base64Encoded: blobdata) {
                 let blob = Blob.init(contentType: type, data: data)
-               
+                
                 do {
                     try database.saveBlob(blob:blob);
                     return blob.toJSON();
@@ -243,35 +243,35 @@ class DatabaseManager: RCTEventEmitter {
     
     func getBlob(dbname: String, key: String) throws -> String {
         do {
-        if let db = databases[dbname], let database = db.database {
-            var properties : [String : Any] = [String : Any]()
-            if let data  = key.data(using: .utf8) {
-                properties =  try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] ?? [String : Any]()
+            if let db = databases[dbname], let database = db.database {
+                var properties : [String : Any] = [String : Any]()
+                if let data  = key.data(using: .utf8) {
+                    properties =  try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] ?? [String : Any]()
+                } else {
+                    return ResponseStrings.invalidblob
+                }
+                
+                var blob = try database.getBlob(properties: properties)
+                return (blob?.content?.base64EncodedString())!
+                
             } else {
-                return ResponseStrings.invalidblob
+                return ResponseStrings.Blobnotfound
             }
-
-            var blob = try database.getBlob(properties: properties)
-            return (blob?.content?.base64EncodedString())!
-        
-        } else {
-            return ResponseStrings.Blobnotfound
-        }
         } catch let error {
             throw error
         }
     }
     
-//    func convertToDictionary(text: String) -> [String: Any]? {
-//        if let data = text.data(using: .utf8) {
-//            do {
-//                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-//            } catch {
-//                print(error.localizedDescription)
-//            }
-//        }
-//        return nil
-//    }
+    //    func convertToDictionary(text: String) -> [String: Any]? {
+    //        if let data = text.data(using: .utf8) {
+    //            do {
+    //                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+    //            } catch {
+    //                print(error.localizedDescription)
+    //            }
+    //        }
+    //        return nil
+    //    }
     
     func createValueIndex(args: IndexArgs) throws -> String {
         do {
@@ -308,10 +308,10 @@ class DatabaseManager: RCTEventEmitter {
                     
                     var index = IndexBuilder.fullTextIndex(items: FullTextIndexItem.property(indexExpression))
                     if ignoreAccents {
-                      index = index.ignoreAccents(ignoreAccents)
+                        index = index.ignoreAccents(ignoreAccents)
                     }
                     if !language.isEmpty {
-                      index = index.language(language)
+                        index = index.language(language)
                     }
                     try db.createIndex(index, withName: indexName)
                     return ResponseStrings.SuccessCode
@@ -409,25 +409,25 @@ class DatabaseManager: RCTEventEmitter {
     
     func enableLogging(domain: String, logLevel: String) -> String {
         if domain.isEmpty {
-          Database.log.console.domains = .all
+            Database.log.console.domains = .all
         }
         else if let d = Int(domain) {
-          Database.log.console.domains = LogDomains(rawValue: d)
+            Database.log.console.domains = LogDomains(rawValue: d)
         }
         else {
-          return "Domain is invalid"
+            return "Domain is invalid"
         }
         
         if logLevel.isEmpty {
-          Database.log.console.level = .debug
+            Database.log.console.level = .debug
         }
         else if let l = UInt8(logLevel), let level = LogLevel.init(rawValue: l) {
-          Database.log.console.level = level
+            Database.log.console.level = level
         }
         else {
-          return "Console level is invalid"
+            return "Console level is invalid"
         }
-       return ResponseStrings.SuccessCode
+        return ResponseStrings.SuccessCode
     }
     
     func createQuery(args: QueryArgs) throws -> String {
@@ -459,24 +459,27 @@ class DatabaseManager: RCTEventEmitter {
                     if !databases.keys.contains(dbname) {
                         return ResponseStrings.DBnotfound
                     }
-                    let select = SelectResult.property(queryString)
-                    let query = QueryBuilder.select(select)
-                    let queryID = try dbResource.setQuery(query: query)
-                    var rows:ResultSet?
-                    if (try dbResource.getQuery(queryID: queryID)?.explain().hash != nil) {
-                        rows = try dbResource.getQuery(queryID: queryID)?.execute()
-                    } else {
-                        _ = try dbResource.setQuery(query: query)
-                        rows = try dbResource.getQuery(queryID: queryID)?.execute()
+                    let query = dbResource.database?.createQuery(query: queryString)
+                    let queryID = try dbResource.setQuery(query: query!)
+                    
+                    if (try dbResource.getQuery(queryID: queryID)?.explain().hashValue == nil) {
+                        _ = try dbResource.setQuery(query: query!)
                     }
-                    var row: Result?
-                    var json = [Any]()
-                    while (row = rows?.next()) != nil {
-                        let jsonData = try? JSONSerialization.data(withJSONObject: row!, options: .prettyPrinted)
-                        let rowObject = try JSONSerialization.jsonObject(with: jsonData!, options: .allowFragments)
-                        json.append(rowObject)
+                    
+                    do {
+                        var resultString = "["
+                        for result in try dbResource.getQuery(queryID: queryID)!.execute() {
+                            resultString += result.toJSON()
+                            resultString += ","
+                        }
+                        var trimResults = String(resultString.dropLast())
+                        trimResults += "]"
+                        return trimResults
+                    } catch {
+                        return ResponseStrings.ExceptionInvalidQuery
                     }
-                    return json.description
+                    
+                    
                 } else {
                     return ResponseStrings.DBnotfound
                 }
