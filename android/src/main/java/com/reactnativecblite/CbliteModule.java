@@ -3,7 +3,6 @@ package com.reactnativecblite;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -17,22 +16,21 @@ import com.reactnativecblite.Args.*;
 import com.reactnativecblite.util.DatabaseManager;
 
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import java.util.List;
 
-@ReactModule(name = CbliteModule.NAME)
-public class CbliteModule extends ReactContextBaseJavaModule {
-  public static final String NAME = "CBlite";
+@ReactModule(name = CBLiteModule.NAME)
+public class CBLiteModule extends ReactContextBaseJavaModule {
+  public static final String NAME = "CBLite";
   private DatabaseManager dbMgr;
   private ResponseStrings responseStrings;
   private final ReactApplicationContext reactContext;
 
 
-  public CbliteModule(ReactApplicationContext reactContext) {
+  public CBLiteModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.dbMgr = DatabaseManager.getSharedInstance(reactContext);
     this.reactContext = reactContext;

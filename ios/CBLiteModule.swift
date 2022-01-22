@@ -2,7 +2,7 @@ import CouchbaseLiteSwift
 
 @objc(Cblite)
 class Cblite: NSObject {
-    private var _TAG = "CBlite"
+    private var _TAG = "CBLite"
     var TAG: String {
         get { return _TAG }
     }

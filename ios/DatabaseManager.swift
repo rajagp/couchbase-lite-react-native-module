@@ -262,16 +262,6 @@ class DatabaseManager: RCTEventEmitter {
         }
     }
     
-    //    func convertToDictionary(text: String) -> [String: Any]? {
-    //        if let data = text.data(using: .utf8) {
-    //            do {
-    //                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-    //            } catch {
-    //                print(error.localizedDescription)
-    //            }
-    //        }
-    //        return nil
-    //    }
     
     func createValueIndex(args: IndexArgs) throws -> String {
         do {
@@ -437,10 +427,15 @@ class DatabaseManager: RCTEventEmitter {
                     if !databases.keys.contains(dbname) {
                         return ResponseStrings.DBnotfound
                     }
-                    let select = SelectResult.property(queryString)
-                    let query = QueryBuilder.select(select)
-                    let queryID = try dbResource.setQuery(query: query)
-                    return "\(queryID)"
+                    
+                    if let query = dbResource.database?.createQuery(query: queryString){
+                        let queryID = try dbResource.setQuery(query: query)
+                        return "\(queryID)"
+                    }
+                    else
+                    {
+                        return ResponseStrings.ExceptionInvalidQuery
+                    }
                 } else {
                     return ResponseStrings.DBnotfound
                 }
@@ -459,25 +454,45 @@ class DatabaseManager: RCTEventEmitter {
                     if !databases.keys.contains(dbname) {
                         return ResponseStrings.DBnotfound
                     }
-                    let query = dbResource.database?.createQuery(query: queryString)
-                    let queryID = try dbResource.setQuery(query: query!)
-                    
-                    if (try dbResource.getQuery(queryID: queryID)?.explain().hashValue == nil) {
-                        _ = try dbResource.setQuery(query: query!)
-                    }
-                    
-                    do {
-                        var resultString = "["
-                        for result in try dbResource.getQuery(queryID: queryID)!.execute() {
-                            resultString += result.toJSON()
-                            resultString += ","
+                    if let mquery = dbResource.database?.createQuery(query: queryString)
+                    {
+                        let mqueryID = try dbResource.setQuery(query: mquery)
+                        if (try dbResource.getQuery(queryID: mqueryID)?.explain().hashValue != nil) {
+                            
                         }
-                        var trimResults = String(resultString.dropLast())
-                        trimResults += "]"
-                        return trimResults
-                    } catch {
+                        else{
+                            _ = try dbResource.setQuery(query: mquery)
+                        }
+                        
+                        
+                        do {
+                            var resultString = "["
+                            if let queryResource = dbResource.getQuery(queryID: mqueryID) {
+                                for result in try queryResource.execute()
+                                {
+                                    resultString += result.toJSON()
+                                    resultString += ","
+                                }
+                                if(resultString.count>1)
+                                {
+                                    resultString = String(resultString.dropLast())
+                                }
+                            }
+                            
+                            resultString += "]"
+                            return resultString
+                            
+                        } catch {
+                            return ResponseStrings.ExceptionInvalidQuery
+                        }
+                    }
+                    else
+                    {
                         return ResponseStrings.ExceptionInvalidQuery
                     }
+                    
+                    
+                    
                     
                     
                 } else {
@@ -582,6 +597,171 @@ class DatabaseManager: RCTEventEmitter {
         } catch let error {
             throw error
         }
+        return ResponseStrings.SuccessCode
+    }
+    func replicatorStart(dbname:String,id:String) throws -> String {
+        do {
+            
+            if let dbResource = databases[dbname] {
+                if !databases.keys.contains(dbname) {
+                    return ResponseStrings.DBnotfound
+                }
+                if dbResource.getReplicator(replicatorID: id) != nil {
+                    dbResource.getReplicator(replicatorID: id)!.start()
+                }else{
+                    return ResponseStrings.ReplicatorNotExists
+                }
+                
+            } else {
+                return ResponseStrings.DBnotfound
+            }
+            
+        } catch let error {
+            throw error
+        }
+        return ResponseStrings.ErrorCode
+    }
+    
+    func replicatorStop(dbname:String,id:String) throws -> String {
+        do {
+            
+            if let dbResource = databases[dbname] {
+                if !databases.keys.contains(dbname) {
+                    return ResponseStrings.DBnotfound
+                }
+                if dbResource.getReplicator(replicatorID: id) != nil {
+                    dbResource.getReplicator(replicatorID: id)!.stop()
+                    if dbResource.getReplicatorChangeListenerToken(replicatorId: id) == nil {
+                        dbResource.removeReplicator(replicatorId: id)
+                    }
+                    
+                }else{
+                    return ResponseStrings.ReplicatorNotExists
+                }
+                
+            } else {
+                return ResponseStrings.DBnotfound
+            }
+            
+        } catch let error {
+            throw error
+        }
+        return ResponseStrings.ErrorCode
+    }
+    
+    func replicationRemoveChangeListener(dbname:String,id:String) throws -> String {
+        
+        do {
+            if let dbResource = databases[dbname] {
+                if !databases.keys.contains(dbname) {
+                    return ResponseStrings.DBnotfound
+                }
+                if let replicator = dbResource.getReplicator(replicatorID: id){
+                    
+                    if let token = dbResource.getReplicatorChangeListenerToken(replicatorId: id) {
+                        replicator.removeChangeListener(withToken: token)
+                        dbResource.setReplicatorChangeListenerToken(replicatorId: id, replicatorChangeListenerToken: nil)
+                        if replicator.status.activity == Replicator.ActivityLevel.stopped {
+                            dbResource.removeReplicator(replicatorId: id)
+                        }
+                    }else {
+                        return ResponseStrings.ReplicatorListenerNotExists
+                    }
+                    
+                }else // replicator else
+                {
+                    return ResponseStrings.ReplicatorNotExists
+                }
+                
+            }// dbresource if let
+            else {
+                ResponseStrings.DBnotfound
+            }
+            
+            
+            
+        } catch let error {
+            throw error
+        }
+        return ResponseStrings.SuccessCode
+    }
+    
+    
+    func replicationAddChangeListener(dbname:String,id:String,listner:String) throws -> String{
+        do {
+            if let dbResource = databases[dbname] {
+                if !databases.keys.contains(dbname) {
+                    return ResponseStrings.DBnotfound
+                }
+                
+                if let replicator = dbResource.getReplicator(replicatorID: id){
+                    
+                    dbResource.setReplicatorChangeListenerToken(replicatorId: id, replicatorChangeListenerJSFunction: listner)
+                    
+                    if let token = dbResource.getReplicatorChangeListenerToken(replicatorId: id) {
+                        // if token is not null
+                        
+                    }else {
+                        //if token is null
+                        
+                        let blockToken =   dbResource.getReplicator(replicatorID: id)!.addChangeListener { (change) in
+                            var changeObject : [String:String] = [:]
+                            
+                            switch change.status.activity {
+                            case Replicator.ActivityLevel.stopped:
+                                changeObject.updateValue("stoped", forKey: "status")
+                                break
+                            case Replicator.ActivityLevel.busy:
+                                changeObject.updateValue("busy", forKey: "status")
+                                break
+                            case Replicator.ActivityLevel.connecting:
+                                changeObject.updateValue("connecting", forKey: "status")
+                                break
+                            case Replicator.ActivityLevel.offline:
+                                changeObject.updateValue("offile", forKey: "status")
+                                break
+                            default:
+                                changeObject.updateValue("idle", forKey: "status")
+                                break
+                            }
+                            
+                            if change.status.error != nil {
+                                changeObject.updateValue(change.status.error!.localizedDescription, forKey: "error")
+                                // changeObject.updateValue(change.status.error., forKey: <#T##String#>)
+                            }
+                            changeObject.updateValue("\(change.status.progress.completed)", forKey: "completed")
+                            changeObject.updateValue("\(change.status.progress.total)", forKey: "total")
+                            
+                            if let jsCallBackFunc = dbResource.getReplicatorChangeListenerJSFunction(replicatorId: id) {
+                                if jsCallBackFunc != nil && !jsCallBackFunc.isEmpty {
+                                    
+                                    if self.hasListeners {
+                                        self.sendEvent(withName: jsCallBackFunc, body: changeObject)
+                                    }
+                                }
+                            }
+                            
+                        }
+                        
+                        dbResource.setReplicatorChangeListenerToken(replicatorId: id, replicatorChangeListenerToken: blockToken)
+                        
+                        
+                    }// token else end.
+                    
+                }else // replicator else
+                {
+                    return ResponseStrings.ReplicatorNotExists
+                }
+                
+            }// dbresource if let
+            else {
+                ResponseStrings.DBnotfound
+            }
+            
+        } catch let error {
+            throw error
+        }
+        
         return ResponseStrings.SuccessCode
     }
     

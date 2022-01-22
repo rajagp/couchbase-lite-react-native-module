@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CblitePackage implements ReactPackage {
+public class CBLitePackage implements ReactPackage {
     @NonNull
     @Override
     public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
-        modules.add(new CbliteModule(reactContext));
+        modules.add(new CBLiteModule(reactContext));
         return modules;
     }
 

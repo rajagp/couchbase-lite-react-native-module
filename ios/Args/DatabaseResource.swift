@@ -32,10 +32,8 @@ class DatabaseResource: NSObject {
         set { _replicators = newValue }
     }
     private var _querys:[Int:QueryResource]?
-    var querys:[Int:QueryResource]? {
-        get { return _querys }
-        set { _querys = newValue }
-    }
+    var querys : [Int:QueryResource] = [:]
+
     
     override init() {
         super.init()
@@ -86,7 +84,7 @@ class DatabaseResource: NSObject {
         self.replicators?.removeValue(forKey: replicatorId)
     }
     
-    func setReplicatorChangeListenerToken(replicatorId: String, replicatorChangeListenerToken: ListenerToken) {
+    func setReplicatorChangeListenerToken(replicatorId: String, replicatorChangeListenerToken: ListenerToken?) {
         if let _ = self.replicators , let _ = self.replicators![replicatorId] {
             self.replicators![replicatorId]!.replicatorChangeListenerToken = replicatorChangeListenerToken
         }
@@ -100,6 +98,8 @@ class DatabaseResource: NSObject {
     }
     
     func setReplicatorChangeListenerToken(replicatorId: String, replicatorChangeListenerJSFunction: String) {
+        // check for empty string
+        
         if let _ = self.replicators , let _ = self.replicators![replicatorId] {
             self.replicators![replicatorId]!.replicatorChangeListenerJSFunction = replicatorChangeListenerJSFunction
         }
@@ -113,10 +113,10 @@ class DatabaseResource: NSObject {
     }
     
     func getQuery(queryID: Int) -> Query? {
-        if let _ = self.querys, let _ = self.querys![queryID], let _ = self.querys![queryID]!.query {
-            return self.querys![queryID]!.query!
+        if ((!self.querys.isEmpty)&&(self.querys[queryID] != nil)&&(self.querys[queryID]?.query != nil)){
+            return self.querys[queryID]?.query
         }
-        return nil
+           return nil
     }
     
     func setQuery(query: Query) throws -> Int {
@@ -125,8 +125,9 @@ class DatabaseResource: NSObject {
         var hash = 0
         do {
             hash = try query.explain().hashValue
-            if ((self.querys?.keys.contains(hash)) == nil) {
-                self.querys?[hash] = queryResource
+        
+            if (!self.querys.keys.contains(hash)) {
+                self.querys.updateValue(queryResource, forKey: hash)
             }
         }
         catch let error {
@@ -136,22 +137,22 @@ class DatabaseResource: NSObject {
     }
     
     func removeQuery(queryId: Int) {
-        self.querys?.removeValue(forKey: queryId)
+        self.querys.removeValue(forKey: queryId)
     }
     
     func getQueryChangeListenerToken(queryId: Int) -> ListenerToken? {
-        return self.querys?[queryId]?.queryChangeListenerToken
+        return self.querys[queryId]?.queryChangeListenerToken
     }
     
     func setQueryChangeListenerToken(queryChangeListenerToken: ListenerToken?, queryID: Int) {
-        self.querys?[queryID]?.queryChangeListenerToken = queryChangeListenerToken
+        self.querys[queryID]?.queryChangeListenerToken = queryChangeListenerToken
     }
     
     func getQueryChangeListenerJSFunction(queryID: Int) -> String? {
-        return self.querys?[queryID]?.queryChangeListenerJSFunction
+        return self.querys[queryID]?.queryChangeListenerJSFunction
     }
     
     func setQueryChangeListenerJSFunction(queryChangeListenerJSFunction: String, queryID: Int) {
-        self.querys?[queryID]?.queryChangeListenerJSFunction = queryChangeListenerJSFunction
+        self.querys[queryID]?.queryChangeListenerJSFunction = queryChangeListenerJSFunction
     }
 }

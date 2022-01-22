@@ -15,8 +15,10 @@ const linkin_err = new Proxy(
   }
 );
 
-const Cblite = Platform.OS == 'ios'? (NativeModules.Cblite
-  ? NativeModules.Cblite :linkin_err) : NativeModules? NativeModules : linkin_err;
+//const CBLite = NativeModules.CBLite ? NativeModules.CBLite : linkin_err;
+
+const CBLite = Platform.OS == 'ios'? (NativeModules.Cblite
+  ? NativeModules.Cblite :linkin_err) : (NativeModules.CBLite? NativeModules.CBLite : linkin_err);
 
 export function CreateOrOpenDatabase(
   dbname: string,
@@ -24,7 +26,7 @@ export function CreateOrOpenDatabase(
   OnSuccessCallback: Function,
   OnErrorCallback: Function
 ): void {
-  Cblite.CreateOrOpenDatabase(
+  CBLite.CreateOrOpenDatabase(
     dbname,
     config,
     OnSuccessCallback,
@@ -36,10 +38,10 @@ export function closeDatabase(
   OnSuccessCallback: Function,
   OnErrorCallback: Function
 ): void {
-  Cblite.closeDatabase(dbname, OnSuccessCallback, OnErrorCallback);
+  CBLite.closeDatabase(dbname, OnSuccessCallback, OnErrorCallback);
 }
 export function deleteDatabase(dbname: string): string {
-  return Cblite.deleteDatabase(dbname);
+  return CBLite.deleteDatabase(dbname);
 }
 export function copyDatabase(
   currentdbname: string,
@@ -49,7 +51,7 @@ export function copyDatabase(
   OnSuccessCallback: Function,
   OnErrorCallback: Function
 ): void {
-  Cblite.copyDatabase(
+  CBLite.copyDatabase(
     currentdbname,
     newDBName,
     currentConfig,
@@ -62,7 +64,7 @@ export function databaseExists(
   dbname: string,
   config: Object
 ): string {
-  return Cblite.databaseExists(dbname, config);
+  return CBLite.databaseExists(dbname, config);
 }
 export function deleteDocument(
   dbname: string,
@@ -70,7 +72,7 @@ export function deleteDocument(
   OnSuccessCallback: Function,
   OnErrorCallback: Function
 ): void {
-  Cblite.deleteDocument(dbname, docid, OnSuccessCallback, OnErrorCallback);
+  CBLite.deleteDocument(dbname, docid, OnSuccessCallback, OnErrorCallback);
 }
 export function getDocument(
   dbname: string,
@@ -78,7 +80,7 @@ export function getDocument(
   OnSuccessCallback: Function,
   OnErrorCallback: Function
 ): void {
-  Cblite.getDocument(dbname, docid, OnSuccessCallback, OnErrorCallback);
+  CBLite.getDocument(dbname, docid, OnSuccessCallback, OnErrorCallback);
 }
 export function setDocument(
   dbname: string,
@@ -87,14 +89,14 @@ export function setDocument(
   OnSuccessCallback: Function,
   OnErrorCallback: Function
 ): void {
-  Cblite.setDocument(dbname, docid, data, OnSuccessCallback, OnErrorCallback);
+  CBLite.setDocument(dbname, docid, data, OnSuccessCallback, OnErrorCallback);
 }
 export function setBlob(
   dbname: string,
   type: string,
   imagedata: string,
 ): string {
-  return Cblite.setBlob(dbname, type, imagedata);
+  return CBLite.setBlob(dbname, type, imagedata);
 }
 export function getBlob(
   dbname: string,
@@ -102,14 +104,14 @@ export function getBlob(
   OnSuccessCallback: Function,
   OnErrorCallback: Function
 ): void {
-  Cblite.getBlob(dbname, blobData, OnSuccessCallback, OnErrorCallback);
+  CBLite.getBlob(dbname, blobData, OnSuccessCallback, OnErrorCallback);
 }
 export function createValueIndex(
   dbname: string,
   indexName: string,
   indexExpressions: [string]
 ): string {
-  return Cblite.createValueIndex(dbname, indexName, indexExpressions);
+  return CBLite.createValueIndex(dbname, indexName, indexExpressions);
 }
 export function createFTSIndex(
   dbname: string,
@@ -117,31 +119,31 @@ export function createFTSIndex(
   options: Object,
   indexExpressions: [string]
 ): string {
-  return Cblite.createFTSIndex(dbname, indexName, options, indexExpressions);
+  return CBLite.createFTSIndex(dbname, indexName, options, indexExpressions);
 }
 export function deleteIndex(
   dbname: string,
   indexName: string
 ): string {
-  return Cblite.deleteIndex(dbname, indexName);
+  return CBLite.deleteIndex(dbname, indexName);
 }
 export function addDatabaseChangeListener(
   dbname: string,
   listener: string
 ): string {
-  return Cblite.addDatabaseChangeListener(dbname, listener);
+  return CBLite.addDatabaseChangeListener(dbname, listener);
 }
 export function removeDatabaseChangeListener(dbname: string): string {
-  return Cblite.removeDatabaseChangeListener(dbname);
+  return CBLite.removeDatabaseChangeListener(dbname);
 }
 export function enableConsoleLogging(
   domain: string,
   logLevel: string
 ): string {
-  return Cblite.enableConsoleLogging(domain, logLevel);
+  return CBLite.enableConsoleLogging(domain, logLevel);
 }
 export function createQuery(dbname: string, query: string): string {
-  return Cblite.createQuery(dbname, query);
+  return CBLite.createQuery(dbname, query);
 }
 export function query(
   dbname: string,
@@ -150,7 +152,7 @@ export function query(
   OnSuccessCallback: Function,
   OnErrorCallback: Function
 ): void {
-  Cblite.querydb(dbname, query, OnSuccessCallback, OnErrorCallback);
+  CBLite.querydb(dbname, query, OnSuccessCallback, OnErrorCallback);
 }
 export function queryWithChangeListener(
   dbname: string,
@@ -158,12 +160,12 @@ export function queryWithChangeListener(
   query: string,
   listener: string
 ): string {
-  return Cblite.queryWithChangeListener(dbname, query, listener);
+  return CBLite.queryWithChangeListener(dbname, query, listener);
 }
 export function removeQueryChangeListener(
   dbname: string,
   // eslint-disable-next-line no-shadow
   query: string
 ): string {
-  return Cblite.removeQueryChangeListener(dbname, query);
+  return CBLite.removeQueryChangeListener(dbname, query);
 }
