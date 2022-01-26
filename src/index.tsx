@@ -152,7 +152,7 @@ export function query(
   OnSuccessCallback: Function,
   OnErrorCallback: Function
 ): void {
-  CBLite.querydb(dbname, query, OnSuccessCallback, OnErrorCallback);
+  CBLite.query(dbname, query, OnSuccessCallback, OnErrorCallback);
 }
 export function queryWithChangeListener(
   dbname: string,

@@ -48,9 +48,6 @@ repositories {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
         url("$rootDir/../node_modules/react-native/android")
     }
-//    maven {
-//      url "https://mobile.maven.couchbase.com/maven2/dev/"
-//    }
     google()
     mavenCentral()
     jcenter()
@@ -60,6 +57,4 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation rootProject.dependencies.module(safeExtGet('cblVersion', 'com.couchbase.lite:versionName:versionCode'));
-    //implementation 'com.couchbase.lite:couchbase-lite-android-ee:3.0.0-beta02';
-
 }

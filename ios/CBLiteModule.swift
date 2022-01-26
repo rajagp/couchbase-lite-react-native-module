@@ -458,7 +458,7 @@ class Cblite: NSObject {
     }
     
     @objc
-    func querydb(_ dbname: String, query: String, OnSuccessCallback:RCTResponseSenderBlock, OnErrorCallback: RCTResponseSenderBlock) {
+    func query(_ dbname: String, query: String, OnSuccessCallback:RCTResponseSenderBlock, OnErrorCallback: RCTResponseSenderBlock) {
         do {
             if dbname.isEmpty {
                 let error = ResponseStrings.MissingargsDBN;
