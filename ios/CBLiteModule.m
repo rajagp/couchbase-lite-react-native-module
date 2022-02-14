@@ -39,6 +39,16 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(enableConsoleLogging:(NSString *)domain 
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(createQuery:(NSString *)dbname query:(NSString *)query)
 
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(createReplicator:(NSString *)dbname replicatorConfig:(NSDictionary *)replicatorConfig)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(replicatorStart:(NSString *)dbname rid:(NSString *)rid)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(replicatorStop:(NSString *)dbname rid:(NSString *)rid)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(replicationRemoveChangeListener:(NSString *)dbname rid:(NSString *)rid)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(replicationAddChangeListener:(NSString *)dbname rid:(NSString *)rid listner:(NSString *)listner)
+
 RCT_EXTERN_METHOD(query:(NSString *)dbname query:(NSString *)query OnSuccessCallback:(RCTResponseSenderBlock)OnSuccessCallback OnErrorCallback:(RCTResponseSenderBlock)OnErrorCallback)
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(queryWithChangeListener:(NSString *)dbname query:(NSString *)query listener:(NSString *)listener)

@@ -894,6 +894,7 @@ public class DatabaseManager {
             if (dbr != null) {
                 database = dbr.getDatabase();
             } else {
+                
                 DatabaseArgs dbArgs = new DatabaseArgs(dbname);
 
                 String dbresponse = openOrCreateDatabase(dbArgs);

@@ -526,6 +526,106 @@ class Cblite: NSObject {
         }
     }
     
+    
+    @objc
+    func createReplicator(dbname:String,replicatorConfig:[String:Any]) -> [String:Any]   {
+        do {
+            if dbname.isEmpty {
+                let error = [ResponseStrings.ErrorCode:ResponseStrings.MissingargsDBN]
+                return error;
+            } else if replicatorConfig.isEmpty {
+                let error = [ResponseStrings.ErrorCode:ResponseStrings.Missingargs+"Replicator Config"]
+                return error;
+            } else {
+                let result = try DatabaseManager.shared.createReplicator(dbname: dbname, replicatorConfig: replicatorConfig)
+                return (result);
+            }
+        } catch let error {
+            let error = [ResponseStrings.ErrorCode:ResponseStrings.Exception + error.localizedDescription]
+            return error;
+        }
+    }
+    
+    @objc
+    func replicatorStart(dbname:String,rid:String) -> String  {
+        do {
+            if dbname.isEmpty {
+                let error = ResponseStrings.MissingargsDBN;
+                return error;
+            } else if rid.isEmpty {
+                let error = ResponseStrings.Missingargs+"Replicator ID";
+                return error;
+            } else {
+                let result = try DatabaseManager.shared.replicatorStart(dbname: dbname, id: rid)
+                return (result);
+            }
+        } catch let error {
+            let error = ResponseStrings.Exception + error.localizedDescription;
+            return error;
+        }
+    }
+    
+    @objc
+    func replicatorStop(dbname:String,rid:String) -> String  {
+        do {
+            if dbname.isEmpty {
+                let error = ResponseStrings.MissingargsDBN;
+                return error;
+            } else if rid.isEmpty {
+                let error = ResponseStrings.Missingargs+"Replicator ID";
+                return error;
+            } else {
+                let result = try DatabaseManager.shared.replicatorStop(dbname: dbname, id: rid)
+                return (result);
+            }
+        } catch let error {
+            let error = ResponseStrings.Exception + error.localizedDescription;
+            return error;
+        }
+    }
+    
+    @objc
+    func replicationRemoveChangeListener(dbname:String,rid:String) -> String  {
+        do {
+            if dbname.isEmpty {
+                let error = ResponseStrings.MissingargsDBN;
+                return error;
+            } else if rid.isEmpty {
+                let error = ResponseStrings.Missingargs+"Replicator ID";
+                return error;
+            } else {
+                let result = try DatabaseManager.shared.replicationRemoveChangeListener(dbname: dbname, id: rid)
+                return (result);
+            }
+        } catch let error {
+            let error = ResponseStrings.Exception + error.localizedDescription;
+            return error;
+        }
+    }
+    
+    
+    @objc
+    func replicationAddChangeListener(dbname:String,rid:String,listner:String) -> String  {
+        do {
+            if dbname.isEmpty {
+                let error = ResponseStrings.MissingargsDBN;
+                return error;
+            } else if rid.isEmpty {
+                let error = ResponseStrings.Missingargs+"Replicator ID";
+                return error;
+            } else {
+                let result = try DatabaseManager.shared.replicationAddChangeListener(dbname: dbname, id: rid, listner:listner)
+                return (result);
+            }
+        } catch let error {
+            let error = ResponseStrings.Exception + error.localizedDescription;
+            return error;
+        }
+    }
+    
+    
+    
+    
     @objc
     static func requiresMainQueueSetup() -> Bool {
         return true

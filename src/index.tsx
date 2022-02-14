@@ -169,3 +169,45 @@ export function removeQueryChangeListener(
 ): string {
   return CBLite.removeQueryChangeListener(dbname, query);
 }
+
+
+export function createReplicator(
+  dbname: string,
+  // eslint-disable-next-line no-shadow
+  replicatorID: string,
+  // eslint-disable-next-line no-shadow
+  JSlistener: string
+): string {
+  return CBLite.createReplicator(dbname, replicatorID, JSlistener);
+}
+
+export function replicationAddChangeListener(
+  dbname: string,
+  // eslint-disable-next-line no-shadow
+  replicatorID: string,
+  // eslint-disable-next-line no-shadow
+  JSlistener: string
+): string {
+  return CBLite.replicationAddChangeListener(dbname, replicatorID, JSlistener);
+}
+export function replicationRemoveChangeListener(
+  dbname: string,
+  // eslint-disable-next-line no-shadow
+  replicatorID: string
+): string {
+  return CBLite.replicationRemoveChangeListener(dbname, replicatorID);
+}
+export function replicatorStop(
+  dbname: string,
+  // eslint-disable-next-line no-shadow
+  replicatorID: string
+): string {
+  return CBLite.replicatorStop(dbname, replicatorID);
+}
+export function replicatorStart(
+  dbname: string,
+  // eslint-disable-next-line no-shadow
+  replicatorID: string
+): string {
+  return CBLite.replicatorStart(dbname, replicatorID);
+}
