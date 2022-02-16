@@ -174,11 +174,9 @@ export function removeQueryChangeListener(
 export function createReplicator(
   dbname: string,
   // eslint-disable-next-line no-shadow
-  replicatorID: string,
-  // eslint-disable-next-line no-shadow
-  JSlistener: string
+  replicatorConfig: Object,
 ): string {
-  return CBLite.createReplicator(dbname, replicatorID, JSlistener);
+  return CBLite.createReplicator(dbname, replicatorConfig);
 }
 
 export function replicationAddChangeListener(

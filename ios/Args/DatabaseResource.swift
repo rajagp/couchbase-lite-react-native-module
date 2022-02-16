@@ -27,10 +27,8 @@ class DatabaseResource: NSObject {
         set { _listenerToken = newValue }
     }
     private var _replicators:[String:ReplicatorResource]?
-    var replicators:[String:ReplicatorResource]? {
-        get { return _replicators }
-        set { _replicators = newValue }
-    }
+    var replicators:[String:ReplicatorResource] = [:]
+    
     private var _querys:[Int:QueryResource]?
     var querys : [Int:QueryResource] = [:]
 
@@ -51,15 +49,15 @@ class DatabaseResource: NSObject {
     }
     
     func getReplicator(replicatorID: String) -> Replicator? {
-        return self.replicators?[replicatorID]?.replicator
+        return self.replicators[replicatorID]?.replicator
     }
     
     func setReplicator(replicator: Replicator) -> String? {
         let setReplicator = ReplicatorResource()
         setReplicator.replicator = replicator
         let hash = generateReplicatorConfigHash(replicator: replicator)
-        if let _ = self.replicators, let _ = hash {
-            self.replicators![hash!] = setReplicator
+        if hash != nil {
+            self.replicators.updateValue(setReplicator, forKey: hash!)
         }
         return hash
     }
@@ -81,18 +79,18 @@ class DatabaseResource: NSObject {
     }
     
     func removeReplicator(replicatorId: String) {
-        self.replicators?.removeValue(forKey: replicatorId)
+        self.replicators.removeValue(forKey: replicatorId)
     }
     
     func setReplicatorChangeListenerToken(replicatorId: String, replicatorChangeListenerToken: ListenerToken?) {
-        if let _ = self.replicators , let _ = self.replicators![replicatorId] {
-            self.replicators![replicatorId]!.replicatorChangeListenerToken = replicatorChangeListenerToken
+        if self.replicators[replicatorId] != nil {
+            self.replicators[replicatorId]!.replicatorChangeListenerToken = replicatorChangeListenerToken
         }
     }
     
     func getReplicatorChangeListenerToken(replicatorId: String) -> ListenerToken? {
-        if let _ = self.replicators , let _ = self.replicators![replicatorId], let _ = self.replicators![replicatorId]!.replicatorChangeListenerToken {
-            return self.replicators![replicatorId]!.replicatorChangeListenerToken!
+        if  self.replicators[replicatorId]  != nil &&  self.replicators[replicatorId]!.replicatorChangeListenerToken != nil {
+            return self.replicators[replicatorId]!.replicatorChangeListenerToken!
         }
         return nil
     }
@@ -100,14 +98,14 @@ class DatabaseResource: NSObject {
     func setReplicatorChangeListenerToken(replicatorId: String, replicatorChangeListenerJSFunction: String) {
         // check for empty string
         
-        if let _ = self.replicators , let _ = self.replicators![replicatorId] {
-            self.replicators![replicatorId]!.replicatorChangeListenerJSFunction = replicatorChangeListenerJSFunction
+        if self.replicators[replicatorId] != nil  {
+            self.replicators[replicatorId]!.replicatorChangeListenerJSFunction = replicatorChangeListenerJSFunction
         }
     }
     
     func getReplicatorChangeListenerJSFunction(replicatorId: String) -> String? {
-        if let _ = self.replicators , let _ = self.replicators![replicatorId], let _ = self.replicators![replicatorId]!.replicatorChangeListenerToken {
-            return self.replicators![replicatorId]!.replicatorChangeListenerJSFunction!
+        if  self.replicators[replicatorId] != nil && self.replicators[replicatorId]!.replicatorChangeListenerToken != nil  {
+            return self.replicators[replicatorId]!.replicatorChangeListenerJSFunction!
         }
         return nil
     }

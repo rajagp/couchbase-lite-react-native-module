@@ -26,6 +26,9 @@ class DatabaseManager: RCTEventEmitter {
         set { _hasListeners = newValue }
     }
     
+    var mevents:[String] = []
+    
+    
     func getDatabaseConfig(args: DatabaseArgs) -> DatabaseConfiguration? {
         let directory = args.directory
         let encryptionKey = args.encryptionKey
@@ -185,11 +188,9 @@ class DatabaseManager: RCTEventEmitter {
             }
             if let parentDb = databases[dbName], let db = parentDb.database {
                 if let document = db.document(withID: docId) {
-                    do {
-                        return document.toJSON();
-                    } catch let error {
-                        throw error
-                    }
+                    
+                    return document.toJSON();
+                    
                 } else {
                     return ResponseStrings.Docnotfound
                 }
@@ -229,7 +230,7 @@ class DatabaseManager: RCTEventEmitter {
                 do {
                     try database.saveBlob(blob:blob);
                     return blob.toJSON();
-                } catch let error {
+                } catch _ {
                     return ResponseStrings.ExceptionBLOB
                 }
             } else {
@@ -251,7 +252,7 @@ class DatabaseManager: RCTEventEmitter {
                     return ResponseStrings.invalidblob
                 }
                 
-                var blob = try database.getBlob(properties: properties)
+                let blob = try database.getBlob(properties: properties)
                 return (blob?.content?.base64EncodedString())!
                 
             } else {
@@ -342,6 +343,7 @@ class DatabaseManager: RCTEventEmitter {
         }
         if let dbResource = databases[dbname], let db = dbResource.database {
             if dbResource.listenerToken == nil {
+                mevents.append(jsListener)
                 let token = db.addChangeListener { change in
                     var changeDocMap = [String:Any]()
                     var deletedDocMap = [String:Any]()
@@ -386,6 +388,7 @@ class DatabaseManager: RCTEventEmitter {
         }
         if let dbResource = databases[dbname], let db = dbResource.database {
             if let token = dbResource.listenerToken {
+                
                 db.removeChangeListener(withToken: token)
                 dbResource.listenerToken = nil
                 return ResponseStrings.SuccessCode
@@ -398,25 +401,41 @@ class DatabaseManager: RCTEventEmitter {
     }
     
     func enableLogging(domain: String, logLevel: String) -> String {
-        if domain.isEmpty {
+        
+        var mloglevel:LogLevel;
+        
+        switch (domain){
+        case "database":
+            Database.log.console.domains = .database
+        case "query":
+            Database.log.console.domains = .query
+        case "replicator":
+            Database.log.console.domains = .replicator
+        case "network":
+            Database.log.console.domains = .network
+        //        case "listener":
+        //            Database.log.console.domains = .listener
+        default:
             Database.log.console.domains = .all
         }
-        else if let d = Int(domain) {
-            Database.log.console.domains = LogDomains(rawValue: d)
-        }
-        else {
-            return "Domain is invalid"
+        
+        switch (logLevel){
+        case "debug":
+            mloglevel = LogLevel.debug
+        case "verbose":
+            mloglevel = LogLevel.verbose
+        case "info":
+            mloglevel = LogLevel.info
+        case "warning":
+            mloglevel = LogLevel.warning
+        case "error":
+            mloglevel = LogLevel.error
+        default:
+            mloglevel = LogLevel.none
         }
         
-        if logLevel.isEmpty {
-            Database.log.console.level = .debug
-        }
-        else if let l = UInt8(logLevel), let level = LogLevel.init(rawValue: l) {
-            Database.log.console.level = level
-        }
-        else {
-            return "Console level is invalid"
-        }
+        Database.log.console.level = mloglevel
+        
         return ResponseStrings.SuccessCode
     }
     
@@ -512,58 +531,61 @@ class DatabaseManager: RCTEventEmitter {
                 if !databases.keys.contains(dbname) {
                     return ResponseStrings.DBnotfound
                 }
-                let select = SelectResult.property(query)
-                let q = QueryBuilder.select(select)
-                let queryID = try dbResource.setQuery(query: q)
-                if dbResource.getQuery(queryID: queryID) == nil {
-                    _ = try dbResource.setQuery(query: q)
-                }
                 
-                if dbResource.getQuery(queryID: queryID) != nil
-                    && dbResource.getQueryChangeListenerToken(queryId: queryID) != nil {
-                    return ResponseStrings.QueryListenerExists;
-                } else {
-                    dbResource.setQueryChangeListenerJSFunction(queryChangeListenerJSFunction: jsListener, queryID: queryID)
-                    let queryListenerToken = dbResource.getQuery(queryID: queryID)?.addChangeListener({change in
-                        let jsCallback = dbResource.getQueryChangeListenerJSFunction(queryID: queryID)
-                        if change.error != nil {
-                            var listenerResults = [String:Any]()
-                            listenerResults["message"] = change.error?.localizedDescription
-                            
-                            if !jsCallback!.isEmpty {
-                                let params = listenerResults.description
-                                if self.hasListeners {
-                                    self.sendEvent(withName: jsCallback!, body: params)
-                                }
-                            }
-                        } else {
-                            do {
-                                var row: Result?
-                                var json = [Any]()
-                                if change.results != nil {
-                                    while (row = change.results?.next()) != nil {
-                                        let jsonData = try? JSONSerialization.data(withJSONObject: row!, options: .prettyPrinted)
-                                        let rowObject = try JSONSerialization.jsonObject(with: jsonData!, options: .allowFragments)
-                                        json.append(rowObject)
-                                    }
-                                }
-                                if !jsCallback!.isEmpty {
-                                    let params = json.description
-                                    if self.hasListeners {
-                                        self.sendEvent(withName: jsCallback!, body: params)
-                                    }
-                                }
-                            } catch _ {
-                            }
-                        }
-                        
-                    })
-                    if let token = queryListenerToken {
-                        dbResource.setQueryChangeListenerToken(queryChangeListenerToken: token, queryID: queryID)
-                    } else {
-                        return "Listenertoken is empty"
+                if let mquery = dbResource.database?.createQuery(query: query)
+                {
+                    
+                    let queryID = try dbResource.setQuery(query: mquery)
+                    if dbResource.getQuery(queryID: queryID) == nil {
+                        _ = try dbResource.setQuery(query: mquery)
                     }
-                    return ResponseStrings.SuccessCode
+                    
+                    if dbResource.getQuery(queryID: queryID) != nil
+                        && dbResource.getQueryChangeListenerToken(queryId: queryID) != nil {
+                        return ResponseStrings.QueryListenerExists;
+                    } else {
+                        mevents.append(jsListener)
+                        dbResource.setQueryChangeListenerJSFunction(queryChangeListenerJSFunction: jsListener, queryID: queryID)
+                        let queryListenerToken = dbResource.getQuery(queryID: queryID)?.addChangeListener({change in
+                            let jsCallback = jsListener
+                            if change.error != nil {
+                                var listenerResults = [String:Any]()
+                                listenerResults["message"] = change.error?.localizedDescription
+                                
+                                if !jsCallback.isEmpty {
+                                    let params = listenerResults.description
+                                    if self.hasListeners {
+                                        self.sendEvent(withName: jsCallback, body: params)
+                                    }
+                                }
+                            } else {
+                                do {
+                                    var json = [Any]()
+                                    if change.results != nil {
+                                        
+                                        for result in change.results?.allResults() ?? []
+                                        {
+                                            json.append(result.toJSON())
+                                        }
+                                        
+                                        
+                                    }
+                                    if !jsCallback.isEmpty {
+                                        let params = json.description
+                                            self.sendEvent(withName: jsCallback, body: params)
+                                    }
+                                } catch _ {
+                                }
+                            }
+                            
+                        })
+                        if let token = queryListenerToken {
+                            dbResource.setQueryChangeListenerToken(queryChangeListenerToken: token, queryID: queryID)
+                        } else {
+                            return "Listenertoken is empty"
+                        }
+                        return ResponseStrings.SuccessCode
+                    }
                 }
                 
             } else {
@@ -572,24 +594,25 @@ class DatabaseManager: RCTEventEmitter {
         } catch let error {
             throw error
         }
+        return ResponseStrings.ErrorCode
     }
     
     func deregisterForQueryChanges(dbname : String, queryString: String) throws -> String {
         do {
             if let dbResource = databases[dbname] {
-                let select = SelectResult.property(queryString)
-                let q = QueryBuilder.select(select)
-                let queryID = try dbResource.setQuery(query: q)
-                if (dbResource.getQuery(queryID: queryID) != nil) {
-                    if let token = dbResource.getQueryChangeListenerToken(queryId: queryID) {
-                        dbResource.getQuery(queryID: queryID)?.removeChangeListener(withToken: token)
-                        dbResource.setQueryChangeListenerToken(queryChangeListenerToken: nil, queryID: queryID)
+                let mquery = dbResource.database?.createQuery(query: queryString)
+                let queryID = try mquery?.explain().hashValue
+                if (dbResource.getQuery(queryID: queryID!) != nil) {
+                    if let token = dbResource.getQueryChangeListenerToken(queryId: queryID!) {
+                        dbResource.getQuery(queryID: queryID!)?.removeChangeListener(withToken: token)
+                        dbResource.setQueryChangeListenerToken(queryChangeListenerToken: nil, queryID: queryID!)
+                        return ResponseStrings.SuccessCode
                     } else {
                         return ResponseStrings.QueryNotListenerExists
                     }
                     
                 } else {
-                    return ResponseStrings.QueryNotListenerExists
+                    return ResponseStrings.ExceptionQuerynotExists
                 }
             } else {
                 return ResponseStrings.DBNotExists
@@ -597,73 +620,61 @@ class DatabaseManager: RCTEventEmitter {
         } catch let error {
             throw error
         }
-        return ResponseStrings.SuccessCode
-    }
-
-    func createReplicator(dbname:String,replicatorConfig:[String:Any]) -> [String:Any] {
-        do {
-            var response : [String:Any] = [:]
-            if let dbResource = databases[dbname] {
-                
-                if !replicatorConfig.keys.contains("target") || replicatorConfig["target"]==nil
-                {
-                    return [ResponseStrings.ErrorCode:ResponseStrings.Missingargs + "Target Url"]
-                }
-                
-                var database : Database? = nil
-                
-                if databases.isEmpty{
-                    return[ResponseStrings.ErrorCode:ResponseStrings.DBnotfound]
-                }else{
-                    do {
-                        
-                        if let dbr = databases[dbname]{
-                            let dbArgs = DatabaseArgs.init(dbname: dbname)
-                            let dbResponse = try openOrCreateDatabase(args: dbArgs)
-                            if dbResponse != ResponseStrings.SuccessCode || dbResponse != ResponseStrings.DBExists {
-                                response.updateValue(ResponseStrings.ErrorCode+" Message : couldn't open database for replication.", forKey: ResponseStrings.ErrorCode)
-                                return response
-                            }else {
-                                let dbr2 = databases[dbname]
-                                database = dbr2?.database
-                            }
-                           
-                        }
-                        
-                        let replicatorConfiguration = getReplicatorConfig(db: database!, replicatorCongig: replicatorConfig)
-                        let newReplicator = Replicator.init(config: replicatorConfiguration)
-                        let replicatorId = databases[dbname]?.setReplicator(replicator: newReplicator)
-                        response.updateValue(replicatorId, forKey: "ReplicatorID")
-                        return response
-                       
-                    }
-                    catch let error {
-                        throw error
-                    }
-                    
-                }
-            } else {
-                return [ResponseStrings.ErrorCode:ResponseStrings.DBnotfound]
-            }
-            
-        } catch let error {
-            return [ResponseStrings.ErrorCode:error.localizedDescription]
-            
-        }
-        return [ResponseStrings.ErrorCode:ResponseStrings.ErrorCode]
         
     }
-   
+    
+    func createReplicator(dbname:String,replicatorConfig:[String:Any]) -> String {
+        do {
+            
+            
+            
+            if !replicatorConfig.keys.contains("target") || replicatorConfig["target"]==nil
+            {
+                return ResponseStrings.Missingargs + "Target Url"
+            }
+            
+            var database : Database? = nil
+            
+            if databases.isEmpty{
+                return ResponseStrings.DBnotfound
+            }else{
+                do {
+                    
+                    if databases[dbname] == nil {
+                        let dbArgs = DatabaseArgs.init(dbname: dbname)
+                        let dbResponse = try openOrCreateDatabase(args: dbArgs)
+                        if ((dbResponse != ResponseStrings.SuccessCode) && (dbResponse != ResponseStrings.DBExists)) {
+                            return ResponseStrings.ErrorCode+" Message : couldn't open database for replication."
+                        }
+                    }
+                    database = databases[dbname]?.database
+                    
+                    let replicatorConfiguration = getReplicatorConfig(db: database!, replicatorCongig: replicatorConfig)
+                    let newReplicator = Replicator.init(config: replicatorConfiguration)
+                    let replicatorId = databases[dbname]?.setReplicator(replicator: newReplicator)
+                    return replicatorId ?? ResponseStrings.ErrorCode
+                }
+                catch let error {
+                    throw error
+                }
+                
+            }
+        } catch let error {
+            return error.localizedDescription
+            
+        }
+        
+    }
+    
     func getReplicatorConfig(db:Database, replicatorCongig:[String:Any]) -> ReplicatorConfiguration {
         
         var replicatorCongigResponse:ReplicatorConfiguration? = nil
-        
-        do {
+   
             
-             var dbName = replicatorCongig["databaseName"]
-        
-             var targetUrl = replicatorCongig["target"]
-        
+        let dbName = replicatorCongig["databaseName"]
+            
+        let targetUrl = replicatorCongig["target"]
+            
             
             if let url = URL(string: targetUrl as! String) {
                 let endPoint  = URLEndpoint(url: url)
@@ -672,32 +683,28 @@ class DatabaseManager: RCTEventEmitter {
                     if let continuous = replicatorCongig["continuous"] {
                         replicatorCongigResponse?.continuous = continuous as! Bool
                     }
-                    var headerMap : [String:String] = [:]
-                    var i = 0
                     
-                     let headers = replicatorCongig["headers"] as! NSMutableArray
+                    if replicatorCongig.keys.contains("headers") {
+                        var headerMap : [String:String] = [:]
+                        var i = 0
+                        
+                        let headers = replicatorCongig["headers"] as! NSMutableArray
                         if headers.count > 0 {
-                            
                             for value in headers {
-                                
                                 headerMap.updateValue(value as! String, forKey: (value as AnyObject).key!)
                                 i += 1
                             }
                             replicatorCongigResponse?.headers = headerMap
-                            
+                        }
                         
-                        
-                    }else {
-                        print("replicaotCOnfig headers not found")
                     }
+                    
                     if replicatorCongig.keys.contains("channels") {
                         let channelsArray:[String] = replicatorCongig["channels"] as! [String]
                         if channelsArray.count > 0 {
                             replicatorCongigResponse?.channels = channelsArray
                         }
                         
-                    }else {
-                        print("replicator config has no channels")
                     }
                     
                     if replicatorCongig.keys.contains("documentIds") {
@@ -706,15 +713,13 @@ class DatabaseManager: RCTEventEmitter {
                             replicatorCongigResponse?.documentIDs = documentIds
                         }
                         
-                    }else {
-                        print("replicator config has no documentIds")
                     }
-//                    if replicatorCongig.keys.contains("acceptOnlySelfSignedServerCertificate"){
-//                        replicatorCongigResponse.acceptOnlySelfSignedServerCertificate = replicatorCongig["acceptOnlySelfSignedServerCertificate"]
-//                    }
+                    //                    if replicatorCongig.keys.contains("acceptOnlySelfSignedServerCertificate"){
+                    //                        replicatorCongigResponse.acceptOnlySelfSignedServerCertificate = replicatorCongig["acceptOnlySelfSignedServerCertificate"]
+                    //                    }
                     
                     if replicatorCongig.keys.contains("pinnedServerCertificateUri"){
-                        if let pathToCert = Bundle.main.path(forResource: replicatorCongig["pinnedServerCertificateUri"] as! String, ofType: "cer") {
+                        if let pathToCert = Bundle.main.path(forResource: replicatorCongig["pinnedServerCertificateUri"] as? String, ofType: "cer") {
                             if let localCertificate:NSData = NSData(contentsOfFile: pathToCert) {
                                 let certificate = SecCertificateCreateWithData(nil, localCertificate)
                                 replicatorCongigResponse?.pinnedServerCertificate = certificate
@@ -729,9 +734,10 @@ class DatabaseManager: RCTEventEmitter {
                         let authObj = replicatorCongig["authenticator"] as! [String:Any]
                         
                         if authObj.keys.contains("authType") && (authObj["authType"] as! String).lowercased() == "basic" {
-                            let userName = authObj["userName"] as! String
-                            let password = authObj["password"] as!  String
-                            if (userName != nil || userName != "") && (password != nil || password != "") {
+                            if (authObj.keys.contains("username") && authObj["username"] != nil) && (authObj.keys.contains("password") && authObj["password"] != nil) {
+                                let userName = authObj["username"] as! String
+                                let password = authObj["password"] as!  String
+                                
                                 
                                 replicatorCongigResponse?.authenticator = BasicAuthenticator(username: userName, password: password)
                                 
@@ -740,7 +746,7 @@ class DatabaseManager: RCTEventEmitter {
                         }else if authObj.keys.contains("authType") && (authObj["authType"] as! String).lowercased() == "session" {
                             if let sessionId = authObj["sessionId"] {
                                 if let cookieName = authObj["cookieName"] {
-                                    replicatorCongigResponse?.authenticator = SessionAuthenticator(sessionID: sessionId as! String, cookieName: cookieName as! String)
+                                    replicatorCongigResponse?.authenticator = SessionAuthenticator(sessionID: sessionId as! String, cookieName: cookieName as? String)
                                 }else {
                                     replicatorCongigResponse?.authenticator = SessionAuthenticator(sessionID: sessionId as! String)
                                 }
@@ -748,195 +754,178 @@ class DatabaseManager: RCTEventEmitter {
                         }
                         
                     }
-                    }
                 }
+            }
             
-        
-            
-        } catch let error {
-            replicatorCongigResponse = nil
-        }
+  
         return replicatorCongigResponse!
-    
-}
-
-func replicatorStart(dbname:String,id:String) throws -> String {
-    do {
         
-        if let dbResource = databases[dbname] {
-            if !databases.keys.contains(dbname) {
-                return ResponseStrings.DBnotfound
-            }
-            if dbResource.getReplicator(replicatorID: id) != nil {
-                dbResource.getReplicator(replicatorID: id)!.start()
-            }else{
-                return ResponseStrings.ReplicatorNotExists
-            }
-            
-        } else {
-            return ResponseStrings.DBnotfound
-        }
-        
-    } catch let error {
-        throw error
     }
-    return ResponseStrings.ErrorCode
-}
-
-
-func replicatorStop(dbname:String,id:String) throws -> String {
-    do {
-        
-        if let dbResource = databases[dbname] {
-            if !databases.keys.contains(dbname) {
-                return ResponseStrings.DBnotfound
-            }
-            if dbResource.getReplicator(replicatorID: id) != nil {
-                dbResource.getReplicator(replicatorID: id)!.stop()
-                if dbResource.getReplicatorChangeListenerToken(replicatorId: id) == nil {
-                    dbResource.removeReplicator(replicatorId: id)
+    
+    func replicatorStart(dbname:String,id:String) throws -> String {
+    
+            if let dbResource = databases[dbname] {
+                if !databases.keys.contains(dbname) {
+                    return ResponseStrings.DBnotfound
+                }
+                if dbResource.getReplicator(replicatorID: id) != nil {
+                    dbResource.getReplicator(replicatorID: id)!.start()
+                    return ResponseStrings.SuccessCode
+                }else{
+                    return ResponseStrings.ReplicatorNotExists
                 }
                 
-            }else{
-                return ResponseStrings.ReplicatorNotExists
-            }
-            
-        } else {
-            return ResponseStrings.DBnotfound
-        }
-        
-    } catch let error {
-        throw error
-    }
-    return ResponseStrings.ErrorCode
-}
-
-func replicationRemoveChangeListener(dbname:String,id:String) throws -> String {
-    
-    do {
-        if let dbResource = databases[dbname] {
-            if !databases.keys.contains(dbname) {
+            } else {
                 return ResponseStrings.DBnotfound
             }
-            if let replicator = dbResource.getReplicator(replicatorID: id){
-                
-                if let token = dbResource.getReplicatorChangeListenerToken(replicatorId: id) {
-                    replicator.removeChangeListener(withToken: token)
-                    dbResource.setReplicatorChangeListenerToken(replicatorId: id, replicatorChangeListenerToken: nil)
-                    if replicator.status.activity == Replicator.ActivityLevel.stopped {
+            
+ 
+        
+    }
+    
+    
+    func replicatorStop(dbname:String,id:String) throws -> String {
+  
+            if let dbResource = databases[dbname] {
+                if !databases.keys.contains(dbname) {
+                    return ResponseStrings.DBnotfound
+                }
+                if dbResource.getReplicator(replicatorID: id) != nil {
+                    dbResource.getReplicator(replicatorID: id)!.stop()
+                    if dbResource.getReplicatorChangeListenerToken(replicatorId: id) == nil {
                         dbResource.removeReplicator(replicatorId: id)
                     }
-                }else {
-                    return ResponseStrings.ReplicatorListenerNotExists
+                    return ResponseStrings.SuccessCode
+                    
+                }else{
+                    return ResponseStrings.ReplicatorNotExists
                 }
                 
-            }else // replicator else
-            {
-                return ResponseStrings.ReplicatorNotExists
-            }
-            
-        }// dbresource if let
-        else {
-            ResponseStrings.DBnotfound
-        }
-        
-        
-        
-    } catch let error {
-        throw error
-    }
-    return ResponseStrings.SuccessCode
-}
-
-
-func replicationAddChangeListener(dbname:String,id:String,listner:String) throws -> String{
-    do {
-        if let dbResource = databases[dbname] {
-            if !databases.keys.contains(dbname) {
+            } else {
                 return ResponseStrings.DBnotfound
             }
-            
-            if let replicator = dbResource.getReplicator(replicatorID: id){
-                
-                dbResource.setReplicatorChangeListenerToken(replicatorId: id, replicatorChangeListenerJSFunction: listner)
-                
-                if let token = dbResource.getReplicatorChangeListenerToken(replicatorId: id) {
-                    // if token is not null
-                    
-                }else {
-                    //if token is null
-                    
-                    let blockToken =   dbResource.getReplicator(replicatorID: id)!.addChangeListener { (change) in
-                        var changeObject : [String:String] = [:]
-                        
-                        switch change.status.activity {
-                        case Replicator.ActivityLevel.stopped:
-                            changeObject.updateValue("stoped", forKey: "status")
-                            break
-                        case Replicator.ActivityLevel.busy:
-                            changeObject.updateValue("busy", forKey: "status")
-                            break
-                        case Replicator.ActivityLevel.connecting:
-                            changeObject.updateValue("connecting", forKey: "status")
-                            break
-                        case Replicator.ActivityLevel.offline:
-                            changeObject.updateValue("offile", forKey: "status")
-                            break
-                        default:
-                            changeObject.updateValue("idle", forKey: "status")
-                            break
-                        }
-                        
-                        if change.status.error != nil {
-                            changeObject.updateValue(change.status.error!.localizedDescription, forKey: "error")
-                            // changeObject.updateValue(change.status.error., forKey: <#T##String#>)
-                        }
-                        changeObject.updateValue("\(change.status.progress.completed)", forKey: "completed")
-                        changeObject.updateValue("\(change.status.progress.total)", forKey: "total")
-                        
-                        if let jsCallBackFunc = dbResource.getReplicatorChangeListenerJSFunction(replicatorId: id) {
-                            if jsCallBackFunc != nil && !jsCallBackFunc.isEmpty {
-                                
-                                if self.hasListeners {
-                                    self.sendEvent(withName: jsCallBackFunc, body: changeObject)
-                                }
-                            }
-                        }
-                        
-                    }
-                    
-                    dbResource.setReplicatorChangeListenerToken(replicatorId: id, replicatorChangeListenerToken: blockToken)
-                    
-                    
-                }// token else end.
-                
-            }else // replicator else
-            {
-                return ResponseStrings.ReplicatorNotExists
-            }
-            
-        }// dbresource if let
-        else {
-            ResponseStrings.DBnotfound
-        }
-        
-    } catch let error {
-        throw error
+      
     }
     
-    return ResponseStrings.SuccessCode
-}
+    func replicationRemoveChangeListener(dbname:String,id:String) throws -> String {
+        
+            if let dbResource = databases[dbname] {
+                if !databases.keys.contains(dbname) {
+                    return ResponseStrings.DBnotfound
+                }
+                if let replicator = dbResource.getReplicator(replicatorID: id){
+                    
+                    if let token = dbResource.getReplicatorChangeListenerToken(replicatorId: id) {
+                        replicator.removeChangeListener(withToken: token)
+                        dbResource.setReplicatorChangeListenerToken(replicatorId: id, replicatorChangeListenerToken: nil)
+                        
+                        if replicator.status.activity == Replicator.ActivityLevel.stopped {
+                            dbResource.removeReplicator(replicatorId: id)
+                        }
+                    }else {
+                        return ResponseStrings.ReplicatorListenerNotExists
+                    }
+                    
+                }else // replicator else
+                {
+                    return ResponseStrings.ReplicatorNotExists
+                }
+                
+            }// dbresource if let
+            else {
+              return  ResponseStrings.DBnotfound
+            }
+            
+        
+        return ResponseStrings.SuccessCode
+    }
+    
+    
+    func replicationAddChangeListener(dbname:String,id:String,listner:String) throws -> String{
+       
+            if let dbResource = databases[dbname] {
+                if !databases.keys.contains(dbname) {
+                    return ResponseStrings.DBnotfound
+                }
+                
+                if dbResource.getReplicator(replicatorID: id) != nil{
+                    
+                    dbResource.setReplicatorChangeListenerToken(replicatorId: id, replicatorChangeListenerJSFunction: listner)
+                    
+                    if dbResource.getReplicatorChangeListenerToken(replicatorId: id) == nil {
+                        
+                        //if token is null
+                        mevents.append(listner)
 
-
-override func supportedEvents() -> [String]! {
-    return [""]
-}
-override func startObserving() {
-    self.hasListeners = true
-}
-
-override func stopObserving() {
-    self.hasListeners = false
-}
+                        let blockToken =   dbResource.getReplicator(replicatorID: id)!.addChangeListener { (change) in
+                            var changeObject : [String:String] = [:]
+                            
+                            switch change.status.activity {
+                            case Replicator.ActivityLevel.stopped:
+                                changeObject.updateValue("stoped", forKey: "status")
+                                break
+                            case Replicator.ActivityLevel.busy:
+                                changeObject.updateValue("busy", forKey: "status")
+                                break
+                            case Replicator.ActivityLevel.connecting:
+                                changeObject.updateValue("connecting", forKey: "status")
+                                break
+                            case Replicator.ActivityLevel.offline:
+                                changeObject.updateValue("offile", forKey: "status")
+                                break
+                            default:
+                                changeObject.updateValue("idle", forKey: "status")
+                                break
+                            }
+                            
+                            if change.status.error != nil {
+                                changeObject.updateValue(change.status.error!.localizedDescription, forKey: "error")
+                                // changeObject.updateValue(change.status.error., forKey: <#T##String#>)
+                            }
+                            changeObject.updateValue("\(change.status.progress.completed)", forKey: "completed")
+                            changeObject.updateValue("\(change.status.progress.total)", forKey: "total")
+                            
+                            if let jsCallBackFunc = dbResource.getReplicatorChangeListenerJSFunction(replicatorId: id) {
+                                if !jsCallBackFunc.isEmpty {
+                                    
+                                    if self.hasListeners {
+                                        self.sendEvent(withName: jsCallBackFunc, body: changeObject)
+                                    }
+                                }
+                            }
+                            
+                        }
+                        
+                        dbResource.setReplicatorChangeListenerToken(replicatorId: id, replicatorChangeListenerToken: blockToken)
+                        
+                        
+                    }// token else end.
+                    
+                }else // replicator else
+                {
+                    return ResponseStrings.ReplicatorNotExists
+                }
+                
+            }// dbresource if let
+            else {
+               return ResponseStrings.DBnotfound
+            }
+            
+       
+        
+        return ResponseStrings.SuccessCode
+    }
+    
+    
+    override func supportedEvents() -> [String]! {
+        return self.mevents
+    }
+    override func startObserving() {
+        self.hasListeners = true
+    }
+    
+    override func stopObserving() {
+        self.hasListeners = false
+    }
 }
 

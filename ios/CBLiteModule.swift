@@ -24,7 +24,7 @@ class Cblite: NSObject {
                 if response == ResponseStrings.DBExists || response == ResponseStrings.SuccessCode {
                     OnSuccessCallback([response])
                 } else {
-                    var error = response;
+                    let error = response;
                     OnErrorCallback([error])
                 }
             } else {
@@ -412,10 +412,7 @@ class Cblite: NSObject {
     
     @objc
     func enableConsoleLogging(_ domain: String, logLevel: String)->String {
-        if domain.isEmpty {
-            let error = ResponseStrings.Missingargs+"domain";
-            return error;
-        } else if logLevel.isEmpty {
+        if logLevel.isEmpty {
             let error = ResponseStrings.Missingargs+"logLevel";
             return error;
         } else {
@@ -528,26 +525,23 @@ class Cblite: NSObject {
     
     
     @objc
-    func createReplicator(dbname:String,replicatorConfig:[String:Any]) -> [String:Any]   {
-        do {
+    func createReplicator(_ dbname:String, replicatorConfig:[String:Any]) -> String   {
+      
             if dbname.isEmpty {
-                let error = [ResponseStrings.ErrorCode:ResponseStrings.MissingargsDBN]
+                let error = ResponseStrings.MissingargsDBN
                 return error;
             } else if replicatorConfig.isEmpty {
-                let error = [ResponseStrings.ErrorCode:ResponseStrings.Missingargs+"Replicator Config"]
+                let error = ResponseStrings.Missingargs+"Replicator Config"
                 return error;
             } else {
-                let result = try DatabaseManager.shared.createReplicator(dbname: dbname, replicatorConfig: replicatorConfig)
+                let result = DatabaseManager.shared.createReplicator(dbname: dbname, replicatorConfig: replicatorConfig)
                 return (result);
             }
-        } catch let error {
-            let error = [ResponseStrings.ErrorCode:ResponseStrings.Exception + error.localizedDescription]
-            return error;
-        }
+       
     }
     
     @objc
-    func replicatorStart(dbname:String,rid:String) -> String  {
+    func replicatorStart(_ dbname:String,rid:String) -> String  {
         do {
             if dbname.isEmpty {
                 let error = ResponseStrings.MissingargsDBN;
@@ -566,7 +560,7 @@ class Cblite: NSObject {
     }
     
     @objc
-    func replicatorStop(dbname:String,rid:String) -> String  {
+    func replicatorStop(_ dbname:String,rid:String) -> String  {
         do {
             if dbname.isEmpty {
                 let error = ResponseStrings.MissingargsDBN;
@@ -585,7 +579,7 @@ class Cblite: NSObject {
     }
     
     @objc
-    func replicationRemoveChangeListener(dbname:String,rid:String) -> String  {
+    func replicationRemoveChangeListener(_ dbname:String,rid:String) -> String  {
         do {
             if dbname.isEmpty {
                 let error = ResponseStrings.MissingargsDBN;
@@ -605,7 +599,7 @@ class Cblite: NSObject {
     
     
     @objc
-    func replicationAddChangeListener(dbname:String,rid:String,listner:String) -> String  {
+    func replicationAddChangeListener(_ dbname:String,rid:String,listner:String) -> String  {
         do {
             if dbname.isEmpty {
                 let error = ResponseStrings.MissingargsDBN;
