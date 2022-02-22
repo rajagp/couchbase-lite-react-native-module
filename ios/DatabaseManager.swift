@@ -8,7 +8,7 @@
 //import UIKit
 import CouchbaseLiteSwift
 
-class DatabaseManager: RCTEventEmitter {
+class DatabaseManager {
     public static var shared = DatabaseManager()
     private var _databases = [String:DatabaseResource]()
     var databases:[String:DatabaseResource] {
@@ -20,15 +20,8 @@ class DatabaseManager: RCTEventEmitter {
         get { return _listenerToken }
         set { _listenerToken = newValue }
     }
-    private var _hasListeners = false
-    var hasListeners:Bool {
-        get { return _hasListeners }
-        set { _hasListeners = newValue }
-    }
-    
-    var mevents:[String] = []
-    
-    
+
+
     func getDatabaseConfig(args: DatabaseArgs) -> DatabaseConfiguration? {
         let directory = args.directory
         let encryptionKey = args.encryptionKey
@@ -343,7 +336,7 @@ class DatabaseManager: RCTEventEmitter {
         }
         if let dbResource = databases[dbname], let db = dbResource.database {
             if dbResource.listenerToken == nil {
-                mevents.append(jsListener)
+                RNEventEmitter.mevents.append(jsListener)
                 let token = db.addChangeListener { change in
                     var changeDocMap = [String:Any]()
                     var deletedDocMap = [String:Any]()
@@ -368,9 +361,8 @@ class DatabaseManager: RCTEventEmitter {
                     if hasdeleted {
                         finalmap["Deleted"] = deletedDocMap
                     }
-                    if self.hasListeners {
-                        self.sendEvent(withName: jsListener, body: finalmap)
-                    }
+                        RNEventEmitter.emitter.sendEvent(withName: jsListener, body: finalmap)
+
                 }
                 dbResource.listenerToken = token
                 return ResponseStrings.SuccessCode
@@ -544,7 +536,7 @@ class DatabaseManager: RCTEventEmitter {
                         && dbResource.getQueryChangeListenerToken(queryId: queryID) != nil {
                         return ResponseStrings.QueryListenerExists;
                     } else {
-                        mevents.append(jsListener)
+                        RNEventEmitter.mevents.append(jsListener)
                         dbResource.setQueryChangeListenerJSFunction(queryChangeListenerJSFunction: jsListener, queryID: queryID)
                         let queryListenerToken = dbResource.getQuery(queryID: queryID)?.addChangeListener({change in
                             let jsCallback = jsListener
@@ -554,9 +546,9 @@ class DatabaseManager: RCTEventEmitter {
                                 
                                 if !jsCallback.isEmpty {
                                     let params = listenerResults.description
-                                    if self.hasListeners {
-                                        self.sendEvent(withName: jsCallback, body: params)
-                                    }
+                                    
+                                        RNEventEmitter.emitter.sendEvent(withName: jsCallback, body: params)
+                                     
                                 }
                             } else {
                                 do {
@@ -572,7 +564,7 @@ class DatabaseManager: RCTEventEmitter {
                                     }
                                     if !jsCallback.isEmpty {
                                         let params = json.description
-                                            self.sendEvent(withName: jsCallback, body: params)
+                                        RNEventEmitter.emitter.sendEvent(withName: jsCallback, body: params)
                                     }
                                 } catch _ {
                                 }
@@ -855,7 +847,6 @@ class DatabaseManager: RCTEventEmitter {
                     if dbResource.getReplicatorChangeListenerToken(replicatorId: id) == nil {
                         
                         //if token is null
-                        mevents.append(listner)
 
                         let blockToken =   dbResource.getReplicator(replicatorID: id)!.addChangeListener { (change) in
                             var changeObject : [String:String] = [:]
@@ -887,10 +878,11 @@ class DatabaseManager: RCTEventEmitter {
                             
                             if let jsCallBackFunc = dbResource.getReplicatorChangeListenerJSFunction(replicatorId: id) {
                                 if !jsCallBackFunc.isEmpty {
+                                    RNEventEmitter.mevents.append(jsCallBackFunc)
+                                  
+                                        RNEventEmitter.emitter.sendEvent(withName: jsCallBackFunc, body: changeObject)
+                                        
                                     
-                                    if self.hasListeners {
-                                        self.sendEvent(withName: jsCallBackFunc, body: changeObject)
-                                    }
                                 }
                             }
                             
@@ -917,15 +909,5 @@ class DatabaseManager: RCTEventEmitter {
     }
     
     
-    override func supportedEvents() -> [String]! {
-        return self.mevents
-    }
-    override func startObserving() {
-        self.hasListeners = true
-    }
-    
-    override func stopObserving() {
-        self.hasListeners = false
-    }
 }
 

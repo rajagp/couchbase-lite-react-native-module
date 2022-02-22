@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules, Platform, NativeEventEmitter, DeviceEventEmitter } from 'react-native';
 
 const LINKING_ERROR =
   `The package 'react-native-cblite' doesn't seem to be linked. Make sure: \n\n` +
@@ -19,6 +19,9 @@ const linkin_err = new Proxy(
 
 const CBLite = Platform.OS == 'ios'? (NativeModules.Cblite
   ? NativeModules.Cblite :linkin_err) : (NativeModules.CBLite? NativeModules.CBLite : linkin_err);
+
+
+export const EventsListeners = Platform.OS === 'ios' ? new NativeEventEmitter(NativeModules.RNEventEmitter): DeviceEventEmitter
 
 export function CreateOrOpenDatabase(
   dbname: string,
@@ -169,6 +172,7 @@ export function removeQueryChangeListener(
 ): string {
   return CBLite.removeQueryChangeListener(dbname, query);
 }
+
 
 
 export function createReplicator(
