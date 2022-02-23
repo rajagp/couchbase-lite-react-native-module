@@ -12,6 +12,8 @@ open class RNEventEmitter: RCTEventEmitter {
    
     public static var mevents:[String] = []
   
+    public static var hasListeners:Bool = false
+    
     public func addevents(name : String)
     {
         RNEventEmitter.mevents.append(name)
@@ -23,6 +25,16 @@ open class RNEventEmitter: RCTEventEmitter {
    
   }
 
+    
+    open override func startObserving() {
+        RNEventEmitter.hasListeners = true
+    }
+    
+    
+    open override func stopObserving() {
+        RNEventEmitter.hasListeners = false
+    }
+    
   open override func supportedEvents() -> [String] {
     return RNEventEmitter.mevents;    // etc.
   }

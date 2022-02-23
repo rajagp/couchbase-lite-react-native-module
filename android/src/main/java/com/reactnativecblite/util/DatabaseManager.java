@@ -726,17 +726,38 @@ public class DatabaseManager {
     public String enableLogging(String domain,String loglevel) {
 
         try {
-            if(domain==null||domain.isEmpty())
-                Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS);
-            else
-                Database.log.getConsole().setDomains(LogDomain.valueOf(domain));
+            switch (domain.toLowerCase()){
+                case "database":
+                    Database.log.getConsole().setDomains(LogDomain.DATABASE);
+                case "query":
+                    Database.log.getConsole().setDomains(LogDomain.QUERY);
+                case "replicator":
+                    Database.log.getConsole().setDomains(LogDomain.REPLICATOR);
+                case "network":
+                    Database.log.getConsole().setDomains(LogDomain.NETWORK);
+                case "listener":
+                    Database.log.getConsole().setDomains(LogDomain.LISTENER);
+                default:
+                    Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS);
+            }
 
-            if(loglevel==null||loglevel.isEmpty())
-                Database.log.getConsole().setLevel(LogLevel.DEBUG);
-            else
-                Database.log.getConsole().setLevel(LogLevel.valueOf(loglevel));
+            LogLevel mloglevel;
+            switch (domain.toLowerCase()){
+                case "debug":
+                    mloglevel = LogLevel.DEBUG;
+                case "verbose":
+                    mloglevel = LogLevel.VERBOSE;
+                case "info":
+                    mloglevel = LogLevel.INFO;
+                case "warning":
+                    mloglevel = LogLevel.WARNING;
+                case "error":
+                    mloglevel = LogLevel.ERROR;
+                default:
+                    mloglevel = LogLevel.NONE;
+            }
 
-
+            Database.log.getConsole().setLevel(LogLevel.DEBUG);
             return responseStrings.SuccessCode;
 
         } catch (Exception exception) {
@@ -998,8 +1019,8 @@ public class DatabaseManager {
                                         replicatorChange.put("status", "idle");
                                 }
 
-                                if(change.getStatus().getError()!=null&&!change.getStatus().getError().getMessage().isEmpty()) {
-                                    replicatorChange.put("error", change.getStatus().getError().getMessage());
+                                if(change.getStatus().getError()!=null&&!change.getStatus().getError().getLocalizedMessage().isEmpty()) {
+                                    replicatorChange.put("error", change.getStatus().getError().getLocalizedMessage());
                                     replicatorChange.put("errorCode", change.getStatus().getError().getCode());
                                 }
 

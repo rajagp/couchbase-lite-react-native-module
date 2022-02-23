@@ -396,7 +396,7 @@ class DatabaseManager {
         
         var mloglevel:LogLevel;
         
-        switch (domain){
+        switch (domain.lowercased()){
         case "database":
             Database.log.console.domains = .database
         case "query":
@@ -411,7 +411,7 @@ class DatabaseManager {
             Database.log.console.domains = .all
         }
         
-        switch (logLevel){
+        switch (domain.lowercased()){
         case "debug":
             mloglevel = LogLevel.debug
         case "verbose":
@@ -552,18 +552,19 @@ class DatabaseManager {
                                 }
                             } else {
                                 do {
-                                    var json = [Any]()
+                                    var json = "["
                                     if change.results != nil {
                                         
                                         for result in change.results?.allResults() ?? []
                                         {
-                                            json.append(result.toJSON())
+                                            json+=(result.toJSON())+","
                                         }
-                                        
-                                        
+                                        if(json.count>1){json.removeLast()}
+                                       
                                     }
+                                    json+="]"
                                     if !jsCallback.isEmpty {
-                                        let params = json.description
+                                        let params = json
                                         RNEventEmitter.emitter.sendEvent(withName: jsCallback, body: params)
                                     }
                                 } catch _ {
@@ -617,8 +618,6 @@ class DatabaseManager {
     
     func createReplicator(dbname:String,replicatorConfig:[String:Any]) -> String {
         do {
-            
-            
             
             if !replicatorConfig.keys.contains("target") || replicatorConfig["target"]==nil
             {
