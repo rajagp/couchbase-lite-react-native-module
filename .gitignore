@@ -12,5 +12,4 @@ android/src/main/java/com/.DS_Store
 android/gradle/.DS_Store
 android/build/
 android/local.properties
-ios/Cblite.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
-ios/Cblite.xcodeproj
+
