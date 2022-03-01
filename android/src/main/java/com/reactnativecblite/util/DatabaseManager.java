@@ -551,13 +551,13 @@ public class DatabaseManager {
 
         if (!databases.containsKey(database)) {
             return responseStrings.DBnotfound;
-        }
-
+        } ResultSet rows = null;
+        try {
         DatabaseResource dbResource = databases.get(database);
         Database db = dbResource.getDatabase();
         Query query = db.createQuery(queryString);
-        ResultSet rows = null;
-        try {
+       
+       
             if(dbResource.getQuery(query.explain().hashCode())!=null) {
                 rows = dbResource.getQuery(query.explain().hashCode()).execute();
             }
@@ -618,9 +618,11 @@ public class DatabaseManager {
             final DatabaseResource dbr = databases.get(dbName);
             if (dbr != null) {
                 Database db = dbr.getDatabase();
-                Query newQuery = db.createQuery(query);
+                try { 
+                    
+                    Query newQuery = db.createQuery(query);
 
-                try {
+                
 
                     final Integer newQueryID = newQuery.explain().hashCode();
 

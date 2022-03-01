@@ -55,15 +55,15 @@ class DatabaseResource: NSObject {
     func setReplicator(replicator: Replicator) -> String? {
         let setReplicator = ReplicatorResource()
         setReplicator.replicator = replicator
-        let hash = generateReplicatorConfigHash(replicator: replicator)
+        let hash = generateReplicatorConfigHash(replicator: replicator.config)
         if hash != nil {
             self.replicators.updateValue(setReplicator, forKey: hash!)
         }
         return hash
     }
     
-    func generateReplicatorConfigHash(replicator: Replicator) -> String? {
-        let replicatorConfiguration = replicator.config
+    func generateReplicatorConfigHash(replicator: ReplicatorConfiguration) -> String? {
+        let replicatorConfiguration = replicator
         var sbhash = ""
         sbhash.append(replicatorConfiguration.database.name)
         sbhash.append("\(replicatorConfiguration.continuous)")

@@ -267,7 +267,7 @@ class Cblite: NSObject {
             do {
                 let response = try DatabaseManager.shared.getBlob(dbname: dbname,
                                                                   key: key)
-                if response != ResponseStrings.DBnotfound && response != ResponseStrings.invalidblob {
+                if response != ResponseStrings.DBnotfound && response != ResponseStrings.invalidblob && response != ResponseStrings.Blobnotfound {
                     OnSuccessCallback([response])
                 } else {
                     let error = response;
