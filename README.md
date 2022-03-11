@@ -41,8 +41,8 @@ The following is a list of APIs (and features) exported by the react-native plug
 | createReplicator  | Replicator |
 | replicatorStart  | Replicator |
 | replicatorStop  | Replicator |
-| replicationAddListener  | Replicator |
-| replicationRemoveListener  | Replicator |
+| replicationAddChangeListener  | Replicator |
+| replicationRemoveChangeListener  | Replicator |
 
 ## Getting Started
 
@@ -207,7 +207,7 @@ Here are a few examples of using the native module in your app
 To use the module, open your react-native app project using a suitable IDE and declare the plugin at the on top of your `app.js` file.
 
 ```
-import CBL from 'react-native-cblite';
+import * as CBL from 'react-native-cblite';
 ```
 
 ### Create Database
@@ -433,15 +433,13 @@ _Example Response_
 ### Add Database Change Listener
 
 ```
-import {DeviceEventEmitter} from 'react-native';
-......
 
 var JSListenerEvent = 'OnDatabaseChanged'
 
-var response = CBL.addDatabaseChangeListener(dbName,JSListenerEvent);
+var response = CBL.EventsListeners.addDatabaseChangeListener(dbName,JSListenerEvent);
 
 if(response=='Success') {
-    DeviceEventEmitter.addListener(JSListener, (eventResponse) => { console.log(eventResponse) });
+    CBL.EventsListeners.addListener(JSListener, (eventResponse) => { console.log(eventResponse) });
     }
     else {
         console.log("ERROR: " + response);
@@ -481,7 +479,7 @@ var JSListenerEvent = 'OnDatabaseChanged'
 var response = CBL.removeDatabaseChangeListener(dbName);
 
 if(response=='Success') {
-     DeviceEventEmitter.removeAllListeners(JSListenerEvent);
+     CBL.EventsListeners.removeAllListeners(JSListenerEvent);
      }
      else {
         console.log("ERROR: " + response);
@@ -654,7 +652,7 @@ _Example Response_
   let listenerAddResponse = await CouchbaseNativeModule.queryWithChangeListener(dbName, query, JSListenerEvent);
 
   if (listenerAddResponse == "Success") {
-      DeviceEventEmitter.addListener(JsListener, function(response){
+      CBL.EventsListeners.addListener(JsListener, function(response){
         conosole.log("Query Response : ", response);
       });  
   }
@@ -692,7 +690,7 @@ _Example Response in eventResponse_
   var stopQueryListener = await CouchbaseNativeModule.removeQueryChangeListener(dbname, query);
 
   if (stopQueryListener == "Success") {
-      DeviceEventEmitter.removeAllListeners(stopQueryListener);
+      CBL.EventsListeners.removeAllListeners(stopQueryListener);
   }
         
 ```
@@ -816,10 +814,10 @@ _Example Response_
 ```
   let JSListenerEvent = "OnReplicatorChanged"
 
-  let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationAddListener(dbname, ReplicatorID, JSListenerEvent);
+  let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationAddChangeListener(dbname, ReplicatorID, JSListenerEvent);
      
    if (ReplicatorListenerResponse == "Success") {
-      DeviceEventEmitter.addListener(JSListenerEvent, function(response){
+      CBL.EventsListeners.addListener(JSListenerEvent, function(response){
         conosole.log("Replicator Status Response : ", response);
       });  
   }
@@ -856,10 +854,10 @@ _Example Response in eventResponse_
 ```
   let JSListenerEvent = "OnReplicatorChanged"
 
-  var stopReplicatorListener = await CouchbaseNativeModule.replicationRemoveListener(dbname, ReplicatorID);
+  var stopReplicatorListener = await CouchbaseNativeModule.replicationRemoveChangeListener(dbname, ReplicatorID);
 
   if (stopReplicatorListener == "Success") {
-      DeviceEventEmitter.removeAllListeners(JSListenerEvent);
+      CBL.EventsListeners.removeAllListeners(JSListenerEvent);
   }
         
 ```

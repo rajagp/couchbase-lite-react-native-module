@@ -1,6 +1,4 @@
-<!-- AndroidManifest.xml -->
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.couchbase.cblitereact">
+          package="com.reactnativecblite">
 
 </manifest>
