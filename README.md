@@ -65,34 +65,11 @@ We will look at the steps to integrate and use the react native module within a 
 
 - Follow the instructions outlined in the README within the Android folder on steps to integrate and use the Couchbase Lite RN module within a sample React Native Android app.
 
-
-## Updates to Native Module
-
-If you update the plugin such as adding a new API, don't forget to remove the plugin and re-add it to the app. 
-
-### Removing the module
-
-```bash
-yarn remove react-native-cblite
-```
-
-### Adding the module
-```bash
-yarn add https://github.com/rajagp/couchbase-lite-react-native-module
-```
-
-*Troubleshooting Tip*:
-
-If the app isn't recognizing the latest plugin changes it may help to do a complete clean
-  - remove the root level `node_modules` folder
-  - Run "npm install"
-  - Repeat the steps to add the module and couchbase lite package.
-
 ## Usage
 
-Here are a few examples of using the native module in your app
+Here are a few examples of using the native module within your app
 
-To use the module, open your react-native app project using a suitable IDE and declare the plugin at the on top of your `app.js` file.
+To use the module, you must declare the plugin at the on top of your `app.js` file.
 
 ```
 import * as CBL from 'react-native-cblite';
