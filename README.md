@@ -1,21 +1,30 @@
 # Overview
-A reference implementation of a [React Native Module](https://reactnative.dev/docs/native-modules-intro) for couchbase lite on Android. 
+A reference implementation of a [React Native Module](https://reactnative.dev/docs/native-modules-intro) for couchbase lite on iOS and Android.
 
-**NOTE**: The plugin implementation is not officially supported by Couchbase and there are no guarantees that the APIs exported by the module are up to date with the latest version of Couchbase Lite. The module implementation is available as an open source reference implementation for developers to use as a starting point.
+**:NOTE:** The plugin is not officially supported by Couchbase and there are no guarantees that the APIs exported by the module are up to date with the latest version of Couchbase Lite. The module implementation is available as an open source reference implementation for developers to use as a starting point and contribute as needed
 
-In order to use Couchbase Lite as embedded database within your React Native app, you will need a way to access Couchbase Lite’s native APIs from within your React Native JS application. React Native Modules allow mobile apps written in React Native to access native platform APIs.
+React Native Modules allow mobile apps written in React Native to access native platform APIs. The sample module exports a relevant subset of native Couchbase Lite API functionality and makes it available to React native JS apps. You can extend this module to expose otherAPIs per [module development guide](https://reactnative.dev/docs/native-modules-ios).
 
-The React Native Module example exports a subset of native Couchbase Lite API functionality and makes it available to React native JS apps. This is intended to be used as a reference. You can extend this module to expose other relevant APIs per [module development guide](https://reactnative.dev/docs/native-modules-ios) 
+**LICENSE**: The source code for the plugin is Apache-licensed, as specified in LICENSE. However, the usage of Couchbase Lite will be guided by the terms and conditions specified in Couchbase's Enterprise or Community License agreements respectively
 
-**LICENSE**: The source code for the plugin is Apache-licensed, as specified in LICENSE. However, the usage of Couchbase Lite will be guided by the terms and conditions specified in Couchbase's Enterprise or Community License agreements.
+## Repo Folders
 
-*NOTE*: The plugin **does not** bundle Couchbase Lite native framework. You will include Couchbase Lite library when building your React Native app. The Getting Started instructions below describe the same.
+* The "_index.tsx_" file in the "_src_" folder contains the functions exported to JS world. The "_ios_" and "_android_" folders contain the corresponding implementation for iOS and Android platforms respectively. Although the underlying implementation of the APIs is platform specific, note that the JS API definitions are common. So you can share the App UI logic across Android and iOS
 
-![](https://i2.wp.com/blog.couchbase.com/wp-content/uploads/2018/10/ReactNativeModule.jpg?w=900)
+* The "_ios_" folder contains the React Native module implementation for iOS version of Couchbase Lite. Apps written in iOS must use this plugin.
+
+* The "_android_" folder contains the React Native module implementation for Android version of Couchbase Lite. Apps written in Android must use this plugin.
+
+## Sample App
+
+A React Native app that demonstrates core database, CRUD, query and sync functions of Couchbase Lite using the plugin is available [here](). 
+
 
 ## Exported APIs
 
-The following is a list of APIs (and features) exported by the react-native plugin. See the description of Couchbase Lite Native [API Specifications](https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-android/com/couchbase/lite/package-summary.html) for an authoritative description of the API functionality. As mentioned above, in some cases, the plugin isn't a simple passthrough. The plugin implements additional logic, so there will not be an exact 1:1 mapping to the original API definition.
+The following is a list of APIs (and features) exported by the react-native plugin. See the description of Couchbase Lite Native [API Specifications](https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-android/com/couchbase/lite/package-summary.html) for an authoritative description of the API functionality.
+
+**NOTE**: The plugin isn't a simple API passthrough. The plugin implements a Data Manager pattern and includes additional bookkeeping logic for managing and tracking open databases, replicators, listeners etc on behalf of the app. This avoids the need for the apps to implement all that bookkeeping logic. It is not required that you implement the plugin this way but it will simplify your app so you can focus on the apps UI and control logic. Also, by pushing these tasks into the plugin, app developers do not have to reimplement that logic for every app.
 
 | API methods | Native Class |
 | :---: | :---: |
@@ -46,159 +55,38 @@ The following is a list of APIs (and features) exported by the react-native plug
 
 ## Getting Started
 
-The instructions assume some familiarity with [React Native app development](https://reactnative.dev/docs/environment-setup).
+We will look at the steps to integrate and use the react native module within a sample React Native app. The instructions assume some familiarity with [React Native app development](https://reactnative.dev/docs/environment-setup). You will do something similar when integrating into your own app. 
 
-### Integrating the native module into your React Native App
+**iOS**: 
+
+- Follow the instructions outlined in the README within the iOS folder on steps to integrate and use the Couchbase Lite RN module within a sample React Native iOS app.
+
+**Android**: 
+
+- Follow the instructions outlined in the README within the Android folder on steps to integrate and use the Couchbase Lite RN module within a sample React Native Android app.
 
 
-The step-by-step instructions below illustrates how you can integrate and use the react native module within a sample React Native app for Android platform. You will do something similar when integrating into your own React Native app. 
+## Updates to Native Module
 
-*  Create a sample React Native app named "AwesomeProject" for Android as per instructions in the [Starter's Guide](https://reactnative.dev/docs/environment-setup). The instructions also guide you through the steps to set up your environment for React Native app development for Android (and iOS).
- 
- For the rest of the instructions, we will assume that you have created a sample React Native project named "AwesomeProject" for Android. **NOTE:** You will need node version 12+ for Android app development. 
+If you update the plugin such as adding a new API, don't forget to remove the plugin and re-add it to the app. 
 
-*  Install yarn from within your root folder
+### Removing the module
 
 ```bash
-cd  /path/to/AwesomeProject
-npm install yarn
-
+yarn remove react-native-cblite
 ```
 
-* Install the plugin by adding the appropriate Github repo. If you fork the repo and modify it, then be sure to point it to the right URL!
-
+### Adding the module
 ```bash
 yarn add https://github.com/rajagp/couchbase-lite-react-native-module
 ```
 
+*Troubleshooting Tip*:
 
-### Adding couchbase-lite-android framework as a dependency
-
-The module does not come bundled with the couchbase lite framework. You will have to include the appropriately licensed Couchbase Lite Android library as dependency within your app.
- 
-The React native reference module requires minimal version of **Couchbase Lite v3.0.0**. 
-
-Couchbase Lite can be downloaded from Couchbase [downloads](https://www.couchbase.com/downloads) page or can be pulled in via maven as described in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html).
-
-We discuss the steps to add the Couchbase Lite framework dependency depending on how you downloaded the framework. 
-
-* Open the Android project located inside your React Native project under directory: `/path/to/AwesomeProject/android` using Android Studio.
-
-**Include couchbase-lite-android sdk from maven**
-
-Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL or maven repository etc.
-
-- In your 'app' level `build.gradle` file, add your library file path. 
- ```
- dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
- }
-```
-
-
-- In your 'project' level `build.gradle` file, add your library file path. 
-
-```
- buildscript {
-    ...
-    ext {
-        ...
-        // Add this line
-        cblVersion = 'com.couchbase.lite:couchbase-lite-android:${version}'
-        ...
-        }
-    ...
-}
-```
-
-
-**To add couchbase-lite-android as an .aar file**
-
-* Create a a new directory called 'libs' under your "**/path/to/AwesomeProject/node_modules/react-native-cblite/android**" folder
-* Copy the .aar files from within your downloaded Couchbase Lite package into the newly created'libs' folder
-```bash
-cd /path/to/AwesomeProject/node_modules/react-native-cblite/android
-
-mkdir libs
-
-cp ~/path/to/couchbase-lite-android-ee-3.0.0.aar libs/ 
-```
-
-
-* In Android Studio, navigate to the "project structure" in order to add  couchbase lite library as a dependency.
-
-![](https://blog.couchbase.com/wp-content/uploads/2021/09/project-structure.png)
-
-* Add "lib/couchbase-lite-android-ee-3.0.0.aar" as dependency to the couchbase lite React native module
-
-![](https://blog.couchbase.com/wp-content/uploads/2021/09/adding-library-react-native.png)
-
-* Your dependency tree would look something like this
-
-![](https://blog.couchbase.com/wp-content/uploads/2021/09/dependency-tree.png)
-
-* In your 'Project' level `build.gradle` file, add the "libs" directory path using "flatDir"
-```
-allprojects {
-    repositories {
-        mavenLocal()
-        maven {
-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url("$rootDir/../node_modules/react-native/android")
-        }
-        maven {
-            // Android JSC is installed from npm
-            url("$rootDir/../node_modules/jsc-android/dist")
-        }
-
-        google()
-        jcenter()
-        maven { url 'https://www.jitpack.io' }
-        flatDir {
-            dirs 'libs'
-        }
-    }
-}
-```
-
-* In your 'app' level `build.gradle` file, add Couchbase Lite library under dependencies. 
-```bash
-dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation files('com.couchbase.couchbase-lite-android-ee-3.0.0')
-
-}
-```
-
-
-**Confirm minimum SDK version**
-
-Couchbase Lite required min SDK version of API 22. So confirm that the React Native app has minimum SDK of API22.
-
-For this, in your project level 'build.gradle' file, confirm that the `minSdkVersion` is greater than or equal to API 22
-
-```bash
-buildscript {
-    ext {
-        buildToolsVersion = "29.0.3"
-        minSdkVersion = 22
-        compileSdkVersion = 29
-        targetSdkVersion = 29
-        ndkVersion = "20.1.5948944"
-    }
-
-```
-
-### Build and Run your React Native project
-
-Build and run the app per instructions in [Getting Started Guide]("https://reactnative.dev/docs/environment-setup"). You can run the app direcly from Android Studio or from command line.
-
-Don't forget to start the Metro bundler before running your app!
-
-```bash
-npx react-native start
-```
-
+If the app isn't recognizing the latest plugin changes it may help to do a complete clean
+  - remove the root level `node_modules` folder
+  - Run "npm install"
+  - Repeat the steps to add the module and couchbase lite package.
 
 ## Usage
 
@@ -878,22 +766,3 @@ _Example Response_
 
 
 
-## Updates to Native Module
-
-If you update the plugin such as adding a new API, don't forget to remove the plugin and re-add it to the app. 
-
-### Removing the module
-```bash
-yarn remove react-native-cblite
-```
-
-### Adding the module
-```bash
-yarn add https://github.com/rajagp/couchbase-lite-react-native-module
-```
-
-*Troubleshooting Tip*:
- On occasion.  if the app isn't recognizing the latest plugin changes it may help to do a complete clean
-  - remove the root level `node_modules` folder
-  - Run "npm install"
-  - Repeat the steps to add the module and couchbase lite package.
