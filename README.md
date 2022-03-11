@@ -7,6 +7,8 @@ In order to use Couchbase Lite as embedded database within your React Native app
 
 The React Native Module example exports a subset of native Couchbase Lite API functionality and makes it available to React native JS apps. This is intended to be used as a reference. You can extend this module to expose other relevant APIs per [module development guide](https://reactnative.dev/docs/native-modules-ios) 
 
+**LICENSE**: The source code for the plugin is Apache-licensed, as specified in LICENSE. However, the usage of Couchbase Lite will be guided by the terms and conditions specified in Couchbase's Enterprise or Community License agreements.
+
 *NOTE*: The plugin **does not** bundle Couchbase Lite native framework. You will include Couchbase Lite library when building your React Native app. The Getting Started instructions below describe the same.
 
 ![](https://i2.wp.com/blog.couchbase.com/wp-content/uploads/2018/10/ReactNativeModule.jpg?w=900)
