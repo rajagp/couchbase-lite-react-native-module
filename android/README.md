@@ -22,6 +22,11 @@ npm install yarn
 yarn add https://github.com/couchbaselabs/couchbase-lite-react-native-module
 ```
 
+* Install the relevant dependencies
+
+```bash
+npm install
+```
 
 ### Step 2: Add couchbase-lite-android framework as a dependency
 

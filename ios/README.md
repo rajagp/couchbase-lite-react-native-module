@@ -24,6 +24,11 @@ npm install yarn
 yarn add https://github.com/coucbaselabs/couchbase-lite-react-native-module
 ```
 
+* Install the relevant dependencies
+
+```bash
+npm install
+```
 
 ### Step 2: Install the plugin with Couchbase Lite-iOS framework as a dependency
 
