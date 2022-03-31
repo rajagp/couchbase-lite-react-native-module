@@ -69,6 +69,17 @@ npm install yarn
 yarn add https://github.com/rajagp/couchbase-lite-react-native-module
 ```
 
+## iOS setup
+
+The module does not come bundled with the couchbase lite framework. You will have to include the appropriately licensed Couchbase Lite iOS library as pod within your app.
+The React native reference module requires minimal version of **CouchbaseLite-Swift v3.0.0**. 
+
+```bash
+cd ios
+pod install
+```
+
+## Android setup
 
 ### Adding couchbase-lite-android framework as a dependency
 
@@ -183,6 +194,7 @@ buildscript {
         compileSdkVersion = 29
         targetSdkVersion = 29
         ndkVersion = "20.1.5948944"
+        cblVersion = 'com.couchbase.lite:couchbase-lite-android:${version}'
     }
 
 ```
