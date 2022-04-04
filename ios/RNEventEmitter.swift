@@ -25,6 +25,9 @@ open class RNEventEmitter: RCTEventEmitter {
    
   }
 
+    override open class func requiresMainQueueSetup() -> Bool {
+        return true
+    }
     
     open override func startObserving() {
         RNEventEmitter.hasListeners = true
