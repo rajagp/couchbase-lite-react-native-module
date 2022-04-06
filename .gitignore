@@ -1,10 +1,11 @@
 .idea
 .git
-android/.gradle
-android/.idea
+*.DS_Store
+package.json
 node_modules/
 example/
-.DS_Store
+android/.gradle
+android/.idea
 android/libs/couchbase-lite-android-ee-3.0.0.aar
 android/src/main/.DS_Store
 android/src/main/java/.DS_Store
